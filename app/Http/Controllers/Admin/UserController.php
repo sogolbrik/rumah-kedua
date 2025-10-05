@@ -16,7 +16,8 @@ class UserController extends Controller
     public function index()
     {
         return view('admin.user.data', [
-            'users' => User::with('kamar')->latest()->paginate(10)
+            'users' => User::with('kamar')->latest()->paginate(10),
+            'kamar' => Kamar::select('id', 'kode_kamar', 'tipe', 'status')->get()
         ]);
     }
 
@@ -297,6 +298,47 @@ class UserController extends Controller
             return redirect()->route('user.index')->with('success', 'User berhasil dihapus');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    // Status Penghuni
+    //Nonaktifkan
+    public function nonaktifkan($id)
+    {
+        $user = User::findOrFail($id);
+        if ($user->role !== 'penghuni') {
+            return redirect()->back()->with('error', 'Hanya penghuni yang dapat dinonaktifkan.');
+        }
+
+        if ($user->id_kamar) {
+            Kamar::where('id', $user->id_kamar)->update(['status' => 'Tersedia']);
+        }
+
+        $user->status_penghuni = 'nonaktif';
+        $user->id_kamar = null;
+        $user->save();
+
+
+        return redirect()->back()->with('success', 'Status penghuni berhasil diubah menjadi nonaktif.');
+    }
+
+    //Aktifkan
+    public function aktifkan(Request $request, $id)
+    {
+        $request->validate([
+            'id_kamar' => 'required|exists:kamars,id',
+        ]);
+
+        $user = User::findOrFail($id);
+        $user->update([
+            'id_kamar'       => $request->id_kamar,
+            'tanggal_masuk'  => now(),
+            'status_penghuni' => 'aktif',
+        ]);
+
+        // update kamar jadi Terisi
+        if ($user->id_kamar) {
+            Kamar::where('id', $user->id_kamar)->update(['status' => 'Terisi']);
         }
     }
 }

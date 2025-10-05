@@ -17,3 +17,5 @@ Route::get('pengumuman-admin', [PengumumanController::class, 'index'])->name('pe
 Route::get('transaksi-admin', [TransaksiController::class, 'index'])->name('transaksi-admin');
 Route::resource('kamar', KamarController::class);
 Route::resource('user', UserController::class);
+Route::put('user/{id}/nonaktifkan', [UserController::class, 'nonaktifkan'])->name('user.nonaktifkan');
+Route::put('user/{id}/aktifkan', [UserController::class, 'aktifkan'])->name('user.aktifkan');

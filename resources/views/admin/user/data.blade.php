@@ -374,7 +374,7 @@
             const statusElement = document.getElementById('modalStatus');
             const inactiveButton = document.getElementById('inactiveButton');
 
-            if (user.status_penghuni === 'aktif' || !user.status_penghuni) {
+            if (user.status_penghuni === 'aktif') {
                 statusElement.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Aktif';
                 statusElement.className = 'px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200';
 
@@ -383,7 +383,7 @@
                 inactiveButton.className =
                     'inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-amber-700 bg-amber-100 border border-amber-200 rounded-lg hover:bg-amber-200 transition-all duration-200 hover:shadow-sm';
                 inactiveButton.onclick = function() {
-                    nonaktifkanUser(user.id);
+                    nonaktifkanUser(user.id, user.name);
                 };
                 inactiveButton.style.display = 'inline-flex'; // Tampilkan tombol
 
@@ -396,10 +396,9 @@
                 inactiveButton.className =
                     'inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-amber-700 bg-amber-100 border border-amber-200 rounded-lg hover:bg-amber-200 transition-all duration-200 hover:shadow-sm';
                 inactiveButton.onclick = function() {
-                    nonaktifkanUser(user.id);
+                    nonaktifkanUser(user.id, user.name);
                 };
                 inactiveButton.style.display = 'inline-flex'; // Tampilkan tombol
-
             } else {
                 statusElement.innerHTML = '<i class="fa-solid fa-user-slash mr-1"></i> Nonaktif';
                 statusElement.className = 'px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200';
@@ -409,7 +408,7 @@
                 inactiveButton.className =
                     'inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-emerald-700 bg-emerald-100 border border-emerald-200 rounded-lg hover:bg-emerald-200 transition-all duration-200 hover:shadow-sm';
                 inactiveButton.onclick = function() {
-                    aktifkanUser(user.id);
+                    aktifkanUser(user.id, user.name);
                 };
                 inactiveButton.style.display = 'inline-flex'; // Tampilkan tombol
             }
@@ -484,57 +483,179 @@
         }
 
         // Fungsi untuk nonaktifkan user
-        function nonaktifkanUser(userId) {
-            if (confirm('Apakah Anda yakin ingin menonaktifkan user ini?')) {
-                // Implementasi AJAX untuk nonaktifkan user
-                fetch(`/user/${userId}/nonaktifkan`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert('User berhasil dinonaktifkan');
-                            location.reload();
-                        } else {
-                            alert('Gagal menonaktifkan user');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Terjadi kesalahan saat menonaktifkan user');
-                    });
-            }
+        function nonaktifkanUser(userId, namaUser) {
+            const url = "{{ route('user.nonaktifkan', ':id') }}".replace(':id', userId);
+            Swal.fire({
+                title: 'Nonaktifkan User?',
+                html: `
+                    <div class="text-center">
+                        <p class="text-slate-700 mb-2">Anda akan menonaktifkan user:</p>
+                        <p class="text-lg font-bold text-amber-600 mb-3">${namaUser}</p>
+                        <p class="text-sm text-slate-500">User akan tidak dapat mengakses sistem</p>
+                    </div>
+                    `,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#f59e0b',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: '<i class="fa-solid fa-user-slash mr-2"></i>Ya, Nonaktifkan',
+                cancelButtonText: '<i class="fa-solid fa-times mr-2"></i>Batal',
+                reverseButtons: true,
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'inline-flex items-center px-4 py-2 bg-amber-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-amber-700 focus:bg-amber-700 active:bg-amber-800 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition ease-in-out duration-150 ml-2',
+                    cancelButton: 'inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Buat form secara dinamis
+                    const form = document.createElement('form');
+                    form.id = 'nonaktifkan-user-' + userId;
+                    form.method = 'POST';
+                    form.action = url;
+                    form.style.display = 'none';
+
+                    // Tambahkan CSRF token
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = '_token';
+                    csrfInput.value = csrfToken;
+
+                    // Tambahkan method spoofing untuk PUT
+                    const methodInput = document.createElement('input');
+                    methodInput.type = 'hidden';
+                    methodInput.name = '_method';
+                    methodInput.value = 'PUT';
+
+                    form.appendChild(csrfInput);
+                    form.appendChild(methodInput);
+                    document.body.appendChild(form);
+
+                    // Submit form
+                    form.submit();
+                }
+            });
         }
 
         // Fungsi untuk aktifkan user
-        function aktifkanUser(userId) {
-            if (confirm('Apakah Anda yakin ingin mengaktifkan user ini?')) {
-                // Implementasi AJAX untuk aktifkan user
-                fetch(`/user/${userId}/aktifkan`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert('User berhasil diaktifkan');
-                            location.reload();
+        function aktifkanUser(userId, namaUser) {
+            const url = "{{ route('user.aktifkan', ':id') }}".replace(':id', userId);
+
+            const kamarOptions = `
+                                <option value="" disabled selected>- Pilih Kamar -</option>
+                                @foreach ($kamar as $item)
+                                    @if ($item->status == 'Tersedia')
+                                        <option value="{{ $item->id }}">{{ $item->kode_kamar }} - {{ $item->tipe }}</option>
+                                    @endif
+                                @endforeach
+                            `;
+
+            Swal.fire({
+                title: 'Aktifkan User?',
+                html: `
+                        <div class="text-center">
+                            <p class="text-slate-700 mb-2">Anda akan mengaktifkan user:</p>
+                            <p class="text-lg font-bold text-emerald-600 mb-3">${namaUser}</p>
+                            <p class="text-sm text-slate-500 mb-4">User akan dapat mengakses sistem kembali</p>
+                            
+                            <div class="text-left">
+                                <label class="block text-sm font-medium text-slate-700 mb-2">Pilih Kamar:</label>
+                                <select id="kamarSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                                    ${kamarOptions}
+                                </select>
+                                <p id="kamarError" class="text-red-500 text-xs mt-1 hidden">Harap pilih kamar</p>
+                            </div>
+                        </div>
+                    `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: '<i class="fa-solid fa-user-check mr-2"></i>Ya, Aktifkan',
+                cancelButtonText: '<i class="fa-solid fa-times mr-2"></i>Batal',
+                reverseButtons: true,
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-700 focus:bg-emerald-700 active:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition ease-in-out duration-150 ml-2',
+                    cancelButton: 'inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150'
+                },
+                preConfirm: () => {
+                    const kamarSelect = document.getElementById('kamarSelect');
+                    const kamarError = document.getElementById('kamarError');
+
+                    if (!kamarSelect.value) {
+                        kamarError.classList.remove('hidden');
+                        return false;
+                    }
+
+                    kamarError.classList.add('hidden');
+                    return {
+                        id_kamar: kamarSelect.value
+                    };
+                }
+            }).then(async (result) => {
+                if (result.isConfirmed && result.value) {
+                    const {
+                        id_kamar
+                    } = result.value;
+
+                    try {
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                'X-HTTP-Method-Override': 'PUT'
+                            },
+                            body: JSON.stringify({
+                                id_kamar: id_kamar
+                            })
+                        });
+
+                        if (response.ok) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Status penghuni berhasil diubah menjadi aktif',
+                                timer: 2000,
+                                position: "top-end",
+                                toast: true,
+                                showConfirmButton: false,
+                                customClass: {
+                                    popup: 'rounded-xl'
+                                }
+                            }).then(() => {
+                                // reload setelah alert selesai / timer habis
+                                location.reload();
+                            });
                         } else {
-                            alert('Gagal mengaktifkan user');
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal mengaktifkan user',
+                                timer: 3000,
+                                position: "top-end",
+                                toast: true,
+                                showConfirmButton: false,
+                                customClass: {
+                                    popup: 'rounded-xl'
+                                }
+                            });
                         }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Terjadi kesalahan saat mengaktifkan user');
-                    });
-            }
+                    } catch (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal mengaktifkan user',
+                            timer: 3000,
+                            position: "top-end",
+                            toast: true,
+                            showConfirmButton: false,
+                            customClass: {
+                                popup: 'rounded-xl'
+                            }
+                        });
+                    }
+                }
+            });
         }
 
         // Tutup modal dengan ESC key
