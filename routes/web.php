@@ -11,11 +11,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-//Admin
+//AdminPanel
 Route::get('dashboard-admin', [DashboardController::class, 'index'])->name('dashboard-admin');
-Route::get('pengumuman-admin', [PengumumanController::class, 'index'])->name('pengumuman-admin');
-Route::get('transaksi-admin', [TransaksiController::class, 'index'])->name('transaksi-admin');
 Route::resource('kamar', KamarController::class);
 Route::resource('user', UserController::class);
 Route::put('user/{id}/nonaktifkan', [UserController::class, 'nonaktifkan'])->name('user.nonaktifkan');
 Route::put('user/{id}/aktifkan', [UserController::class, 'aktifkan'])->name('user.aktifkan');
+//Transaksi
+Route::get('transaksi-admin', [TransaksiController::class, 'index'])->name('transaksi-admin');
+Route::get('transaksi-admin-create', [TransaksiController::class, 'create'])->name('transaksi.create');
+Route::post('transaksi-admin-create', [TransaksiController::class, 'store'])->name('transaksi.store');
+Route::get('pengumuman-admin', [PengumumanController::class, 'index'])->name('pengumuman-admin');
