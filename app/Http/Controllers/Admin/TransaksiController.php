@@ -11,7 +11,7 @@ class TransaksiController extends Controller
     public function index()
     {
         return view('admin.transaksi.data', [
-            'transaksi' => Transaksi::latest()->paginate(10),
+            'transaksi' => Transaksi::with('user', 'kamar')->latest()->paginate(10),
         ]);
     }
 
@@ -22,6 +22,10 @@ class TransaksiController extends Controller
 
     public function store()
     {
+        //
+    }
+
+    public function destroy(){
         //
     }
 }

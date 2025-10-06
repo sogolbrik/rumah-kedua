@@ -25,14 +25,6 @@
                             Kode Transaksi
                         </th>
                         <th class="text-left px-6 py-4">
-                            <i class="fa-solid fa-user mr-2 text-xs"></i>
-                            User
-                        </th>
-                        <th class="text-left px-6 py-4">
-                            <i class="fa-solid fa-door-closed mr-2 text-xs"></i>
-                            Kamar
-                        </th>
-                        <th class="text-left px-6 py-4">
                             <i class="fa-solid fa-money-bill-wave mr-2 text-xs"></i>
                             Total Bayar
                         </th>
@@ -41,7 +33,7 @@
                             Periode
                         </th>
                         <th class="text-left px-6 py-4 w-36">
-                            <i class="fa-solid-circle-info mr-2 text-xs"></i>
+                            <i class="fa-solid fa-circle-info mr-2 text-xs"></i>
                             Status
                         </th>
                         <th class="text-right px-6 py-4 w-52">
@@ -58,18 +50,6 @@
                                 <div class="flex items-center gap-2">
                                     <i class="fa-solid fa-receipt text-slate-400 text-sm"></i>
                                     <span class="font-medium text-slate-900">{{ $item->kode }}</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-user text-blue-500 text-sm"></i>
-                                    <span class="text-slate-900">{{ $item->user->name ?? 'N/A' }}</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-door-closed text-green-500 text-sm"></i>
-                                    <span class="text-slate-900">{{ $item->kamar->kode_kamar ?? 'N/A' }}</span>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
@@ -109,7 +89,7 @@
                                         <i class="fa-solid fa-eye text-xs"></i>
                                         Detail
                                     </button>
-                                    {{-- <form action="{{ route('transaksi.destroy', $item->id) }}" method="POST" class="inline" id="hapus-data-{{ $item->id }}">
+                                    <form action="{{ route('transaksi.destroy', $item->id) }}" method="POST" class="inline" id="hapus-data-{{ $item->id }}">
                                         @csrf
                                         @method('DELETE')
                                         <button type="button"
@@ -118,7 +98,7 @@
                                             <i class="fa-solid fa-trash-can text-xs"></i>
                                             Hapus
                                         </button>
-                                    </form> --}}
+                                    </form>
                                 </div>
                             </td>
                         </tr>
@@ -210,7 +190,7 @@
                             <div class="space-y-3">
                                 <div class="flex justify-between items-center">
                                     <span class="text-slate-600">Kode:</span>
-                                    <span id="modalKode" class="font-medium text-slate-900"></span>
+                                    <span id="modalKode" class="font-medium text-slate-900 break-all text-right max-w-[200px]"></span>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-slate-600">Status:</span>
@@ -218,11 +198,11 @@
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-slate-600">Metode Bayar:</span>
-                                    <span id="modalMetode" class="font-medium text-slate-900"></span>
+                                    <span id="modalMetode" class="font-medium text-slate-900 break-all text-right max-w-[200px]"></span>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-slate-600">Total Bayar:</span>
-                                    <span id="modalTotal" class="font-bold text-slate-900"></span>
+                                    <span id="modalTotal" class="font-bold text-slate-900 break-all text-right max-w-[200px]"></span>
                                 </div>
                             </div>
                         </div>
@@ -236,19 +216,19 @@
                             <div class="space-y-3">
                                 <div class="flex justify-between items-center">
                                     <span class="text-slate-600">Tanggal Bayar:</span>
-                                    <span id="modalTanggalBayar" class="font-medium text-slate-900"></span>
+                                    <span id="modalTanggalBayar" class="font-medium text-slate-900 break-all text-right max-w-[200px]"></span>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-slate-600">Jatuh Tempo:</span>
-                                    <span id="modalJatuhTempo" class="font-medium text-slate-900"></span>
+                                    <span id="modalJatuhTempo" class="font-medium text-slate-900 break-all text-right max-w-[200px]"></span>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-slate-600">Periode:</span>
-                                    <span id="modalPeriode" class="font-medium text-slate-900"></span>
+                                    <span id="modalPeriode" class="font-medium text-slate-900 break-all text-right max-w-[200px]"></span>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-slate-600">Masuk Kamar:</span>
-                                    <span id="modalMasukKamar" class="font-medium text-slate-900"></span>
+                                    <span id="modalMasukKamar" class="font-medium text-slate-900 break-all text-right max-w-[200px]"></span>
                                 </div>
                             </div>
                         </div>
@@ -265,15 +245,15 @@
                             <div class="space-y-3">
                                 <div class="flex justify-between items-center">
                                     <span class="text-slate-600">User:</span>
-                                    <span id="modalUser" class="font-medium text-slate-900"></span>
+                                    <span id="modalUser" class="font-medium text-slate-900 break-all text-right max-w-[200px]"></span>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-slate-600">Kamar:</span>
-                                    <span id="modalKamar" class="font-medium text-slate-900"></span>
+                                    <span id="modalKamar" class="font-medium text-slate-900 break-all text-right max-w-[200px]"></span>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-slate-600">Durasi:</span>
-                                    <span id="modalDurasi" class="font-medium text-slate-900"></span>
+                                    <span id="modalDurasi" class="font-medium text-slate-900 break-all text-right max-w-[200px]"></span>
                                 </div>
                             </div>
                         </div>
@@ -287,19 +267,19 @@
                             <div class="space-y-3">
                                 <div class="flex justify-between items-center">
                                     <span class="text-slate-600">Order ID:</span>
-                                    <span id="modalOrderId" class="font-mono text-xs text-slate-900"></span>
+                                    <span id="modalOrderId" class="font-mono text-xs text-slate-900 break-all text-right max-w-[200px]"></span>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-slate-600">Transaction ID:</span>
-                                    <span id="modalTransactionId" class="font-mono text-xs text-slate-900"></span>
+                                    <span id="modalTransactionId" class="font-mono text-xs text-slate-900 break-all text-right max-w-[200px]"></span>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-slate-600">Payment Type:</span>
-                                    <span id="modalPaymentType" class="font-medium text-slate-900"></span>
+                                    <span id="modalPaymentType" class="font-medium text-slate-900 break-all text-right max-w-[200px]"></span>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-slate-600">Expired At:</span>
-                                    <span id="modalExpired" class="font-medium text-slate-900"></span>
+                                    <span id="modalExpired" class="font-medium text-slate-900 break-all text-right max-w-[200px]"></span>
                                 </div>
                             </div>
                         </div>
@@ -311,7 +291,7 @@
                                 Response Midtrans
                             </h4>
                             <div class="max-h-32 overflow-y-auto">
-                                <pre id="modalResponse" class="text-xs text-slate-700 whitespace-pre-wrap"></pre>
+                                <pre id="modalResponse" class="text-xs text-slate-700 whitespace-pre-wrap break-all"></pre>
                             </div>
                         </div>
                     </div>
@@ -355,7 +335,6 @@
             document.getElementById('modalPaymentType').textContent = transaksi.midtrans_payment_type || '-';
             document.getElementById('modalExpired').textContent = formatDate(transaksi.expired_at);
             document.getElementById('modalResponse').textContent = transaksi.midtrans_response ? JSON.stringify(JSON.parse(transaksi.midtrans_response), null, 2) : '-';
-            // document.getElementById('modalEditLink').href = `/transaksi/${transaksi.id}/edit`;
 
             // Set status
             const statusElement = document.getElementById('modalStatus');
@@ -492,6 +471,11 @@
 
         #detailModal ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
+        }
+
+        /* Ensure text breaks properly */
+        .break-all {
+            word-break: break-all;
         }
     </style>
 @endsection

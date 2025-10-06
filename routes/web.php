@@ -21,4 +21,6 @@ Route::put('user/{id}/aktifkan', [UserController::class, 'aktifkan'])->name('use
 Route::get('transaksi-admin', [TransaksiController::class, 'index'])->name('transaksi-admin');
 Route::get('transaksi-admin-create', [TransaksiController::class, 'create'])->name('transaksi.create');
 Route::post('transaksi-admin-create', [TransaksiController::class, 'store'])->name('transaksi.store');
+Route::post('transaksi-admin-destroy', [TransaksiController::class, 'destroy'])->name('transaksi.destroy');
+//Pengumuman
 Route::get('pengumuman-admin', [PengumumanController::class, 'index'])->name('pengumuman-admin');
