@@ -71,7 +71,7 @@
         <div class="xl:col-span-2 rounded-xl border border-slate-200 bg-white p-4">
             <div class="flex items-center justify-between mb-3">
                 <h2 class="text-base font-semibold text-slate-900">Transaksi Terbaru</h2>
-                <a href="{{ route('transaksi-admin') }}" class="text-sm text-blue-700 hover:underline">Lihat semua</a>
+                <a href="{{ route('transaksi.index') }}" class="text-sm text-blue-700 hover:underline">Lihat semua</a>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">

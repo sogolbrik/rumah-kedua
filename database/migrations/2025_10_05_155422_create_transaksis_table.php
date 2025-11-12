@@ -27,13 +27,13 @@ return new class extends Migration
             $table->decimal('total_bayar', 15, 2);
             $table->enum('metode_pembayaran', ['cash', 'midtrans'])->default('midtrans');
 
-            $table->enum('status_pembayaran', ['pending', 'paid', 'failed', 'cancelled', 'expired'])->default('pending');
+            $table->enum('status_pembayaran', ['pending', 'paid', 'failed', 'cancelled', 'expired', 'challenge'])->default('pending');
 
             $table->string('midtrans_order_id')->nullable();
             $table->string('midtrans_transaction_id')->nullable();
             $table->string('midtrans_payment_type')->nullable(); // bank_transfer, gopay, qris, dll
             $table->json('midtrans_response')->nullable(); // simpan response JSON dari Midtrans
-            $table->timestamp('expired_at')->nullable();
+            $table->datetime('expired_at')->nullable();
             $table->timestamps();
         });
     }

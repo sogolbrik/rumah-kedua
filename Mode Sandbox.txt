@@ -1,0 +1,4 @@
+Mode Sandbox
+
+Gunakan kartu test: 4811 1111 1111 1114
+CVV: 123, OTP: 112233

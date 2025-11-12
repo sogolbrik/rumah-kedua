@@ -1,0 +1,1104 @@
+perbaiki kode logika mengupdate data ketika berhasil melakukan transaksi menggunakan midtrans, jangan tambahkan debugging seperti log, try catch, dll
+TransaksiController:
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Api\MidtransController;
+use App\Http\Controllers\Controller;
+use App\Models\Transaksi;
+use App\Models\User;
+use App\Models\Kamar;
+use App\Http\Requests\StoreTransaksiRequest;
+use App\Services\MidtransService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+
+class TransaksiController extends Controller
+{
+    protected $midtransService;
+
+    public function __construct(MidtransService $midtransService)
+    {
+        $this->midtransService = $midtransService;
+    }
+
+    public function index()
+    {
+        $transaksis = Transaksi::with(['user', 'kamar'])
+            ->latest()
+            ->paginate(10);
+
+        return view('admin.transaksi.data', compact('transaksis'));
+    }
+
+    public function create()
+    {
+        $users = User::where('role', 'user')->get();
+        $kamars = Kamar::where('status', 'Tersedia')->get();
+
+        return view('admin.transaksi.form', compact('users', 'kamars'));
+    }
+
+    public function store(StoreTransaksiRequest $request)
+    {
+        DB::beginTransaction();
+
+        $kode = 'INV-' . strtoupper(Str::random(8)) . '-' . date('Ymd');
+        $tanggalJatuhTempo = $this->calculateDueDate($request->tanggal_pembayaran, $request->durasi);
+        $total_bayar = (int) str_replace('.', '', $request->total_bayar);
+
+        if ($total_bayar <= 0) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Total bayar harus lebih dari 0');
+        }
+
+        $transaksiData = [
+            'id_user' => $request->id_user,
+            'id_kamar' => $request->id_kamar,
+            'kode' => $kode,
+            'tanggal_pembayaran' => $request->tanggal_pembayaran,
+            'tanggal_jatuhtempo' => $tanggalJatuhTempo,
+            'periode_pembayaran' => $request->periode_pembayaran,
+            'masuk_kamar' => $request->masuk_kamar,
+            'durasi' => $request->durasi,
+            'total_bayar' => $total_bayar,
+            'metode_pembayaran' => $request->metode_pembayaran,
+            'status_pembayaran' => 'pending'
+        ];
+
+        if ($request->metode_pembayaran === 'cash') {
+            $transaksiData['status_pembayaran'] = 'paid';
+            $transaksi = Transaksi::create($transaksiData);
+
+            $this->updateUserData($request->id_user, $request->id_kamar, $request->masuk_kamar);
+            Kamar::where('id', $request->id_kamar)->update(['status' => 'Terisi']);
+
+            DB::commit();
+
+            return redirect()->route('transaksi.index')
+                ->with('success', 'Transaksi cash berhasil dibuat dan sudah dibayar.');
+        }
+
+        $midtransOrderId = $this->midtransService->generateOrderId($kode);
+        $transaksiData['midtrans_order_id'] = $midtransOrderId;
+        $transaksiData['expired_at'] = Carbon::now()->addHours(24);
+
+        $user = User::find($request->id_user);
+        $kamar = Kamar::find($request->id_kamar);
+
+        if (!$user) {
+            DB::rollBack();
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'User tidak ditemukan');
+        }
+
+        if (!$kamar) {
+            DB::rollBack();
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Kamar tidak ditemukan');
+        }
+
+        $transactionDetails = [
+            'transaction_details' => [
+                'order_id' => $midtransOrderId,
+                'gross_amount' => $total_bayar,
+            ],
+            'customer_details' => [
+                'first_name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone ?? '081234567890',
+            ],
+            'item_details' => [
+                [
+                    'id' => $kamar->id,
+                    'price' => $total_bayar,
+                    'quantity' => 1,
+                    'name' => 'Pembayaran Kos - ' . $kamar->nama_kamar . ' - ' . $request->durasi,
+                    'category' => 'Kost'
+                ]
+            ],
+            'expiry' => [
+                'start_time' => date('Y-m-d H:i:s O'),
+                'unit' => 'hour',
+                'duration' => 24
+            ]
+        ];
+
+        $midtransResponse = $this->midtransService->createTransaction($transactionDetails);
+
+        if (!$midtransResponse['success']) {
+            DB::rollBack();
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Gagal membuat transaksi Midtrans: ' . $midtransResponse['message']);
+        }
+
+        $transaksiData['midtrans_response'] = json_encode([
+            'snap_token' => $midtransResponse['snap_token'],
+            'redirect_url' => $midtransResponse['redirect_url'] ?? null,
+            'created_at' => now()->toDateTimeString()
+        ]);
+
+        $transaksi = Transaksi::create($transaksiData);
+
+        DB::commit();
+
+        return redirect()->route('transaksi.payment', $transaksi->id)
+            ->with('success', 'Transaksi berhasil dibuat. Silakan selesaikan pembayaran.');
+    }
+
+    public function payment($id)
+    {
+        $transaksi = Transaksi::with(['user', 'kamar'])->findOrFail($id);
+
+        if ($transaksi->metode_pembayaran === 'midtrans' && !isset($transaksi->midtrans_response['snap_token'])) {
+            return redirect()->route('transaksi.index')
+                ->with('error', 'Token pembayaran tidak tersedia. Silakan buat transaksi ulang.');
+        }
+
+        return view('admin.transaksi.payment', compact('transaksi'));
+    }
+
+    public function checkStatus($id)
+    {
+        $transaksi = Transaksi::findOrFail($id);
+
+        return response()->json([
+            'status_pembayaran' => $transaksi->status_pembayaran,
+            'status_label' => $this->getStatusLabel($transaksi->status_pembayaran),
+            'midtrans_order_id' => $transaksi->midtrans_order_id,
+            'midtrans_payment_type' => $transaksi->midtrans_payment_type,
+            'midtrans_transaction_id' => $transaksi->midtrans_transaction_id,
+            'expired_at' => $transaksi->expired_at?->format('d M Y H:i')
+        ]);
+    }
+
+    public function cancel($id)
+    {
+        DB::beginTransaction();
+
+        $transaksi = Transaksi::findOrFail($id);
+
+        if ($transaksi->status_pembayaran === 'paid') {
+            return redirect()->back()
+                ->with('error', 'Tidak dapat membatalkan transaksi yang sudah dibayar.');
+        }
+
+        if ($transaksi->metode_pembayaran === 'midtrans' && $transaksi->midtrans_order_id) {
+            $this->midtransService->cancelTransaction($transaksi->midtrans_order_id);
+        }
+
+        $transaksi->update([
+            'status_pembayaran' => 'cancelled'
+        ]);
+
+        DB::commit();
+
+        return redirect()->route('transaksi.index')
+            ->with('success', 'Transaksi berhasil dibatalkan.');
+    }
+
+    public function destroy($id)
+    {
+        DB::beginTransaction();
+
+        $transaksi = Transaksi::findOrFail($id);
+
+        if (in_array($transaksi->status_pembayaran, ['paid', 'pending'])) {
+            return redirect()->back()
+                ->with('error', 'Tidak dapat menghapus transaksi dengan status ' . $transaksi->status_pembayaran);
+        }
+
+        $transaksi->delete();
+
+        DB::commit();
+
+        return redirect()->route('transaksi.index')
+            ->with('success', 'Transaksi berhasil dihapus.');
+    }
+
+    public function updateUserOnPaymentSuccess($userId, $kamarId, $tanggalMasuk)
+    {
+        $user = User::find($userId);
+        if (!$user) {
+            return false;
+        }
+
+        $updateData = [
+            'id_kamar'        => $kamarId,
+            'tanggal_masuk'   => $tanggalMasuk,
+            'status_penghuni' => 'aktif',
+            'role'            => 'penghuni',
+        ];
+
+        $user->update($updateData);
+
+        Kamar::where('id', $kamarId)->update(['status' => 'Terisi']);
+
+        return true;
+    }
+
+    public function manualCheckStatus($id)
+    {
+        $transaksi = Transaksi::findOrFail($id);
+
+        if (!$transaksi->midtrans_order_id) {
+            return redirect()->back()->with('error', 'Transaksi tidak memiliki order ID Midtrans');
+        }
+
+        $statusResponse = $this->midtransService->checkTransactionStatus($transaksi->midtrans_order_id);
+
+        if ($statusResponse['success']) {
+            $statusData = $statusResponse['status'];
+
+            if (in_array($statusData['transaction_status'], ['settlement', 'capture'])) {
+                $this->processManualPaymentSuccess($transaksi, $statusData);
+                return redirect()->back()->with('success', 'Status diperbarui: Pembayaran berhasil');
+            }
+
+            return redirect()->back()->with('info', 'Status: ' . $statusData['transaction_status']);
+        } else {
+            return redirect()->back()->with('error', 'Gagal memeriksa status: ' . $statusResponse['message']);
+        }
+    }
+
+    private function calculateDueDate($tanggalPembayaran, $durasi)
+    {
+        $tanggal = Carbon::parse($tanggalPembayaran);
+
+        switch ($durasi) {
+            case '1 bulan':
+                return $tanggal->addMonth();
+            case '3 bulan':
+                return $tanggal->addMonths(3);
+            case '6 bulan':
+                return $tanggal->addMonths(6);
+            case '1 tahun':
+                return $tanggal->addYear();
+            default:
+                return $tanggal->addMonth();
+        }
+    }
+
+    private function getStatusLabel($status)
+    {
+        $labels = [
+            'pending' => 'Menunggu Pembayaran',
+            'paid' => 'Lunas',
+            'failed' => 'Gagal',
+            'cancelled' => 'Dibatalkan',
+            'expired' => 'Kadaluarsa',
+            'challenge' => 'Dalam Tantangan'
+        ];
+
+        return $labels[$status] ?? $status;
+    }
+
+    private function updateUserData($userId, $kamarId, $tanggalMasuk)
+    {
+        $user = User::find($userId);
+        if ($user) {
+            $updateData = [
+                'id_kamar'        => $kamarId,
+                'tanggal_masuk'   => $tanggalMasuk,
+                'status_penghuni' => 'aktif',
+                'role'            => 'penghuni',
+            ];
+
+            $user->update($updateData);
+            return true;
+        }
+        return false;
+    }
+
+    private function processManualPaymentSuccess($transaksi, $statusData)
+    {
+        DB::beginTransaction();
+
+        $transaksi->update([
+            'status_pembayaran' => 'paid',
+            'midtrans_payment_type' => $statusData['payment_type'] ?? null,
+            'midtrans_transaction_id' => $statusData['transaction_id'] ?? null,
+            'midtrans_response' => $statusData
+        ]);
+
+        $this->updateUserData($transaksi->id_user, $transaksi->id_kamar, $transaksi->masuk_kamar);
+        Kamar::where('id', $transaksi->id_kamar)->update(['status' => 'Terisi']);
+
+        DB::commit();
+    }
+
+    public function forceUpdateStatus($id)
+    {
+        DB::beginTransaction();
+
+        try {
+            $transaksi = Transaksi::findOrFail($id);
+
+            // Update status transaksi
+            $transaksi->update([
+                'status_pembayaran' => 'paid',
+                'midtrans_payment_type' => 'manual_update',
+                'midtrans_transaction_id' => 'MANUAL_' . time()
+            ]);
+
+            // Update user dan kamar
+            $this->updateUserData($transaksi->id_user, $transaksi->id_kamar, $transaksi->masuk_kamar);
+            Kamar::where('id', $transaksi->id_kamar)->update(['status' => 'Terisi']);
+
+            DB::commit();
+
+            return redirect()->route('transaksi.index')
+                ->with('success', 'Status transaksi berhasil diupdate menjadi paid secara manual.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Gagal update status: ' . $e->getMessage());
+        }
+    }
+}
+
+MidtransController:
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Transaksi;
+use App\Models\User;
+use App\Models\Kamar;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class MidtransController extends Controller
+{
+    public function handleNotification(Request $request)
+    {
+        $notification = $request->all();
+
+        $orderId = $notification['order_id'] ?? null;
+        $transactionStatus = $notification['transaction_status'] ?? null;
+        $fraudStatus = $notification['fraud_status'] ?? null;
+
+        if (!$orderId) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Order ID required'
+            ], 400);
+        }
+
+        $transaksi = Transaksi::where('midtrans_order_id', $orderId)->first();
+
+        if (!$transaksi) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Transaction not found for order_id: ' . $orderId
+            ], 404);
+        }
+
+        $this->updateTransactionStatus($transaksi, $notification, $transactionStatus, $fraudStatus);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Notification processed successfully',
+            'order_id' => $orderId,
+            'transaction_status' => $transactionStatus
+        ]);
+    }
+
+    /**
+     * Update transaction status based on notification
+     */
+    private function updateTransactionStatus($transaksi, $notification, $transactionStatus, $fraudStatus)
+    {
+        DB::beginTransaction();
+
+        try {
+            switch ($transactionStatus) {
+                case 'capture':
+                    if ($fraudStatus == 'challenge') {
+                        $this->updateTransactionData($transaksi, [
+                            'status_pembayaran'       => 'challenge',
+                            'midtrans_payment_type'   => $notification['payment_type'] ?? null,
+                            'midtrans_transaction_id' => $notification['transaction_id'] ?? null,
+                            'midtrans_response'       => $notification
+                        ]);
+                    } else if ($fraudStatus == 'accept') {
+                        $this->processSuccessfulPayment($transaksi, $notification);
+                    }
+                    break;
+
+                case 'settlement':
+                    $this->processSuccessfulPayment($transaksi, $notification);
+                    break;
+
+                case 'pending':
+                    $this->updateTransactionData($transaksi, [
+                        'status_pembayaran'     => 'pending',
+                        'midtrans_payment_type' => $notification['payment_type'] ?? null,
+                        'midtrans_response'     => $notification
+                    ]);
+                    break;
+
+                case 'deny':
+                    $this->updateTransactionData($transaksi, [
+                        'status_pembayaran' => 'failed',
+                        'midtrans_response' => $notification
+                    ]);
+                    break;
+
+                case 'cancel':
+                case 'expire':
+                    $this->updateTransactionData($transaksi, [
+                        'status_pembayaran' => $transactionStatus == 'cancel' ? 'cancelled' : 'expired',
+                        'midtrans_response' => $notification
+                    ]);
+                    break;
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * Process successful payment
+     */
+    private function processSuccessfulPayment($transaksi, $notification)
+    {
+        if ($transaksi->status_pembayaran === 'paid') {
+            return;
+        }
+
+        $updateData = [
+            'status_pembayaran'       => 'paid',
+            'midtrans_payment_type'   => $notification['payment_type'] ?? null,
+            'midtrans_transaction_id' => $notification['transaction_id'] ?? null,
+            'midtrans_response'       => $notification,
+            'updated_at'              => now()
+        ];
+
+        $this->updateTransactionData($transaksi, $updateData);
+
+        $this->updateUserData($transaksi->id_user, $transaksi->id_kamar, $transaksi->masuk_kamar);
+        $this->updateKamarStatus($transaksi->id_kamar);
+    }
+
+    /**
+     * Helper method untuk update transaction data
+     */
+    private function updateTransactionData($transaksi, $data)
+    {
+        return $transaksi->update($data);
+    }
+
+    /**
+     * Update user data setelah pembayaran sukses
+     */
+    private function updateUserData($userId, $kamarId, $tanggalMasuk)
+    {
+        $user = User::find($userId);
+        if (!$user) {
+            return false;
+        }
+
+        $updateData = [
+            'id_kamar'        => $kamarId,
+            'tanggal_masuk'   => $tanggalMasuk,
+            'status_penghuni' => 'aktif',
+            'role'            => 'penghuni',
+            'updated_at'      => now()
+        ];
+
+        return $user->update($updateData);
+    }
+
+    /**
+     * Update status kamar setelah pembayaran sukses
+     */
+    private function updateKamarStatus($kamarId)
+    {
+        $kamar = Kamar::find($kamarId);
+        if (!$kamar) {
+            return false;
+        }
+
+        return $kamar->update([
+            'status' => 'Terisi',
+            'updated_at' => now()
+        ]);
+    }
+
+    /**
+     * Verify signature key untuk security
+     */
+    private function verifySignature($notification, $transaksi)
+    {
+        $serverKey = config('midtrans.server_key');
+        $signatureKey = $notification['signature_key'] ?? '';
+
+        $expectedSignature = hash(
+            'sha512',
+            $notification['order_id'] .
+                $notification['status_code'] .
+                $notification['gross_amount'] .
+                $serverKey
+        );
+
+        return $signatureKey === $expectedSignature;
+    }
+
+    public function checkPaymentStatus($id)
+    {
+        $transaksi = Transaksi::findOrFail($id);
+
+        return response()->json([
+            'status_pembayaran' => $transaksi->status_pembayaran,
+            'midtrans_order_id' => $transaksi->midtrans_order_id,
+            'midtrans_payment_type' => $transaksi->midtrans_payment_type,
+            'midtrans_transaction_id' => $transaksi->midtrans_transaction_id,
+            'expired_at' => $transaksi->expired_at
+        ]);
+    }
+}
+
+MidtransService:
+<?php
+
+namespace App\Services;
+
+use Midtrans\Config;
+use Midtrans\Snap;
+use Midtrans\Transaction;
+
+class MidtransService
+{
+    public function __construct()
+    {
+        $this->setupConfig();
+    }
+
+    private function setupConfig()
+    {
+        Config::$serverKey = config('midtrans.server_key');
+        Config::$clientKey = config('midtrans.client_key');
+        Config::$isProduction = config('midtrans.is_production', false);
+        Config::$isSanitized = config('midtrans.is_sanitized', true);
+        Config::$is3ds = config('midtrans.is_3ds', true);
+    }
+
+    public function createTransaction(array $transactionData)
+    {
+        $this->validateTransactionData($transactionData);
+        $snapToken = Snap::getSnapToken($transactionData);
+
+        return [
+            'success' => true,
+            'snap_token' => $snapToken,
+            'redirect_url' => null
+        ];
+    }
+
+    private function validateTransactionData(array $transactionData)
+    {
+        if (
+            !isset($transactionData['transaction_details']['gross_amount']) ||
+            $transactionData['transaction_details']['gross_amount'] <= 0
+        ) {
+            throw new \Exception('Gross amount harus lebih dari 0');
+        }
+
+        if (empty($transactionData['transaction_details']['order_id'])) {
+            throw new \Exception('Order ID tidak boleh kosong');
+        }
+
+        if (empty($transactionData['customer_details']['first_name'])) {
+            throw new \Exception('Customer name is required');
+        }
+    }
+
+    public function generateOrderId($kode)
+    {
+        return 'TRX-' . $kode . '-' . time();
+    }
+
+    public function checkTransactionStatus($orderId)
+    {
+        $status = Transaction::status($orderId);
+
+        return [
+            'success' => true,
+            'status' => $status
+        ];
+    }
+
+    public function cancelTransaction($orderId)
+    {
+        $cancel = Transaction::cancel($orderId);
+
+        return [
+            'success' => true,
+            'data' => $cancel
+        ];
+    }
+}
+
+model transaksi:
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Transaksi extends Model
+{
+    protected $fillable = [
+        'id_user',
+        'id_kamar',
+        'kode',
+        'tanggal_pembayaran',
+        'tanggal_jatuhtempo',
+        'periode_pembayaran',
+        'masuk_kamar',
+        'durasi',
+        'total_bayar',
+        'metode_pembayaran',
+        'status_pembayaran',
+        'midtrans_order_id',
+        'midtrans_transaction_id',
+        'midtrans_payment_type',
+        'midtrans_response',
+        'expired_at',
+    ];
+
+    protected $casts = [
+        'midtrans_response' => 'array',
+        'expired_at' => 'datetime',
+        'tanggal_pembayaran' => 'date',
+        'tanggal_jatuhtempo' => 'date',
+        'masuk_kamar' => 'date',
+        'total_bayar' => 'decimal:2'
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_user');
+    }
+
+    public function kamar()
+    {
+        return $this->belongsTo(Kamar::class, 'id_kamar');
+    }
+
+    /**
+     * Accessor untuk midtrans_response
+     */
+    public function getMidtransResponseAttribute($value)
+    {
+        if (is_array($value)) {
+            return $value;
+        }
+
+        $decoded = json_decode($value, true);
+        return is_array($decoded) ? $decoded : [];
+    }
+
+    /**
+     * Mutator untuk midtrans_response
+     */
+    public function setMidtransResponseAttribute($value)
+    {
+        if (is_array($value)) {
+            $this->attributes['midtrans_response'] = json_encode($value);
+        } else {
+            $this->attributes['midtrans_response'] = $value;
+        }
+    }
+}
+
+payment.blade.php:
+@extends('layouts.admin-main')
+
+@section('title', 'Pembayaran Transaksi')
+
+@section('admin-main')
+    <div class="min-h-screen w-full bg-gradient-to-br from-slate-50 to-slate-100/50 pt-0 pb-8">
+        <div class="w-full">
+            <div class="mb-8 flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-slate-900">Pembayaran Transaksi</h1>
+                    <p class="mt-1 text-sm text-slate-600">Selesaikan pembayaran untuk melanjutkan proses sewa</p>
+                </div>
+                <a href="{{ route('transaksi.index') }}"
+                    class="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-slate-200 transition-all hover:bg-slate-50 hover:shadow">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Kembali
+                </a>
+            </div>
+
+            @if (session('success'))
+                <div class="mb-6 rounded-xl border border-emerald-200 bg-emerald-50/50 p-4">
+                    <div class="flex items-center gap-2 text-emerald-800">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span class="font-medium">{{ session('success') }}</span>
+                    </div>
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="mb-6 rounded-xl border border-rose-200 bg-rose-50/50 p-4">
+                    <div class="flex items-center gap-2 text-rose-800">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <span class="font-medium">{{ session('error') }}</span>
+                    </div>
+                </div>
+            @endif
+
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                <!-- Informasi Transaksi -->
+                <div class="lg:col-span-2">
+                    <div class="overflow-hidden rounded-2xl bg-white shadow-xl ring-1 ring-slate-200">
+                        <div class="border-b border-slate-200 bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-5">
+                            <div class="flex items-center gap-3">
+                                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg">
+                                    <i class="fa-solid fa-receipt"></i>
+                                </div>
+                                <div>
+                                    <h2 class="text-lg font-semibold text-slate-900">Detail Transaksi</h2>
+                                    <p class="text-sm text-slate-600">Informasi lengkap transaksi yang perlu dibayar</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-6">
+                            <div class="space-y-6">
+                                <!-- Status & Kode -->
+                                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                    <div class="rounded-xl bg-slate-50 p-4">
+                                        <p class="text-sm font-medium text-slate-600">Status Pembayaran</p>
+                                        <div class="mt-2">
+                                            <span class="inline-flex items-center gap-1.5 rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-800 border border-yellow-200">
+                                                <i class="fa-solid fa-clock text-xs"></i>
+                                                Menunggu Pembayaran
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="rounded-xl bg-slate-50 p-4">
+                                        <p class="text-sm font-medium text-slate-600">Kode Transaksi</p>
+                                        <p class="mt-2 text-lg font-bold text-slate-900">{{ $transaksi->kode }}</p>
+                                        @if ($transaksi->midtrans_order_id)
+                                            <p class="mt-1 text-xs text-slate-500">Order ID: {{ $transaksi->midtrans_order_id }}</p>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <!-- Informasi Pelanggan & Kamar -->
+                                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                    <div class="rounded-xl border border-slate-200 p-4">
+                                        <div class="flex items-center gap-3 mb-3">
+                                            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
+                                                <i class="fa-solid fa-user"></i>
+                                            </div>
+                                            <h3 class="font-semibold text-slate-900">Informasi Pelanggan</h3>
+                                        </div>
+                                        <div class="space-y-2">
+                                            <div class="flex justify-between">
+                                                <span class="text-sm text-slate-600">Nama:</span>
+                                                <span class="text-sm font-medium text-slate-900">{{ $transaksi->user->name }}</span>
+                                            </div>
+                                            <div class="flex justify-between">
+                                                <span class="text-sm text-slate-600">Email:</span>
+                                                <span class="text-sm font-medium text-slate-900">{{ $transaksi->user->email }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="rounded-xl border border-slate-200 p-4">
+                                        <div class="flex items-center gap-3 mb-3">
+                                            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-100 text-cyan-600">
+                                                <i class="fa-solid fa-door-closed"></i>
+                                            </div>
+                                            <h3 class="font-semibold text-slate-900">Informasi Kamar</h3>
+                                        </div>
+                                        <div class="space-y-2">
+                                            <div class="flex justify-between">
+                                                <span class="text-sm text-slate-600">Kamar:</span>
+                                                <span class="text-sm font-medium text-slate-900">{{ $transaksi->kamar->kode_kamar }}</span>
+                                            </div>
+                                            <div class="flex justify-between">
+                                                <span class="text-sm text-slate-600">Tipe:</span>
+                                                <span class="text-sm font-medium text-slate-900">{{ $transaksi->kamar->tipe }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Informasi Waktu -->
+                                <div class="rounded-xl border border-amber-200 bg-amber-50/50 p-4">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 text-amber-600">
+                                            <i class="fa-solid fa-clock"></i>
+                                        </div>
+                                        <h3 class="font-semibold text-amber-900">Batas Waktu Pembayaran</h3>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-sm text-amber-700">
+                                            Selesaikan pembayaran sebelum:
+                                        </p>
+                                        <p class="text-lg font-bold text-amber-900">
+                                            {{ $transaksi->expired_at->format('d M Y H:i') }}
+                                        </p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <div class="h-2 w-full bg-amber-200 rounded-full overflow-hidden">
+                                            <div class="h-full bg-amber-500 rounded-full animate-pulse" style="width: 80%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ringkasan Pembayaran -->
+                <div class="lg:col-span-1">
+                    <div class="sticky top-6 overflow-hidden rounded-2xl bg-white shadow-xl ring-1 ring-slate-200">
+                        <div class="border-b border-slate-200 bg-gradient-to-r from-emerald-50 to-green-50 px-6 py-5">
+                            <div class="flex items-center gap-3">
+                                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-lg">
+                                    <i class="fa-solid fa-credit-card"></i>
+                                </div>
+                                <div>
+                                    <h2 class="text-lg font-semibold text-slate-900">Ringkasan Pembayaran</h2>
+                                    <p class="text-sm text-slate-600">Total yang perlu dibayarkan</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-6">
+                            <div class="space-y-4">
+                                <!-- Total Bayar -->
+                                <div class="rounded-xl bg-gradient-to-r from-emerald-500 to-green-500 p-4 text-white">
+                                    <p class="text-sm font-medium opacity-90">Total Bayar</p>
+                                    <p class="text-2xl font-bold">Rp {{ number_format($transaksi->total_bayar, 0, ',', '.') }}</p>
+                                </div>
+
+                                <!-- Detail Biaya -->
+                                <div class="space-y-3">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-600">Harga Kamar/bulan:</span>
+                                        <span class="font-medium text-slate-900">Rp {{ number_format($transaksi->kamar->harga, 0, ',', '.') }}</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-600">Durasi:</span>
+                                        <span class="font-medium text-slate-900">{{ $transaksi->durasi }}</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-600">Metode:</span>
+                                        <span class="font-medium text-slate-900 capitalize">{{ $transaksi->metode_pembayaran }}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Container Snap -->
+                                <div id="snap-container" class="mt-6">
+                                    @if ($transaksi->metode_pembayaran === 'midtrans' && isset($transaksi->midtrans_response['snap_token']))
+                                        <button id="pay-button"
+                                            class="w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition-all hover:shadow-xl hover:shadow-blue-500/40 focus:outline-none focus:ring-4 focus:ring-blue-500/20">
+                                            <i class="fa-solid fa-lock mr-2"></i>
+                                            Bayar Sekarang
+                                        </button>
+                                    @else
+                                        <div class="rounded-xl bg-slate-100 p-4 text-center">
+                                            <i class="fa-solid fa-info-circle text-slate-400 text-lg mb-2"></i>
+                                            <p class="text-sm text-slate-600">Metode pembayaran tidak tersedia</p>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <!-- Informasi Keamanan -->
+                                <div class="rounded-xl bg-slate-50 p-4 border border-slate-200">
+                                    <div class="flex items-center gap-2 text-sm text-slate-600">
+                                        <i class="fa-solid fa-shield-check text-emerald-500"></i>
+                                        <span>Transaksi aman dan terenkripsi</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if ($transaksi->metode_pembayaran === 'midtrans' && !empty($transaksi->midtrans_response['snap_token']))
+        <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const payButton = document.getElementById('pay-button');
+                const snapToken = '{{ $transaksi->midtrans_response['snap_token'] }}';
+
+                if (payButton && snapToken) {
+                    payButton.addEventListener('click', function() {
+                        // Show loading state
+                        const originalText = payButton.innerHTML;
+                        payButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Memuat Pembayaran...';
+                        payButton.disabled = true;
+
+                        console.log('Memulai pembayaran dengan token:', snapToken);
+
+                        // Panggil Snap popup
+                        snap.pay(snapToken, {
+                            onSuccess: function(result) {
+                                console.log('Pembayaran sukses:', result);
+                                showNotification('success', 'Pembayaran berhasil! Mengalihkan...');
+
+                                // Redirect ke halaman transaksi setelah pembayaran sukses
+                                setTimeout(() => {
+                                    window.location.href = '{{ route('transaksi.index') }}';
+                                }, 3000);
+                            },
+                            onPending: function(result) {
+                                console.log('Pembayaran pending:', result);
+                                showNotification('info', 'Menunggu konfirmasi pembayaran...');
+
+                                // Tetap redirect, sistem akan update via notification
+                                setTimeout(() => {
+                                    window.location.href = '{{ route('transaksi.index') }}';
+                                }, 3000);
+                            },
+                            onError: function(result) {
+                                console.log('Pembayaran error:', result);
+                                showNotification('error', 'Pembayaran gagal: ' + (result.status_message || 'Silakan coba lagi.'));
+                                resetPayButton(originalText);
+                            },
+                            onClose: function() {
+                                console.log('Popup pembayaran ditutup');
+                                showNotification('warning', 'Pembayaran dibatalkan.');
+                                resetPayButton(originalText);
+                            }
+                        });
+                    });
+                }
+
+                function resetPayButton(originalText) {
+                    setTimeout(() => {
+                        payButton.innerHTML = originalText;
+                        payButton.disabled = false;
+                    }, 2000);
+                }
+
+                function showNotification(type, message) {
+                    // Create notification element
+                    const notification = document.createElement('div');
+                    notification.className = `fixed top-4 right-4 z-50 rounded-xl p-4 text-white shadow-lg transform transition-all duration-300 ${
+                    type === 'success' ? 'bg-emerald-500' : 
+                    type === 'error' ? 'bg-rose-500' : 
+                    type === 'warning' ? 'bg-amber-500' : 'bg-blue-500'
+                }`;
+
+                    const icon = type === 'success' ? 'fa-check-circle' :
+                        type === 'error' ? 'fa-exclamation-circle' :
+                        type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle';
+
+                    notification.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid ${icon} text-lg"></i>
+                        <span class="font-medium">${message}</span>
+                    </div>
+                `;
+
+                    document.body.appendChild(notification);
+
+                    // Animate in
+                    setTimeout(() => {
+                        notification.classList.add('translate-x-0', 'opacity-100');
+                    }, 10);
+
+                    // Remove after 5 seconds
+                    setTimeout(() => {
+                        notification.classList.remove('translate-x-0', 'opacity-100');
+                        notification.classList.add('translate-x-full', 'opacity-0');
+                        setTimeout(() => {
+                            if (document.body.contains(notification)) {
+                                document.body.removeChild(notification);
+                            }
+                        }, 300);
+                    }, 5000);
+                }
+            });
+        </script>
+    @endif
+@endsection
+
+route:
+Route::prefix('transaksi')->name('transaksi.')->group(function () {
+    Route::get('/', [TransaksiController::class, 'index'])->name('index');
+    Route::get('/create', [TransaksiController::class, 'create'])->name('create');
+    Route::post('/store', [TransaksiController::class, 'store'])->name('store');
+    Route::get('/{id}/payment', [TransaksiController::class, 'payment'])->name('payment');
+    Route::get('/{id}/status', [TransaksiController::class, 'checkStatus'])->name('status');
+    Route::put('/{id}/cancel', [TransaksiController::class, 'cancel'])->name('cancel');
+    Route::delete('/{id}', [TransaksiController::class, 'destroy'])->name('destroy');
+});
+/* Nanti diluar middleware */
+Route::prefix('midtrans')->group(function () {
+    Route::post('/notification', [MidtransController::class, 'handleNotification'])->name('midtrans.notification');
+    Route::get('/test-notification', [MidtransController::class, 'testNotification'])->name('midtrans.test');
+    Route::get('/health', [MidtransController::class, 'healthCheck'])->name('midtrans.health');
+});
+
+Route::get('/midtrans-setup', function() {
+    $correctUrl = url('/api/midtrans/notification');
+    
+    return "
+        <h1>Midtrans Setup Instructions</h1>
+        <p><strong>Correct Notification URL:</strong></p>
+        <code style='background: #f4f4f4; padding: 10px; display: block;'>
+            {$correctUrl}
+        </code>
+        
+        <p><strong>Steps:</strong></p>
+        <ol>
+            <li>Login ke <a href='https://dashboard.midtrans.com' target='_blank'>Midtrans Dashboard</a></li>
+            <li>Pilih environment: <strong>Sandbox</strong></li>
+            <li>Go to <strong>Settings → Configuration</strong></li>
+            <li>Set <strong>Payment Notification URL</strong> to:</li>
+        </ol>
+        
+        <code style='background: #e8f5e8; padding: 10px; display: block;'>
+            {$correctUrl}
+        </code>
+        
+        <p><strong>Test Notification:</strong></p>
+        <a href='{$correctUrl}?test=1' target='_blank'>Test Notification URL</a>
+    ";
+});
+
+table data tranksaksi:
+	#	Name	Type	Collation	Attributes	Null	Default	Comments	Extra	Action
+	1	id Primary	bigint		UNSIGNED	No	None		AUTO_INCREMENT		
+	2	id_user	bigint		UNSIGNED	No	None				
+	3	id_kamar	bigint		UNSIGNED	No	None				
+	4	kode Index	varchar(255)	utf8mb4_unicode_ci		No	None				
+	5	tanggal_pembayaran	date			No	None				
+	6	tanggal_jatuhtempo	date			No	None				
+	7	periode_pembayaran	varchar(20)	utf8mb4_unicode_ci		No	None				
+	8	masuk_kamar	date			Yes	NULL				
+	9	durasi	varchar(20)	utf8mb4_unicode_ci		No	None				
+	10	total_bayar	decimal(15,2)			No	None				
+	11	metode_pembayaran	enum('cash', 'midtrans')	utf8mb4_unicode_ci		No	midtrans				
+	12	status_pembayaran	enum('pending', 'paid', 'failed', 'cancelled', 'ex...	utf8mb4_unicode_ci		No	pending				
+	13	midtrans_order_id	varchar(255)	utf8mb4_unicode_ci		Yes	NULL				
+	14	midtrans_transaction_id	varchar(255)	utf8mb4_unicode_ci		Yes	NULL				
+	15	midtrans_payment_type	varchar(255)	utf8mb4_unicode_ci		Yes	NULL				
+	16	midtrans_response	json			Yes	NULL				
+	17	expired_at	datetime			Yes	NULL				
+	18	created_at	timestamp			Yes	NULL				
+	19	updated_at	timestamp			Yes	NULL

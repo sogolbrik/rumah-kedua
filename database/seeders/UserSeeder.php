@@ -20,12 +20,14 @@ class UserSeeder extends Seeder
             'role'     => 'admin',
         ]);
 
-        User::create([
-            'name'     => 'User',
-            'email'    => 'user@kos.com',
-            'password' => bcrypt('user123'),
-            'role'     => 'user',
-        ]);
+        for ($i=1; $i < 11; $i++) { 
+            User::create([
+                'name'     => 'User' . $i,
+                'email'    => 'user'. $i .'@kos.com',
+                'password' => bcrypt('user123'),
+                'role'     => 'user',
+            ]);
+        }
 
         User::create([
             'id_kamar'        => 1,

@@ -56,9 +56,9 @@
             </li>
 
             <li>
-                <a href="{{ route('transaksi-admin') }}"
+                <a href="{{ route('transaksi.index') }}"
                     class="flex items-center gap-3 px-3 py-2 rounded-md text-sm
-           {{ request()->routeIs('transaksi-admin') ? 'bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-200' : 'text-slate-700 hover:bg-slate-100' }}">
+           {{ request()->routeIs('transaksi.index') ? 'bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-200' : 'text-slate-700 hover:bg-slate-100' }}">
                     <i class="fa-solid fa-receipt"></i>
                     <span>Transaksi</span>
                 </a>
