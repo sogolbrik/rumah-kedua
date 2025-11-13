@@ -202,8 +202,8 @@
                             <i class="fa-solid fa-user-tag"></i>
                         </div>
                         <div>
-                            <h2 class="text-lg font-semibold text-slate-900">Role & Kamar</h2>
-                            <p class="text-sm text-slate-600">Tentukan role user dan kamar jika diperlukan</p>
+                            <h2 class="text-lg font-semibold text-slate-900">Role User</h2>
+                            <p class="text-sm text-slate-600">Tentukan role user</p>
                         </div>
                     </div>
                 </div>
@@ -218,36 +218,16 @@
                                 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
                                     <i class="fa-solid fa-user-shield text-sm"></i>
                                 </div>
-                                <select id="role" name="role" x-model="formState.role" @change="handleRoleChange" @blur="formState.touched.role = true"
+                                <select id="role" name="role" x-model="formState.role" @blur="formState.touched.role = true"
                                     class="w-full rounded-xl border-2 border-slate-200 bg-white py-3 pl-11 pr-4 text-sm font-medium text-slate-900 placeholder:text-slate-400 transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-500/10">
                                     <option value="" selected disabled>- Pilih Role -</option>
                                     <option value="admin">Admin</option>
                                     <option value="user">User</option>
-                                    <option value="penghuni">Penghuni</option>
                                 </select>
                             </div>
                             <p x-cloak x-show="formState.touched.role && !formState.role" class="mt-1 text-xs font-medium text-rose-600">
                                 <i class="fa-solid fa-circle-exclamation"></i> Role wajib dipilih
                             </p>
-                        </div>
-
-                        <div x-show="formState.role === 'penghuni'">
-                            <label for="id_kamar" class="mb-2 block text-sm font-semibold text-slate-700">
-                                Kamar <span class="text-slate-400">(opsional)</span>
-                            </label>
-                            <div class="relative">
-                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
-                                    <i class="fa-solid fa-door-open text-sm"></i>
-                                </div>
-                                <select id="id_kamar" name="id_kamar" x-model="formState.id_kamar"
-                                    class="w-full rounded-xl border-2 border-slate-200 bg-white py-3 pl-11 pr-4 text-sm font-medium text-slate-900 placeholder:text-slate-400 transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-500/10">
-                                    <option value="">- Pilih Kamar -</option>
-                                    @foreach ($kamar as $item)
-                                        <option value="{{ $item->id }}">{{ $item->kode_kamar }} - {{ $item->tipe }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <p class="mt-1.5 text-xs text-slate-500">Hanya tampil untuk role penghuni</p>
                         </div>
                     </div>
                 </div>
@@ -378,7 +358,6 @@
                     provinsi: '',
                     tanggal_masuk: '',
                     role: '',
-                    id_kamar: '',
                     avatar: null,
                     ktp: null,
                     touched: {
@@ -412,13 +391,6 @@
                         this.formState.password === this.formState.password_confirmation &&
                         this.formState.password.length >= 8 &&
                         this.formState.role.trim() !== '';
-                },
-
-                handleRoleChange() {
-                    // Reset kamar jika role bukan penghuni
-                    if (this.formState.role !== 'penghuni') {
-                        this.formState.id_kamar = '';
-                    }
                 },
 
                 handleAvatarSelect(e) {
@@ -521,7 +493,6 @@
                         provinsi: '',
                         tanggal_masuk: '',
                         role: '',
-                        id_kamar: '',
                         avatar: null,
                         ktp: null,
                         touched: {

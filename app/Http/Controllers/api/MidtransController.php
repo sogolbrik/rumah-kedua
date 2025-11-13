@@ -51,6 +51,8 @@ class MidtransController extends Controller
 
         switch ($transactionStatus) {
             case 'capture':
+                // Untuk status capture, langsung proses sebagai pembayaran berhasil
+                // karena biasanya capture sudah berarti pembayaran diterima
                 if ($fraudStatus == 'challenge') {
                     $transaksi->update([
                         'status_pembayaran'       => 'challenge',
@@ -58,7 +60,8 @@ class MidtransController extends Controller
                         'midtrans_transaction_id' => $notification['transaction_id'] ?? null,
                         'midtrans_response'       => $notification
                     ]);
-                } else if ($fraudStatus == 'accept') {
+                } else {
+                    // Jika fraud_status bukan challenge, anggap sebagai pembayaran berhasil
                     $this->processSuccessfulPayment($transaksi, $notification);
                 }
                 break;
@@ -96,10 +99,12 @@ class MidtransController extends Controller
 
     private function processSuccessfulPayment($transaksi, $notification)
     {
+        // Cek apakah transaksi sudah berstatus paid untuk menghindari duplikasi
         if ($transaksi->status_pembayaran === 'paid') {
             return;
         }
 
+        // Update transaksi
         $transaksi->update([
             'status_pembayaran'       => 'paid',
             'midtrans_payment_type'   => $notification['payment_type'] ?? null,
@@ -108,11 +113,13 @@ class MidtransController extends Controller
             'updated_at'              => now()
         ]);
 
+        // Update user dan kamar
         $this->updateUserAndKamar($transaksi->id_user, $transaksi->id_kamar, $transaksi->masuk_kamar);
     }
 
     private function updateUserAndKamar($userId, $kamarId, $tanggalMasuk)
     {
+        // Update user
         $user = User::find($userId);
         if ($user) {
             $user->update([
@@ -124,10 +131,14 @@ class MidtransController extends Controller
             ]);
         }
 
-        Kamar::where('id', $kamarId)->update([
-            'status' => 'Terisi',
-            'updated_at' => now()
-        ]);
+        // Update status kamar
+        $kamar = Kamar::find($kamarId);
+        if ($kamar) {
+            $kamar->update([
+                'status' => 'Terisi',
+                'updated_at' => now()
+            ]);
+        }
     }
 
     public function checkPaymentStatus($id)
