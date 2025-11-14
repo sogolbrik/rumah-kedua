@@ -35,18 +35,18 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $validation = $request->validate([
-            'name'            => 'required|string|max:255',
-            'email'           => 'required|unique:users,email|max:255',
-            'password'        => 'nullable|string|min:8',
-            'telepon'         => 'nullable|string|max:20',
-            'alamat'          => 'nullable|string|max:255',
-            'kota'            => 'nullable|string|max:100',
-            'provinsi'        => 'nullable|string|max:100',
-            'tanggal_masuk'   => 'nullable|date',
-            'role'            => 'nullable|in:admin,penghuni,user',
+            'name' => 'required|string|max:255',
+            'email' => 'required|unique:users,email|max:255',
+            'password' => 'nullable|string|min:8',
+            'telepon' => 'nullable|string|max:20',
+            'alamat' => 'nullable|string|max:255',
+            'kota' => 'nullable|string|max:100',
+            'provinsi' => 'nullable|string|max:100',
+            'tanggal_masuk' => 'nullable|date',
+            'role' => 'nullable|in:admin,penghuni,user',
             'status_penghuni' => 'nullable|in:aktif,nonaktif,menunggak',
-            'avatar'          => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'ktp'             => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'ktp' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         $validation['password'] = bcrypt($request->password);
@@ -65,7 +65,7 @@ class UserController extends Controller
         // Handle upload avatar
         if ($request->file('avatar')) {
             $extension = $request->file('avatar')->getClientOriginalExtension();
-            $gambarAvatar  = 'avatar_' . time() . '_' . uniqid() . '.' . $extension;
+            $gambarAvatar = 'avatar_' . time() . '_' . uniqid() . '.' . $extension;
             $avatarPath = $request->file('avatar')->storePubliclyAs('avatar', $gambarAvatar, 'public');
             $validation['avatar'] = $avatarPath;
         }
@@ -73,7 +73,7 @@ class UserController extends Controller
         // Handle upload KTP
         if ($request->file('ktp')) {
             $extension = $request->file('ktp')->getClientOriginalExtension();
-            $gambarKtp  = 'ktp' . time() . '_' . uniqid() . '.' . $extension;
+            $gambarKtp = 'ktp' . time() . '_' . uniqid() . '.' . $extension;
             $ktpPath = $request->file('ktp')->storePubliclyAs('ktp', $gambarKtp, 'public');
             $validation['ktp'] = $ktpPath;
         }
@@ -96,9 +96,9 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        $user  = User::findOrFail($id);
+        $user = User::findOrFail($id);
         return view('admin.user.form-edit', [
-            'user'  => $user
+            'user' => $user
         ]);
     }
 
@@ -110,18 +110,18 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         $validation = $request->validate([
-            'name'            => 'required|string|max:255',
-            'email'           => 'sometimes|unique:users,email,' . $user->id,
-            'password'        => 'nullable|string|min:8',
-            'telepon'         => 'nullable|string|max:20',
-            'alamat'          => 'nullable|string|max:255',
-            'kota'            => 'nullable|string|max:100',
-            'provinsi'        => 'nullable|string|max:100',
-            'tanggal_masuk'   => 'nullable|date',
-            'role'            => 'nullable|in:admin,user',
+            'name' => 'required|string|max:255',
+            'email' => 'sometimes|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8',
+            'telepon' => 'nullable|string|max:20',
+            'alamat' => 'nullable|string|max:255',
+            'kota' => 'nullable|string|max:100',
+            'provinsi' => 'nullable|string|max:100',
+            'tanggal_masuk' => 'nullable|date',
+            'role' => 'nullable|in:admin,user',
             'status_penghuni' => 'nullable|in:aktif,nonaktif,menunggak',
-            'avatar'          => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'ktp'             => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'ktp' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         // Jika password tidak diubah → tetap pakai yang lama
@@ -151,7 +151,7 @@ class UserController extends Controller
 
             // Upload avatar baru
             $extension = $request->file('avatar')->getClientOriginalExtension();
-            $gambarAvatar  = 'avatar_' . time() . '_' . uniqid() . '.' . $extension;
+            $gambarAvatar = 'avatar_' . time() . '_' . uniqid() . '.' . $extension;
             $avatarPath = $request->file('avatar')->storePubliclyAs('avatar', $gambarAvatar, 'public');
             $validation['avatar'] = $avatarPath;
         } else {
@@ -177,7 +177,7 @@ class UserController extends Controller
 
             // Upload ktp baru
             $extension = $request->file('ktp')->getClientOriginalExtension();
-            $gambarKtp  = 'ktp' . time() . '_' . uniqid() . '.' . $extension;
+            $gambarKtp = 'ktp' . time() . '_' . uniqid() . '.' . $extension;
             $ktpPath = $request->file('ktp')->storePubliclyAs('ktp', $gambarKtp, 'public');
             $validation['ktp'] = $ktpPath;
         } else {
@@ -245,9 +245,9 @@ class UserController extends Controller
         }
 
         $user->status_penghuni = 'nonaktif';
+        $user->role = 'user';
         $user->id_kamar = null;
         $user->save();
-
 
         return redirect()->back()->with('success', 'Status penghuni berhasil diubah menjadi nonaktif.');
     }
@@ -261,9 +261,10 @@ class UserController extends Controller
 
         $user = User::findOrFail($id);
         $user->update([
-            'id_kamar'       => $request->id_kamar,
-            'tanggal_masuk'  => now(),
+            'id_kamar' => $request->id_kamar,
+            'tanggal_masuk' => now(),
             'status_penghuni' => 'aktif',
+            'role' => 'penghuni',
         ]);
 
         // update kamar jadi Terisi

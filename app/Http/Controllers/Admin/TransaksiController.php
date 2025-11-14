@@ -298,10 +298,10 @@ class TransaksiController extends Controller
         DB::beginTransaction();
 
         $transaksi->update([
-            'status_pembayaran' => 'paid',
-            'midtrans_payment_type' => $statusData['payment_type'] ?? null,
+            'status_pembayaran'       => 'paid',
+            'midtrans_payment_type'   => $statusData['payment_type'] ?? null,
             'midtrans_transaction_id' => $statusData['transaction_id'] ?? null,
-            'midtrans_response' => $statusData
+            'midtrans_response'       => $statusData
         ]);
 
         $this->updateUserAndKamar($transaksi->id_user, $transaksi->id_kamar, $transaksi->masuk_kamar);

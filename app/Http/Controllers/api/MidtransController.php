@@ -45,20 +45,18 @@ class MidtransController extends Controller
         ]);
     }
 
-    private function updateTransactionStatus($transaksi, $notification, $transactionStatus, $fraudStatus)
+    public function updateTransactionStatus($transaksi, $notification, $transactionStatus, $fraudStatus)
     {
         DB::beginTransaction();
 
         switch ($transactionStatus) {
             case 'capture':
-                // Untuk status capture, langsung proses sebagai pembayaran berhasil
-                // karena biasanya capture sudah berarti pembayaran diterima
                 if ($fraudStatus == 'challenge') {
                     $transaksi->update([
-                        'status_pembayaran'       => 'challenge',
-                        'midtrans_payment_type'   => $notification['payment_type'] ?? null,
+                        'status_pembayaran' => 'challenge',
+                        'midtrans_payment_type' => $notification['payment_type'] ?? null,
                         'midtrans_transaction_id' => $notification['transaction_id'] ?? null,
-                        'midtrans_response'       => $notification
+                        'midtrans_response' => $notification
                     ]);
                 } else {
                     // Jika fraud_status bukan challenge, anggap sebagai pembayaran berhasil
@@ -72,9 +70,9 @@ class MidtransController extends Controller
 
             case 'pending':
                 $transaksi->update([
-                    'status_pembayaran'     => 'pending',
+                    'status_pembayaran' => 'pending',
                     'midtrans_payment_type' => $notification['payment_type'] ?? null,
-                    'midtrans_response'     => $notification
+                    'midtrans_response' => $notification
                 ]);
                 break;
 
@@ -97,7 +95,7 @@ class MidtransController extends Controller
         DB::commit();
     }
 
-    private function processSuccessfulPayment($transaksi, $notification)
+    public function processSuccessfulPayment($transaksi, $notification)
     {
         // Cek apakah transaksi sudah berstatus paid untuk menghindari duplikasi
         if ($transaksi->status_pembayaran === 'paid') {
@@ -106,28 +104,28 @@ class MidtransController extends Controller
 
         // Update transaksi
         $transaksi->update([
-            'status_pembayaran'       => 'paid',
-            'midtrans_payment_type'   => $notification['payment_type'] ?? null,
+            'status_pembayaran' => 'paid',
+            'midtrans_payment_type' => $notification['payment_type'] ?? null,
             'midtrans_transaction_id' => $notification['transaction_id'] ?? null,
-            'midtrans_response'       => $notification,
-            'updated_at'              => now()
+            'midtrans_response' => $notification,
+            'updated_at' => now()
         ]);
 
         // Update user dan kamar
         $this->updateUserAndKamar($transaksi->id_user, $transaksi->id_kamar, $transaksi->masuk_kamar);
     }
 
-    private function updateUserAndKamar($userId, $kamarId, $tanggalMasuk)
+    public function updateUserAndKamar($userId, $kamarId, $tanggalMasuk)
     {
         // Update user
         $user = User::find($userId);
         if ($user) {
             $user->update([
-                'id_kamar'        => $kamarId,
-                'tanggal_masuk'   => $tanggalMasuk,
+                'id_kamar' => $kamarId,
+                'tanggal_masuk' => $tanggalMasuk,
                 'status_penghuni' => 'aktif',
-                'role'            => 'penghuni',
-                'updated_at'      => now()
+                'role' => 'penghuni',
+                'updated_at' => now()
             ]);
         }
 

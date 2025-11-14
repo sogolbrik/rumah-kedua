@@ -31,36 +31,8 @@ Route::prefix('transaksi')->name('transaksi.')->group(function () {
 /* Nanti diluar middleware */
 Route::prefix('midtrans')->group(function () {
     Route::post('/notification', [MidtransController::class, 'handleNotification'])->name('midtrans.notification');
-    Route::get('/test-notification', [MidtransController::class, 'testNotification'])->name('midtrans.test');
-    Route::get('/health', [MidtransController::class, 'healthCheck'])->name('midtrans.health');
 });
 
-Route::get('/midtrans-setup', function() {
-    $correctUrl = url('/api/midtrans/notification');
-    
-    return "
-        <h1>Midtrans Setup Instructions</h1>
-        <p><strong>Correct Notification URL:</strong></p>
-        <code style='background: #f4f4f4; padding: 10px; display: block;'>
-            {$correctUrl}
-        </code>
-        
-        <p><strong>Steps:</strong></p>
-        <ol>
-            <li>Login ke <a href='https://dashboard.midtrans.com' target='_blank'>Midtrans Dashboard</a></li>
-            <li>Pilih environment: <strong>Sandbox</strong></li>
-            <li>Go to <strong>Settings → Configuration</strong></li>
-            <li>Set <strong>Payment Notification URL</strong> to:</li>
-        </ol>
-        
-        <code style='background: #e8f5e8; padding: 10px; display: block;'>
-            {$correctUrl}
-        </code>
-        
-        <p><strong>Test Notification:</strong></p>
-        <a href='{$correctUrl}?test=1' target='_blank'>Test Notification URL</a>
-    ";
-});
 /* END ' Nanti diluar middleware */
 //Pengumuman
 Route::get('pengumuman-admin', [PengumumanController::class, 'index'])->name('pengumuman-admin');
