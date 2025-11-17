@@ -8,6 +8,7 @@
     <title>Register - RumahKedua</title>
 
     <link rel="stylesheet" href="{{ asset('assets/vendor/fontawesome/all.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/sweetalert/sweetalert.min.css') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
@@ -48,7 +49,7 @@
             </div>
 
             <!-- Form -->
-            <form method="POST" action="{{ route('register') }}">
+            <form method="POST" action="{{ route('register.store') }}">
                 @csrf
 
                 <!-- Name -->
@@ -76,11 +77,11 @@
 
                 <!-- Phone -->
                 <div class="mb-5" style="animation: slideInUp 0.6s ease-out 0.3s both">
-                    <label for="phone" class="block text-sm font-semibold text-gray-700 mb-2">Nomor Telepon</label>
-                    <input type="tel" name="phone" id="phone" value="{{ old('phone') }}"
-                        class="input-focus w-full px-4 py-3 bg-gray-50 border-b-2 border-gray-300 rounded-lg focus:bg-white @error('phone') border-b-red-600 @enderror" placeholder="+62 812-3456-7890"
+                    <label for="telepon" class="block text-sm font-semibold text-gray-700 mb-2">Nomor Telepon</label>
+                    <input type="tel" name="telepon" id="telepon" value="{{ old('telepon') }}"
+                        class="input-focus w-full px-4 py-3 bg-gray-50 border-b-2 border-gray-300 rounded-lg focus:bg-white @error('telepon') border-b-red-600 @enderror" placeholder="6281234567890"
                         required>
-                    @error('phone')
+                    @error('telepon')
                         <p class="text-red-600 text-sm mt-2"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}
                         </p>
                     @enderror
@@ -157,6 +158,42 @@
     </div>
 
     <script src="{{ asset('assets/vendor/fontawesome/all.min.js') }}"></script>
+
+    {{-- Sweetalert --}}
+    <script src="{{ asset('assets/vendor/sweetalert/sweetalert.min.js') }}"></script>
+    {{-- Success --}}
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: '{{ session('success') }}',
+                position: "top-end",
+                toast: true,
+                timer: 3000,
+                showConfirmButton: false,
+                customClass: {
+                    popup: 'rounded-xl'
+                }
+            });
+        </script>
+    @endif
+
+    {{-- Error --}}
+    @if (session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: '{{ session('error') }}',
+                timer: 3000,
+                position: "top-end",
+                toast: true,
+                showConfirmButton: false,
+                customClass: {
+                    popup: 'rounded-xl'
+                }
+            });
+        </script>
+    @endif
 </body>
 
 </html>

@@ -1,85 +1,7 @@
-<!DOCTYPE html>
-<html lang="id">
+@extends('layouts.frontend-main')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>RumahKedua - Temukan Kenyamanan Seperti di Rumah Sendiri</title>
-
-    <link rel="stylesheet" href="{{ asset('assets/vendor/fontawesome/all.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/vendor/sweetalert/sweetalert.min.css') }}">
-
-    {{-- Vite (Tailwind v4 + Alpine dari app.js) --}}
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    <style>
-        :root {
-            --color-primary: #3b82f6;
-            --color-primary-dark: #1e40af;
-            --color-neutral-light: #f9fafb;
-            --color-neutral-dark: #1f2937;
-            --color-accent: #0891b2;
-        }
-
-        body {
-            scroll-behavior: smooth;
-        }
-
-        .transition-bg {
-            transition: background-color 0.3s ease;
-        }
-    </style>
-</head>
-
-<body class="bg-white text-gray-900">
-
-    <!-- 1. NAVBAR (Sticky, Transparent → Solid on Scroll) -->
-    <nav x-data="{ scrolled: false, mobileOpen: false }" @scroll.window="scrolled = window.scrollY > 50" :class="scrolled ? 'bg-white shadow-md' : 'bg-transparent'" class="fixed w-full top-0 z-50 transition-bg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <!-- Logo -->
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-home text-white text-sm"></i>
-                    </div>
-                    <span class="text-xl font-bold text-gray-900">RumahKedua</span>
-                </div>
-
-                <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center gap-8">
-                    <a href="#fasilitas" class="text-gray-700 hover:text-blue-500 font-medium transition-colors">Fasilitas</a>
-                    <a href="#kamar" class="text-gray-700 hover:text-blue-500 font-medium transition-colors">Kamar</a>
-                    <a href="#lokasi" class="text-gray-700 hover:text-blue-500 font-medium transition-colors">Lokasi</a>
-                    <a href="#harga" class="text-gray-700 hover:text-blue-500 font-medium transition-colors">Harga</a>
-                    <a href="#kontak" class="text-gray-700 hover:text-blue-500 font-medium transition-colors">Kontak</a>
-                </div>
-
-                <!-- CTA Button Desktop -->
-                <button class="hidden md:inline-block bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium transition-colors" onclick="location.href='https://wa.me/62812345678'">
-                    Booking Sekarang
-                </button>
-
-                <!-- Mobile Menu Button -->
-                <button @click="mobileOpen = !mobileOpen" class="md:hidden text-gray-900">
-                    <i class="fas fa-bars text-2xl"></i>
-                </button>
-            </div>
-
-            <!-- Mobile Menu -->
-            <div x-show="mobileOpen" class="md:hidden pb-4 space-y-2 border-t border-gray-100">
-                <a href="#fasilitas" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded transition-colors">Fasilitas</a>
-                <a href="#kamar" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded transition-colors">Kamar</a>
-                <a href="#lokasi" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded transition-colors">Lokasi</a>
-                <a href="#harga" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded transition-colors">Harga</a>
-                <a href="#kontak" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded transition-colors">Kontak</a>
-                <button class="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors mt-2" onclick="location.href='https://wa.me/62812345678'">
-                    Booking Sekarang
-                </button>
-            </div>
-        </div>
-    </nav>
-
+@section('title', 'Temukan Kenyamanan Seperti di Rumah Sendiri')
+@section('frontend-main')
     <!-- 2. HERO SECTION -->
     <header class="pt-32 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-white">
         <div class="max-w-7xl mx-auto">
@@ -94,8 +16,8 @@
                         terbaik untuk kenyamanan menginap Anda.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4 pt-4">
-                        <button class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold transition-colors" onclick="location.href='https://wa.me/62812345678'">
-                            Booking via WhatsApp
+                        <button class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold transition-colors">
+                            Booking
                         </button>
                         <button class="border-2 border-blue-500 text-blue-500 hover:bg-blue-50 px-8 py-3 rounded-lg font-semibold transition-colors">
                             Lihat Galeri
@@ -447,8 +369,8 @@
                 Jangan lewatkan kesempatan untuk menginap di tempat yang nyaman dan terpercaya. Hubungi kami sekarang untuk informasi lebih lanjut atau booking langsung.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <button class="bg-white hover:bg-gray-100 text-blue-500 px-8 py-4 rounded-lg font-semibold transition-colors" onclick="location.href='https://wa.me/62812345678'">
-                    <i class="fab fa-whatsapp mr-2"></i>Booking via WhatsApp
+                <button class="bg-white hover:bg-gray-100 text-blue-500 px-8 py-4 rounded-lg font-semibold transition-colors" onclick="location.href='https://wa.me/+6287870327957'">
+                    <i class="fab fa-whatsapp mr-2"></i>WhatsApp
                 </button>
                 <button class="border-2 border-white hover:bg-white/10 text-white px-8 py-4 rounded-lg font-semibold transition-colors">
                     <i class="fas fa-envelope mr-2"></i>Hubungi Email
@@ -456,75 +378,4 @@
             </div>
         </div>
     </section>
-
-    <!-- 9. FOOTER -->
-    <footer class="bg-gray-900 text-gray-300 py-16 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-                <!-- About -->
-                <div>
-                    <div class="flex items-center gap-2 mb-4">
-                        <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-home text-white text-sm"></i>
-                        </div>
-                        <span class="text-xl font-bold text-white">RumahKedua</span>
-                    </div>
-                    <p class="text-gray-400 leading-relaxed">
-                        Temukan kenyamanan seperti di rumah sendiri dengan layanan terbaik dan fasilitas lengkap.
-                    </p>
-                </div>
-
-                <!-- Quick Links -->
-                <div>
-                    <h4 class="text-white font-semibold mb-4">Link Cepat</h4>
-                    <ul class="space-y-3 text-gray-400">
-                        <li><a href="#fasilitas" class="hover:text-blue-400 transition-colors">Fasilitas</a></li>
-                        <li><a href="#kamar" class="hover:text-blue-400 transition-colors">Pilihan Kamar</a></li>
-                        <li><a href="#lokasi" class="hover:text-blue-400 transition-colors">Lokasi</a></li>
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">FAQ</a></li>
-                    </ul>
-                </div>
-
-                <!-- Kontak -->
-                <div>
-                    <h4 class="text-white font-semibold mb-4">Kontak</h4>
-                    <ul class="space-y-3 text-gray-400">
-                        <li class="flex gap-2"><i class="fas fa-phone w-4"></i> +62 812 3456 7890</li>
-                        <li class="flex gap-2"><i class="fas fa-envelope w-4"></i> info@rumahkedua.com</li>
-                        <li class="flex gap-2"><i class="fas fa-map-marker-alt w-4"></i> Jakarta Selatan</li>
-                    </ul>
-                </div>
-
-                <!-- Sosial Media -->
-                <div>
-                    <h4 class="text-white font-semibold mb-4">Ikuti Kami</h4>
-                    <div class="flex gap-4">
-                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-blue-500 rounded-full flex items-center justify-center transition-colors">
-                            <i class="fab fa-facebook-f text-white"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-blue-500 rounded-full flex items-center justify-center transition-colors">
-                            <i class="fab fa-instagram text-white"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-blue-500 rounded-full flex items-center justify-center transition-colors">
-                            <i class="fab fa-whatsapp text-white"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-blue-500 rounded-full flex items-center justify-center transition-colors">
-                            <i class="fab fa-youtube text-white"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer Bottom -->
-            <div class="border-t border-gray-800 pt-8 text-center text-gray-400">
-                <p>&copy; 2025 RumahKedua. Semua hak cipta dilindungi.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Scripts -->
-    <script src="{{ asset('assets/vendor/fontawesome/all.min.js') }}"></script>
-    <script src="{{ asset('assets/vendor/sweetalert/sweetalert.min.js') }}"></script>
-</body>
-
-</html>
+@endsection
