@@ -14,17 +14,19 @@
 
             <!-- Desktop Menu -->
             <div class="hidden md:flex items-center gap-8">
-                <a href="#fasilitas" class="text-gray-700 hover:text-blue-500 font-medium transition-colors">Fasilitas</a>
-                <a href="#kamar" class="text-gray-700 hover:text-blue-500 font-medium transition-colors">Kamar</a>
-                <a href="#lokasi" class="text-gray-700 hover:text-blue-500 font-medium transition-colors">Lokasi</a>
-                <a href="#kamar" class="text-gray-700 hover:text-blue-500 font-medium transition-colors">Harga</a>
-                <a href="#lokasi" class="text-gray-700 hover:text-blue-500 font-medium transition-colors">Kontak</a>
+                <a href="{{ url('/#fasilitas') }}" class="text-gray-700 hover:text-blue-500 font-medium transition-colors">Fasilitas</a>
+                <a href="{{ url('/#kamar') }}" class="text-gray-700 hover:text-blue-500 font-medium transition-colors">Kamar</a>
+                <a href="{{ url('/#lokasi') }}" class="text-gray-700 hover:text-blue-500 font-medium transition-colors">Lokasi</a>
+                <a href="{{ url('/#kamar') }}" class="text-gray-700 hover:text-blue-500 font-medium transition-colors">Harga</a>
+                <a href="{{ url('/#lokasi') }}" class="text-gray-700 hover:text-blue-500 font-medium transition-colors">Kontak</a>
             </div>
 
             <!-- CTA Button Desktop -->
-            <button class="hidden md:inline-block bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium transition-colors" onclick="location.href='https://wa.me/62812345678'">
-                Booking Sekarang
-            </button>
+            <a href="{{ Route('booking')  }}" class="cursor-default">
+                <button class="hidden md:inline-block bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+                    Booking Sekarang
+                </button>
+            </a>
 
             <!-- Mobile Menu Button -->
             <button @click="mobileOpen = !mobileOpen" class="md:hidden text-gray-900">

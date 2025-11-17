@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Http\Controllers\frontend;
+
+use App\Http\Controllers\Controller;
+use App\Models\Kamar;
+use Illuminate\Http\Request;
+
+class BookingPageController extends Controller
+{
+    public function booking()
+    {
+        return view("frontend.booking", [
+            'kamar' => Kamar::with('detailKamar')->get(),
+        ]);
+    }
+}

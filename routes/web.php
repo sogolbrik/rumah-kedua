@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\TransaksiController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\api\MidtransController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\frontend\BookingPageController;
 use App\Http\Controllers\frontend\LandingPageController;
 use Illuminate\Support\Facades\Route;
 
@@ -44,3 +45,4 @@ Route::get('pengumuman-admin', [PengumumanController::class, 'index'])->name('pe
 //Frontend
 //Landingpage
 Route::get('/', [LandingPageController::class, 'landingPage'])->name('landing-page');
+Route::get('booking', [BookingPageController::class, 'booking'])->name('booking');
