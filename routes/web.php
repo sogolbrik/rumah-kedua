@@ -6,11 +6,15 @@ use App\Http\Controllers\Admin\PengumumanController;
 use App\Http\Controllers\Admin\TransaksiController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\api\MidtransController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\frontend\LandingPageController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+//Authentication
+Route::get('login', [AuthController::class,'login'])->name('login');
+Route::get('register', [AuthController::class,'register'])->name('register');
+Route::post('register', [AuthController::class,'store'])->name('register.store');
+Route::post('login', [AuthController::class,'authentication'])->name('authentication');
 
 //AdminPanel
 Route::get('dashboard-admin', [DashboardController::class, 'index'])->name('dashboard-admin');
@@ -36,3 +40,8 @@ Route::prefix('midtrans')->group(function () {
 /* END ' Nanti diluar middleware */
 //Pengumuman
 Route::get('pengumuman-admin', [PengumumanController::class, 'index'])->name('pengumuman-admin');
+
+
+//Frontend
+//Landingpage
+Route::get('/', [LandingPageController::class, 'landingPage'])->name('landing-page');

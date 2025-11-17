@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -19,14 +18,10 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('telepon')->nullable();
-            $table->text('alamat')->nullable();
-            $table->string('kota')->nullable();
-            $table->string('provinsi')->nullable();
             $table->date('tanggal_masuk')->nullable();
             $table->enum('status_penghuni', ['aktif', 'nonaktif', 'menunggak'])->nullable();
             $table->enum('role', ['admin', 'user', 'penghuni'])->default('user');
             $table->string('avatar')->nullable();
-            $table->string('ktp')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

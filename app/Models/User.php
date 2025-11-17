@@ -23,14 +23,10 @@ class User extends Authenticatable
         'email',
         'password',
         'telepon',
-        'alamat',
-        'kota',
-        'provinsi',
         'tanggal_masuk',
         'role',
         'status_penghuni',
         'avatar',
-        'ktp',
     ];
 
     public function kamar()

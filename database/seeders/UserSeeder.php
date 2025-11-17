@@ -37,9 +37,6 @@ class UserSeeder extends Seeder
             'role'            => 'penghuni',
             'status_penghuni' => 'aktif',
             'telepon'         => 6285704229619,
-            'alamat'          => 'Jl. Penghuni No. 1',
-            'kota'            => 'Surabaya',
-            'provinsi'        => 'Jawa Timur',
             'tanggal_masuk'   => date('Y-m-d'),
         ]);
     }
