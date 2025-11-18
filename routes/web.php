@@ -12,10 +12,10 @@ use App\Http\Controllers\frontend\LandingPageController;
 use Illuminate\Support\Facades\Route;
 
 //Authentication
-Route::get('login', [AuthController::class,'login'])->name('login');
-Route::get('register', [AuthController::class,'register'])->name('register');
-Route::post('register', [AuthController::class,'store'])->name('register.store');
-Route::post('login', [AuthController::class,'authentication'])->name('authentication');
+Route::get('login', [AuthController::class, 'login'])->name('login');
+Route::get('register', [AuthController::class, 'register'])->name('register');
+Route::post('register', [AuthController::class, 'store'])->name('register.store');
+Route::post('login', [AuthController::class, 'authentication'])->name('authentication');
 
 //AdminPanel
 Route::get('dashboard-admin', [DashboardController::class, 'index'])->name('dashboard-admin');
@@ -46,3 +46,4 @@ Route::get('pengumuman-admin', [PengumumanController::class, 'index'])->name('pe
 //Landingpage
 Route::get('/', [LandingPageController::class, 'landingPage'])->name('landing-page');
 Route::get('booking', [BookingPageController::class, 'booking'])->name('booking');
+Route::get('booking-detail/{id}', [BookingPageController::class, 'bookingDetail'])->name('booking-detail');

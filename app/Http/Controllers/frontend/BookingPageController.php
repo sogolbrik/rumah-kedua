@@ -14,4 +14,10 @@ class BookingPageController extends Controller
             'kamar' => Kamar::with('detailKamar')->get(),
         ]);
     }
+
+    public function bookingDetail($id) {
+        return view('frontend.booking-detail', [
+            'kamar' => Kamar::with('detailKamar')->findOrFail($id),
+        ]);
+    }
 }

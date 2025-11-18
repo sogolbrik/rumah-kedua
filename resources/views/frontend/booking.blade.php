@@ -202,7 +202,7 @@
                                 @endif
 
                                 <!-- Button -->
-                                <a href="/booking/{{ $item->kode_kamar }}"
+                                <a href="{{ Route('booking-detail', $item->id) }}"
                                     class="{{ $item->status === 'Terisi' ? 'opacity-50 cursor-not-allowed' : '' }} block w-full py-3 px-4 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all duration-300 text-center uppercase text-sm tracking-wider">
                                     <span class="flex items-center justify-center gap-2">
                                         Lihat Detail
