@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\GaleriController;
 use App\Http\Controllers\Admin\KamarController;
 use App\Http\Controllers\Admin\PengumumanController;
 use App\Http\Controllers\Admin\TransaksiController;
@@ -21,6 +22,7 @@ Route::post('login', [AuthController::class, 'authentication'])->name('authentic
 Route::get('dashboard-admin', [DashboardController::class, 'index'])->name('dashboard-admin');
 Route::resource('kamar', KamarController::class);
 Route::resource('user', UserController::class);
+Route::resource('galeri', GaleriController::class);
 Route::put('user/{id}/nonaktifkan', [UserController::class, 'nonaktifkan'])->name('user.nonaktifkan');
 Route::put('user/{id}/aktifkan', [UserController::class, 'aktifkan'])->name('user.aktifkan');
 //Transaksi
@@ -45,6 +47,7 @@ Route::get('pengumuman-admin', [PengumumanController::class, 'index'])->name('pe
 //Frontend
 //Landingpage
 Route::get('/', [LandingPageController::class, 'landingPage'])->name('landing-page');
+Route::get('galeri-kamar', [LandingPageController::class, 'galeri'])->name('galeri-kamar');
 Route::get('booking', [BookingPageController::class, 'booking'])->name('booking');
 Route::get('booking-detail/{id}', [BookingPageController::class, 'bookingDetail'])->name('booking-detail');
 Route::get('booking-pembayaran/{id}', [BookingPageController::class, 'pembayaran'])->name('pembayaran');

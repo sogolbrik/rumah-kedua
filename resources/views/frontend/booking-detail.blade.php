@@ -46,7 +46,7 @@
                 <span class="text-neutral-300">/</span>
                 <a href="{{ Route('booking') }}" class="text-neutral-600 hover:text-primary transition-smooth">Kamar</a>
                 <span class="text-neutral-300">/</span>
-                <span class="text-primary font-semibold">{{ $kamar->tipe }}</span>
+                <span class="text-primary font-semibold text-blue-600">{{ $kamar->tipe }}</span>
             </nav>
 
             <!-- Hero Section: Image Gallery -->

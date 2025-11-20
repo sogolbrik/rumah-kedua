@@ -16,9 +16,11 @@
                         terbaik untuk kenyamanan menginap Anda.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4 pt-4">
-                        <button class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold transition-all transform hover:scale-105 hover:shadow-lg">
-                            Booking
-                        </button>
+                        <a href="{{ Route('booking') }}">
+                            <button class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold transition-all transform hover:scale-105 hover:shadow-lg">
+                                Booking
+                            </button>
+                        </a>
                         <button class="border-2 border-blue-500 text-blue-500 hover:bg-blue-50 px-8 py-3 rounded-lg font-semibold transition-all transform hover:scale-105">
                             Lihat Galeri
                         </button>
@@ -27,7 +29,7 @@
 
                 <!-- Hero Image -->
                 <div class="relative h-80 md:h-96 bg-gray-200 rounded-2xl overflow-hidden shadow-lg animate-fade-in-right transform transition-transform duration-300">
-                    <img src="/placeholder.svg?height=400&width=500" alt="Kamar RumahKedua" class="w-full h-full object-cover">
+                    <img src="{{ asset('assets/image/landing-page/undraw_login_weas.svg') }}" alt="Kamar RumahKedua" class="w-full h-full object-cover">
                 </div>
             </div>
         </div>

@@ -1,5 +1,5 @@
 @extends('layouts.frontend-main')
-@section('title', 'Pembayaran - Selesaikan Transaksi Anda')
+@section('title', 'Selesaikan Transaksi Anda')
 
 @section('frontend-main')
     <style>
@@ -27,15 +27,18 @@
         }
     </style>
 
+
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-18" x-data="{ duration: 1, harga: 1500000 }">
-        <!-- Breadcrumb -->
-        <nav class="mb-8 flex items-center gap-2 text-sm">
-            <a href="{{ Route('landing-page') }}" class="text-neutral-600 hover:text-primary transition-smooth">Home</a>
-            <span class="text-neutral-300">/</span>
-            <a href="{{ Route('booking') }}" class="text-neutral-600 hover:text-primary transition-smooth">Kamar</a>
-            <span class="text-neutral-300">/</span>
-            <span class="text-blue-600 font-medium">Pembayaran Kos</span>
-        </nav>
+        <div class="max-w-6xl mx-auto mb-2 py-0">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center gap-2 text-sm">
+                <a href="{{ Route('landing-page') }}" class="text-neutral-600 hover:text-primary transition-smooth">Home</a>
+                <span class="text-neutral-300">/</span>
+                <a href="{{ Route('booking') }}" class="text-neutral-600 hover:text-primary transition-smooth">Kamar</a>
+                <span class="text-neutral-300">/</span>
+                <span class="text-blue-600 font-medium">Pembayaran Kos</span>
+            </nav>
+        </div>
 
         <!-- Main Content Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
