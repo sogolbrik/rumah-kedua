@@ -159,7 +159,7 @@ class TransaksiController extends Controller
                 ->with('error', 'Token pembayaran tidak tersedia. Silakan buat transaksi ulang.');
         }
 
-        return view('admin.transaksi.payment', compact('transaksi'));
+        return view('admin.transaksi.pembayaran', compact('transaksi'));
     }
 
     public function checkStatus($id)

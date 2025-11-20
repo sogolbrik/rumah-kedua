@@ -47,3 +47,4 @@ Route::get('pengumuman-admin', [PengumumanController::class, 'index'])->name('pe
 Route::get('/', [LandingPageController::class, 'landingPage'])->name('landing-page');
 Route::get('booking', [BookingPageController::class, 'booking'])->name('booking');
 Route::get('booking-detail/{id}', [BookingPageController::class, 'bookingDetail'])->name('booking-detail');
+Route::get('booking-pembayaran/{id}', [BookingPageController::class, 'pembayaran'])->name('pembayaran');

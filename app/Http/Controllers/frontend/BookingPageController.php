@@ -20,4 +20,10 @@ class BookingPageController extends Controller
             'kamar' => Kamar::with('detailKamar')->findOrFail($id),
         ]);
     }
+
+    public function pembayaran($id){
+        return view('frontend.pembayaran', [
+            'kamar' => Kamar::with('detailKamar')->findOrFail($id),
+        ]);
+    }
 }
