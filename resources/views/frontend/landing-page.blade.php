@@ -316,71 +316,55 @@
                 </p>
             </div>
 
-            <!-- Section FAQ -->
-            <div class="space-y-4">
-                <!-- FAQ Item 1 -->
-                <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 animate-slide-up" style="animation-delay: 0.1s">
-                    <button class="faq-button w-full text-left p-6 flex justify-between items-center hover:bg-gray-50 transition-colors" onclick="toggleFAQ(this)">
+            <div x-data="{ activeIndex: null }" class="space-y-4">
+                <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300" style="animation-delay: 0.1s">
+                    <button @click="activeIndex = activeIndex === 0 ? null : 0" class="w-full text-left p-6 flex justify-between items-center hover:bg-gray-50 transition-colors">
                         <span class="font-semibold text-gray-900 text-lg">Apakah tersedia tempat parkir?</span>
-                        <i class="fas fa-chevron-down text-blue-500 transition-transform duration-300"></i>
+                        <i :class="activeIndex === 0 ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="text-blue-500 transition-transform duration-300"></i>
                     </button>
-                    <div class="faq-content max-h-0 overflow-hidden transition-all duration-300">
-                        <div class="p-6 pt-0 text-gray-600">
-                            Ya, kami menyediakan area parkir yang luas dan aman untuk motor dan mobil. Parkir tersedia 24 jam dengan sistem keamanan CCTV.
-                        </div>
+                    <div x-show="activeIndex === 0" x-transition class="p-6 pt-0 text-gray-600">
+                        Ya, kami menyediakan area parkir yang luas dan aman untuk motor dan mobil. Parkir tersedia 24 jam dengan sistem keamanan CCTV.
                     </div>
                 </div>
 
-                <!-- FAQ Item 2 -->
-                <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 animate-slide-up" style="animation-delay: 0.2s">
-                    <button class="faq-button w-full text-left p-6 flex justify-between items-center hover:bg-gray-50 transition-colors" onclick="toggleFAQ(this)">
+                <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300" style="animation-delay: 0.2s">
+                    <button @click="activeIndex = activeIndex === 1 ? null : 1" class="w-full text-left p-6 flex justify-between items-center hover:bg-gray-50 transition-colors">
                         <span class="font-semibold text-gray-900 text-lg">Apakah ada minimum kontrak sewa?</span>
-                        <i class="fas fa-chevron-down text-blue-500 transition-transform duration-300"></i>
+                        <i :class="activeIndex === 1 ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="text-blue-500 transition-transform duration-300"></i>
                     </button>
-                    <div class="faq-content max-h-0 overflow-hidden transition-all duration-300">
-                        <div class="p-6 pt-0 text-gray-600">
-                            Minimum kontrak sewa adalah 3 bulan. Kami juga menawarkan paket sewa 6 bulan dan 12 bulan dengan harga lebih hemat.
-                        </div>
+                    <div x-show="activeIndex === 1" x-transition class="p-6 pt-0 text-gray-600">
+                        Minimum kontrak sewa adalah 1 bulan. Kami juga menawarkan paket sewa 3 bulan dan 6 bulan dengan harga lebih hemat.
                     </div>
                 </div>
 
-                <!-- FAQ Item 3 -->
-                <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 animate-slide-up" style="animation-delay: 0.3s">
-                    <button class="faq-button w-full text-left p-6 flex justify-between items-center hover:bg-gray-50 transition-colors" onclick="toggleFAQ(this)">
+                <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300" style="animation-delay: 0.3s">
+                    <button @click="activeIndex = activeIndex === 2 ? null : 2" class="w-full text-left p-6 flex justify-between items-center hover:bg-gray-50 transition-colors">
                         <span class="font-semibold text-gray-900 text-lg">Apakah boleh menerima tamu?</span>
-                        <i class="fas fa-chevron-down text-blue-500 transition-transform duration-300"></i>
+                        <i :class="activeIndex === 2 ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="text-blue-500 transition-transform duration-300"></i>
                     </button>
-                    <div class="faq-content max-h-0 overflow-hidden transition-all duration-300">
-                        <div class="p-6 pt-0 text-gray-600">
-                            Tamu diperbolehkan berkunjung pada jam 08:00 - 21:00 dengan melapor ke resepsionis. Untuk keamanan, tamu wajib meninggalkan identitas.
-                        </div>
+                    <div x-show="activeIndex === 2" x-transition class="p-6 pt-0 text-gray-600">
+                        Tamu diperbolehkan berkunjung pada jam 08:00 - 21:00 dengan melapor ke resepsionis. Untuk keamanan, tamu wajib meninggalkan identitas.
                     </div>
                 </div>
 
-                <!-- FAQ Item 4 -->
-                <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 animate-slide-up" style="animation-delay: 0.4s">
-                    <button class="faq-button w-full text-left p-6 flex justify-between items-center hover:bg-gray-50 transition-colors" onclick="toggleFAQ(this)">
+                <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300" style="animation-delay: 0.4s">
+                    <button @click="activeIndex = activeIndex === 3 ? null : 3" class="w-full text-left p-6 flex justify-between items-center hover:bg-gray-50 transition-colors">
                         <span class="font-semibold text-gray-900 text-lg">Fasilitas apa saja yang sudah termasuk dalam harga?</span>
-                        <i class="fas fa-chevron-down text-blue-500 transition-transform duration-300"></i>
+                        <i :class="activeIndex === 3 ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="text-blue-500 transition-transform duration-300"></i>
                     </button>
-                    <div class="faq-content max-h-0 overflow-hidden transition-all duration-300">
-                        <div class="p-6 pt-0 text-gray-600">
-                            Harga sudah termasuk listrik, air, WiFi, keamanan 24 jam, kebersihan, dan akses ke semua fasilitas umum seperti dapur bersama dan area parkir.
-                        </div>
+                    <div x-show="activeIndex === 3" x-transition class="p-6 pt-0 text-gray-600">
+                        Harga sudah termasuk listrik, air, WiFi, keamanan 24 jam, kebersihan, dan akses ke semua fasilitas umum seperti dapur bersama dan area parkir.
                     </div>
                 </div>
 
-                <!-- FAQ Item 5 -->
-                <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 animate-slide-up" style="animation-delay: 0.5s">
-                    <button class="faq-button w-full text-left p-6 flex justify-between items-center hover:bg-gray-50 transition-colors" onclick="toggleFAQ(this)">
+                <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300" style="animation-delay: 0.5s">
+                    <button @click="activeIndex = activeIndex === 4 ? null : 4" class="w-full text-left p-6 flex justify-between items-center hover:bg-gray-50 transition-colors">
                         <span class="font-semibold text-gray-900 text-lg">Bagaimana cara melakukan booking?</span>
-                        <i class="fas fa-chevron-down text-blue-500 transition-transform duration-300"></i>
+                        <i :class="activeIndex === 4 ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="text-blue-500 transition-transform duration-300"></i>
                     </button>
-                    <div class="faq-content max-h-0 overflow-hidden transition-all duration-300">
-                        <div class="p-6 pt-0 text-gray-600">
-                            Anda dapat melakukan booking melalui WhatsApp atau datang langsung ke lokasi untuk melihat kamar. Proses booking mudah dan cepat, cukup transfer DP dan kamar langsung dapat
-                            ditempati.
-                        </div>
+                    <div x-show="activeIndex === 4" x-transition class="p-6 pt-0 text-gray-600">
+                        Anda dapat melakukan booking langsung dengan klik tombol "Booking Sekarang" di pojok kanan atas atau datang langsung ke lokasi untuk melihat kamar. Proses booking mudah dan cepat,
+                        cukup transfer kamar langsung dapat ditempati.
                     </div>
                 </div>
             </div>
@@ -407,7 +391,7 @@
                             </div>
                             <div>
                                 <h4 class="font-semibold text-gray-900 mb-1">Alamat</h4>
-                                <p class="text-gray-600">Jl. Merdeka No. 123, Jakarta Selatan, 12345</p>
+                                <p class="text-gray-600">Jl. Raya Kutorejo No. 45, Kutorejo, Mojokerto, Jawa Timur 61383</p>
                             </div>
                         </div>
 
@@ -432,15 +416,16 @@
                         </div>
                     </div>
 
-                    <button class="mt-8 bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold transition-all transform hover:scale-105 hover:shadow-lg">
-                        Lihat di Google Maps
-                    </button>
+                    <a href="https://maps.app.goo.gl/xxgSZjaCEQDPgodY9" target="_blank" rel="noopener noreferrer">
+                        <button class="mt-8 bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold transition-all transform hover:scale-105 hover:shadow-lg">
+                            Lihat di Google Maps
+                        </button>
+                    </a>
                 </div>
 
                 <!-- Map Embed -->
                 <div class="w-full h-96 bg-gray-300 rounded-xl overflow-hidden shadow-lg animate-fade-in-right transform hover:scale-100 transition-transform duration-300">
-                    <iframe width="100%" height="100%" style="border: 0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.521573490504!2d106.8193!3d-6.2297!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f18fadc0a507%3A0x15a1f3e95d4a7a5a!2sJl%20Merdeka%2C%20Jakarta%2012345!5e0!3m2!1sen!2sid!4v1234567890">
+                    <iframe width="100%" height="100%" style="border: 0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="{{ $mapUrl }}">
                     </iframe>
                 </div>
             </div>
@@ -561,35 +546,8 @@
         }
     </style>
 
-    <!-- JavaScript for FAQ Toggle and Scroll Animations -->
+    <!-- JavaScript for Scroll Animations -->
     <script>
-        function toggleFAQ(button) {
-            const content = button.nextElementSibling;
-            const icon = button.querySelector('i');
-
-            // Toggle current FAQ
-            if (content.classList.contains('max-h-0')) {
-                // Close all other FAQs
-                document.querySelectorAll('.faq-content').forEach(item => {
-                    if (item !== content) {
-                        item.classList.add('max-h-0');
-                        item.classList.remove('max-h-96');
-                        item.previousElementSibling.querySelector('i').classList.remove('rotate-180');
-                    }
-                });
-
-                // Open current FAQ
-                content.classList.remove('max-h-0');
-                content.classList.add('max-h-96');
-                icon.classList.add('rotate-180');
-            } else {
-                // Close current FAQ
-                content.classList.add('max-h-0');
-                content.classList.remove('max-h-96');
-                icon.classList.remove('rotate-180');
-            }
-        }
-
         // Scroll Animation Observer
         const observerOptions = {
             threshold: 0.1,
