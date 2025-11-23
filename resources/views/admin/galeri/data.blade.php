@@ -24,13 +24,18 @@
                 </div>
                 <div class="p-4">
                     <div class="flex items-center justify-between mb-3">
-                        <span class="text-xs text-slate-700">#{{ $loop->iteration }}</span>
+                        <span class="text-xs text-slate-700">#{{ ($galeri->currentPage() - 1) * $galeri->perPage() + $loop->iteration }}</span>
                     </div>
                     <div class="flex gap-2">
-                        <button class="flex-1 inline-flex items-center justify-center gap-1 px-3 py-1.5 text-xs bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors">
-                            <i class="fa-solid fa-trash text-xs"></i>
-                            Hapus
-                        </button>
+                        <form action="{{ Route('galeri.destroy', $item->id) }}" method="POST" class="inline-block" id="hapus-data-{{ $item->id }}">
+                            @csrf
+                            @method('DELETE')
+                            <button type="button" class="flex-1 inline-flex items-center justify-center gap-1 px-3 py-1.5 text-xs bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
+                                onclick="konfirmasiHapusGaleri({{ $item->id }})">
+                                <i class="fa-solid fa-trash text-xs"></i>
+                                Hapus
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -45,7 +50,7 @@
         @endforelse
     </div>
 
-    <!-- Pagination (jika menggunakan paginate) -->
+    <!-- Pagination -->
     @if (isset($galeri) && $galeri->hasPages())
         <div class="mt-6 border-t border-slate-200 pt-6">
             <div class="flex items-center justify-between">
@@ -88,4 +93,34 @@
             </div>
         </div>
     @endif
+
+    <script>
+        function konfirmasiHapusGaleri(id) {
+            Swal.fire({
+                title: 'Hapus Gambar Galeri?',
+                html: `
+                    <div class="text-center">
+                        <p class="text-slate-700 mb-2">Anda akan menghapus gambar ini dari galeri</p>
+                        <p class="text-sm text-slate-500">Tindakan ini tidak dapat dibatalkan</p>
+                    </div>
+                `,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: '<i class="fa-solid fa-trash mr-2"></i>Ya, Hapus',
+                cancelButtonText: '<i class="fa-solid fa-times mr-2"></i>Batal',
+                reverseButtons: true,
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:bg-red-700 active:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150 ml-2',
+                    cancelButton: 'inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('hapus-data-' + id).submit();
+                }
+            });
+        }
+    </script>
 @endsection

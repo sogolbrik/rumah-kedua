@@ -354,10 +354,18 @@
 
                                             <!-- Status -->
                                             <div class="info-item flex items-center gap-3">
-                                                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z">
-                                                    </path>
-                                                </svg>
+                                                @if ($item->status == 'Tersedia')
+                                                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z">
+                                                        </path>
+                                                    </svg>
+                                                @else
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <circle cx="12" cy="12" r="9" stroke-width="2">
+                                                        </circle>
+                                                        <line x1="8" y1="8" x2="16" y2="16" stroke-width="2" stroke-linecap="round"></line>
+                                                    </svg>
+                                                @endif
                                                 <div>
                                                     <p class="text-xs text-white/70">Status</p>
                                                     <p class="text-base font-semibold">{{ $item->status }}</p>

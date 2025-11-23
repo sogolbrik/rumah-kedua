@@ -52,14 +52,16 @@
             <!-- Hero Section: Image Gallery -->
             <div class="mb-12" x-data="{ activeTab: 0, isZoomed: false }">
                 <!-- Main Image with Zoom -->
-                <div class="relative rounded-2xl overflow-hidden shadow-lg mb-4 bg-neutral-200 transition-smooth" @click="isZoomed = true">
-                    <img :src="isZoomed ? '{{ Storage::url($kamar->gambar) }}' : '{{ Storage::url($kamar->gambar) }}'" alt="{{ $kamar->tipe }}"
-                        class="w-full h-96 sm:h-[500px] object-cover cursor-zoom-in transition-smooth hover:scale-105" x-show="!isZoomed">
+                <div class="relative rounded-2xl overflow-hidden shadow-lg mb-4 bg-neutral-200 transition-smooth">
+                    <img src="{{ Storage::url($kamar->gambar) }}" alt="{{ $kamar->tipe }}" class="w-full h-96 sm:h-[500px] object-cover cursor-zoom-in transition-smooth hover:scale-105"
+                        @click="isZoomed = true">
 
                     <!-- Zoom Modal -->
-                    <div class="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4 cursor-zoom-out" @click="isZoomed = false" x-show="isZoomed" x-transition.opacity>
+                    <div class="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4 cursor-zoom-out" x-show="isZoomed" x-transition.opacity @click.self="isZoomed = false">
                         <img src="{{ Storage::url($kamar->gambar) }}" alt="{{ $kamar->tipe }}" class="max-w-4xl max-h-screen object-contain">
-                        <button class="absolute top-4 right-4 text-white text-4xl font-light hover:opacity-70 transition-smooth">&times;</button>
+                        <button @click="isZoomed = false" class="absolute top-4 right-4 text-white text-4xl font-light hover:opacity-70 transition-smooth">
+                            &times;
+                        </button>
                     </div>
 
                     <!-- Badge Status -->

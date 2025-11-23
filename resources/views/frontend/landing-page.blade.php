@@ -21,9 +21,11 @@
                                 Booking
                             </button>
                         </a>
-                        <button class="border-2 border-blue-500 text-blue-500 hover:bg-blue-50 px-8 py-3 rounded-lg font-semibold transition-all transform hover:scale-105">
-                            Lihat Galeri
-                        </button>
+                        <a href="{{ Route('galeri-kamar') }}">
+                            <button class="border-2 border-blue-500 text-blue-500 hover:bg-blue-50 px-8 py-3 rounded-lg font-semibold transition-all transform hover:scale-105">
+                                Lihat Galeri
+                            </button>
+                        </a>
                     </div>
                 </div>
 
@@ -69,7 +71,7 @@
                 <!-- Feature 3 -->
                 <div class="text-center animate-slide-up transform transition-all duration-300 p-4 rounded-xl" style="animation-delay: 0.3s">
                     <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 transform hover:rotate-12 transition-transform">
-                        <i class="fas fa-sparkles text-blue-500 text-2xl"></i>
+                        <i class="fas fa-broom text-blue-500 text-2xl"></i>
                     </div>
                     <h3 class="text-xl font-semibold text-gray-900 mb-2">Bersih & Terawat</h3>
                     <p class="text-gray-600">Perawatan rutin dan kebersihan terjamin setiap hari</p>
@@ -102,8 +104,8 @@
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
                 <!-- Fasilitas Item 1 -->
                 <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-lg transition-all transform hover:scale-100 hover:-translate-y-2 text-center animate-slide-up" style="animation-delay: 0.1s">
-                    <i class="fas fa-fan text-blue-500 text-3xl mb-3 transform hover:rotate-180 transition-transform duration-500"></i>
-                    <p class="font-semibold text-gray-900 text-sm">AC</p>
+                    <i class="fas fa-bath text-blue-500 text-3xl mb-3 transform hover:rotate-180 transition-transform duration-500"></i>
+                    <p class="font-semibold text-gray-900 text-sm">K. Mandi Dalam</p>
                 </div>
 
                 <!-- Fasilitas Item 2 -->
@@ -132,7 +134,7 @@
 
                 <!-- Fasilitas Item 6 -->
                 <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-lg transition-all transform hover:scale-100 hover:-translate-y-2 text-center animate-slide-up" style="animation-delay: 0.6s">
-                    <i class="fas fa-washing-machine text-blue-500 text-3xl mb-3"></i>
+                    <i class="fas fa-tshirt text-blue-500 text-3xl mb-3"></i>
                     <p class="font-semibold text-gray-900 text-sm">Laundry</p>
                 </div>
             </div>

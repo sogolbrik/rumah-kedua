@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Galeri;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class GaleriController extends Controller
 {
@@ -14,7 +15,7 @@ class GaleriController extends Controller
     public function index()
     {
         return view('admin.galeri.data', [
-            'galeri' => Galeri::latest()->paginate(10),
+            'galeri' => Galeri::latest()->paginate(12),
         ]);
     }
 
@@ -83,6 +84,13 @@ class GaleriController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $galeri = Galeri::findOrFail($id);
+
+        if ($galeri->gambar && Storage::disk('public')->exists($galeri->gambar)) {
+            Storage::disk('public')->delete($galeri->gambar);
+        }
+        $galeri->delete();
+
+        return redirect()->route('galeri.index')->with('success', 'Galeri berhasil dihapus');
     }
 }
