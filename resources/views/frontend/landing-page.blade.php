@@ -154,73 +154,116 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Room Card 1 -->
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all transform hover:scale-100 hover:-translate-y-2 animate-slide-up" style="animation-delay: 0.1s">
-                    <div class="h-48 bg-gray-300 overflow-hidden group">
-                        <img src="/placeholder.svg?height=300&width=400" alt="Kamar Single" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Kamar Single</h3>
-                        <p class="text-gray-600 text-sm mb-4">Kamar nyaman untuk 1 orang dengan fasilitas lengkap</p>
-                        <div class="space-y-2 mb-6 text-sm text-gray-700">
-                            <p class="transform hover:translate-x-2 transition-transform"><i class="fas fa-check text-blue-500 mr-2"></i>AC & Kamar Mandi Dalam</p>
-                            <p class="transform hover:translate-x-2 transition-transform"><i class="fas fa-check text-blue-500 mr-2"></i>WiFi 100 Mbps</p>
-                            <p class="transform hover:translate-x-2 transition-transform"><i class="fas fa-check text-blue-500 mr-2"></i>Kasur & Lemari</p>
+                <!-- Standard -->
+                @if ($standard)
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all transform hover:scale-100 hover:-translate-y-2 animate-slide-up"
+                        style="animation-delay: 0.1s">
+                        <div class="h-48 bg-gray-300 overflow-hidden group">
+                            <img src="{{ Storage::url($standard->gambar) }}" alt="Kamar {{ $standard->tipe }}"
+                                class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" onerror="this.src='/placeholder.svg?height=300&width=400'">
                         </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-2xl font-bold text-blue-500">Rp 500K/bln</span>
-                            <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all transform hover:scale-110 text-sm">
-                                Detail
-                            </button>
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ $standard->tipe }}</h3>
+                            <p class="text-gray-600 text-sm mb-4">{{ $standard->deskripsi }}</p>
+                            <div class="space-y-2 mb-6 text-sm text-gray-700">
+                                @foreach ($standard->detailKamar->take(4) as $detail)
+                                    <p class="transform transition-transform">
+                                        <i class="fas fa-check text-blue-500 mr-2"></i>
+                                        {{ $detail->fasilitas }}
+                                    </p>
+                                @endforeach
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-2xl font-bold text-blue-500">
+                                    Rp {{ number_format($standard->harga, 0, ',', '.') }}/bln
+                                </span>
+                                @if ($standard->status == 'Tersedia')
+                                    <a href="{{ route('booking-detail', $standard->id) }}"
+                                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all transform hover:scale-110 text-sm">
+                                        Detail
+                                    </a>
+                                @else
+                                    <button disabled class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-all transform text-sm">Terisi Penuh</button>
+                                @endif
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endif
 
-                <!-- Room Card 2 -->
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all transform hover:scale-100 hover:-translate-y-2 border-2 border-blue-500 animate-slide-up"
-                    style="animation-delay: 0.2s">
-                    <div class="bg-blue-500 text-white text-center py-2 text-sm font-semibold animate-pulse">PALING POPULER</div>
-                    <div class="h-48 bg-gray-300 overflow-hidden group">
-                        <img src="/placeholder.svg?height=300&width=400" alt="Kamar Double" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Kamar Double</h3>
-                        <p class="text-gray-600 text-sm mb-4">Kamar nyaman untuk 2 orang dengan tempat tidur double</p>
-                        <div class="space-y-2 mb-6 text-sm text-gray-700">
-                            <p class="transform hover:translate-x-2 transition-transform"><i class="fas fa-check text-blue-500 mr-2"></i>AC & Kamar Mandi Dalam</p>
-                            <p class="transform hover:translate-x-2 transition-transform"><i class="fas fa-check text-blue-500 mr-2"></i>WiFi 100 Mbps</p>
-                            <p class="transform hover:translate-x-2 transition-transform"><i class="fas fa-check text-blue-500 mr-2"></i>Kasur Double & Lemari</p>
+                <!-- Medium (PALING POPULER) -->
+                @if ($medium)
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all transform hover:scale-100 hover:-translate-y-2 border-2 border-blue-500 animate-slide-up"
+                        style="animation-delay: 0.2s">
+                        <div class="bg-blue-500 text-white text-center py-2 text-sm font-semibold animate-pulse">
+                            PALING POPULER
                         </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-2xl font-bold text-blue-500">Rp 700K/bln</span>
-                            <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all transform hover:scale-110 text-sm">
-                                Detail
-                            </button>
+                        <div class="h-48 bg-gray-300 overflow-hidden group">
+                            <img src="{{ Storage::url($medium->gambar) }}" alt="Kamar {{ $medium->tipe }}"
+                                class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" onerror="this.src='/placeholder.svg?height=300&width=400'">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ $medium->tipe }}</h3>
+                            <p class="text-gray-600 text-sm mb-4">{{ $medium->deskripsi }}</p>
+                            <div class="space-y-2 mb-6 text-sm text-gray-700">
+                                @foreach ($medium->detailKamar->take(4) as $detail)
+                                    <p class="transform transition-transform">
+                                        <i class="fas fa-check text-blue-500 mr-2"></i>
+                                        {{ $detail->fasilitas }}
+                                    </p>
+                                @endforeach
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-2xl font-bold text-blue-500">
+                                    Rp {{ number_format($medium->harga, 0, ',', '.') }}/bln
+                                </span>
+                                @if ($medium->status == 'Tersedia')
+                                    <a href="{{ route('booking-detail', $medium->id) }}"
+                                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all transform hover:scale-110 text-sm">
+                                        Detail
+                                    </a>
+                                @else
+                                    <button disabled class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-all transform text-sm">Terisi Penuh</button>
+                                @endif
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endif
 
-                <!-- Room Card 3 -->
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all transform hover:scale-100 hover:-translate-y-2 animate-slide-up" style="animation-delay: 0.3s">
-                    <div class="h-48 bg-gray-300 overflow-hidden group">
-                        <img src="/placeholder.svg?height=300&width=400" alt="Suite Deluxe" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Suite Deluxe</h3>
-                        <p class="text-gray-600 text-sm mb-4">Kamar premium untuk 2 orang dengan ruang kerja</p>
-                        <div class="space-y-2 mb-6 text-sm text-gray-700">
-                            <p class="transform hover:translate-x-2 transition-transform"><i class="fas fa-check text-blue-500 mr-2"></i>AC & Kamar Mandi Dalam</p>
-                            <p class="transform hover:translate-x-2 transition-transform"><i class="fas fa-check text-blue-500 mr-2"></i>WiFi 100 Mbps</p>
-                            <p class="transform hover:translate-x-2 transition-transform"><i class="fas fa-check text-blue-500 mr-2"></i>Area Kerja & Balkon</p>
+                <!-- Exclusive -->
+                @if ($exclusive)
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all transform hover:scale-100 hover:-translate-y-2 animate-slide-up"
+                        style="animation-delay: 0.3s">
+                        <div class="h-48 bg-gray-300 overflow-hidden group">
+                            <img src="{{ Storage::url($exclusive->gambar) }}" alt="Kamar {{ $exclusive->tipe }}"
+                                class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" onerror="this.src='/placeholder.svg?height=300&width=400'">
                         </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-2xl font-bold text-blue-500">Rp 900K/bln</span>
-                            <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all transform hover:scale-110 text-sm">
-                                Detail
-                            </button>
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ $exclusive->tipe }}</h3>
+                            <p class="text-gray-600 text-sm mb-4">{{ $exclusive->deskripsi }}</p>
+                            <div class="space-y-2 mb-6 text-sm text-gray-700">
+                                @foreach ($exclusive->detailKamar->take(4) as $detail)
+                                    <p class="transform transition-transform">
+                                        <i class="fas fa-check text-blue-500 mr-2"></i>
+                                        {{ $detail->fasilitas }}
+                                    </p>
+                                @endforeach
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-2xl font-bold text-blue-500">
+                                    Rp {{ number_format($exclusive->harga, 0, ',', '.') }}/bln
+                                </span>
+                                @if ($exclusive->status == 'Tersedia')
+                                    <a href="{{ route('booking-detail', $exclusive->id) }}"
+                                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all transform hover:scale-110 text-sm">
+                                        Detail
+                                    </a>
+                                @else
+                                    <button disabled class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-all transform text-sm">Terisi Penuh</button>
+                                @endif
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endif
             </div>
         </div>
     </section>
@@ -239,9 +282,9 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Testimoni 1 -->
-                <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all transform hover:scale-100 hover:-translate-y-2 animate-slide-up" style="animation-delay: 0.1s">
+                <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all transform animate-slide-up" style="animation-delay: 0.1s">
                     <div class="flex items-center gap-4 mb-4">
-                        <img src="/placeholder.svg?height=50&width=50" alt="Avatar" class="w-12 h-12 rounded-full transform hover:scale-110 transition-transform">
+                        <img src="{{ asset('assets/image/avatar/default-avatar.png') }}" alt="Avatar" class="w-12 h-12 rounded-full transform transition-transform">
                         <div>
                             <h4 class="font-semibold text-gray-900">Siti Nur Azizah</h4>
                             <p class="text-sm text-gray-600">Mahasiswa Teknik</p>
@@ -260,9 +303,9 @@
                 </div>
 
                 <!-- Testimoni 2 -->
-                <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all transform hover:scale-100 hover:-translate-y-2 animate-slide-up" style="animation-delay: 0.2s">
+                <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all transform animate-slide-up" style="animation-delay: 0.2s">
                     <div class="flex items-center gap-4 mb-4">
-                        <img src="/placeholder.svg?height=50&width=50" alt="Avatar" class="w-12 h-12 rounded-full transform hover:scale-110 transition-transform">
+                        <img src="{{ asset('assets/image/avatar/default-avatar.png') }}" alt="Avatar" class="w-12 h-12 rounded-full transform transition-transform">
                         <div>
                             <h4 class="font-semibold text-gray-900">Budi Santoso</h4>
                             <p class="text-sm text-gray-600">Pekerja Kantoran</p>
@@ -281,9 +324,9 @@
                 </div>
 
                 <!-- Testimoni 3 -->
-                <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all transform hover:scale-100 hover:-translate-y-2 animate-slide-up" style="animation-delay: 0.3s">
+                <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all transform animate-slide-up" style="animation-delay: 0.3s">
                     <div class="flex items-center gap-4 mb-4">
-                        <img src="/placeholder.svg?height=50&width=50" alt="Avatar" class="w-12 h-12 rounded-full transform hover:scale-110 transition-transform">
+                        <img src="{{ asset('assets/image/avatar/default-avatar.png') }}" alt="Avatar" class="w-12 h-12 rounded-full transform transition-transform">
                         <div>
                             <h4 class="font-semibold text-gray-900">Rina Wijaya</h4>
                             <p class="text-sm text-gray-600">Mahasiswa Bisnis</p>
@@ -442,13 +485,12 @@
                 Jangan lewatkan kesempatan untuk menginap di tempat yang nyaman dan terpercaya. Hubungi kami sekarang untuk informasi lebih lanjut atau booking langsung.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <button class="bg-white hover:bg-gray-100 text-blue-500 px-8 py-4 rounded-lg font-semibold transition-all transform hover:scale-110 hover:shadow-2xl"
-                    onclick="location.href='https://wa.me/+6287870327957'">
+                <a href="https://wa.me/+6287870327957" target="_blank" class="bg-white hover:bg-gray-100 text-blue-500 px-8 py-4 rounded-lg font-semibold transition-all transform hover:scale-100 hover:shadow-2xl">
                     <i class="fab fa-whatsapp mr-2"></i>WhatsApp
-                </button>
-                <button class="border-2 border-white hover:bg-white/10 text-white px-8 py-4 rounded-lg font-semibold transition-all transform hover:scale-110">
+                </a>
+                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=gilangsampurno125@gmail.com" target="_blank" class="border-2 border-white hover:bg-white/10 text-white px-8 py-4 rounded-lg font-semibold transition-all transform hover:scale-100">
                     <i class="fas fa-envelope mr-2"></i>Hubungi Email
-                </button>
+                </a>
             </div>
         </div>
     </section>

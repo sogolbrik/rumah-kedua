@@ -11,12 +11,30 @@ class LandingPageController extends Controller
 {
     public function landingPage()
     {
+        $standard = Kamar::with('detailKamar')
+            ->where('tipe', 'Standard')
+            ->orderByRaw("CASE WHEN status = 'Tersedia' THEN 0 ELSE 1 END")
+            ->first();
+
+        $medium = Kamar::with('detailKamar')
+            ->where('tipe', 'Medium')
+            ->orderByRaw("CASE WHEN status = 'Tersedia' THEN 0 ELSE 1 END")
+            ->first();
+
+        $exclusive = Kamar::with('detailKamar')
+            ->where('tipe', 'Exclusive')
+            ->orderByRaw("CASE WHEN status = 'Tersedia' THEN 0 ELSE 1 END")
+            ->first();
+
         $lat = -7.53526776112375;
         $lng = 112.51447516193055;
         $mapUrl = $this->generateMapUrl($lat, $lng);
 
         return view('frontend.landing-page', [
-            'kamar' => Kamar::get(),
+            // 'kamar' => Kamar::with('detailKamar')->get(),
+            'standard' => $standard,
+            'medium' => $medium,
+            'exclusive' => $exclusive,
             'mapUrl' => $mapUrl
         ]);
     }
