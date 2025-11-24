@@ -10,6 +10,7 @@ use App\Http\Controllers\api\MidtransController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\frontend\BookingPageController;
 use App\Http\Controllers\frontend\LandingPageController;
+use App\Http\Controllers\frontend\PembayaranPageController;
 use Illuminate\Support\Facades\Route;
 
 //Authentication
@@ -35,12 +36,13 @@ Route::prefix('transaksi')->name('transaksi.')->group(function () {
     Route::put('/{id}/cancel', [TransaksiController::class, 'cancel'])->name('cancel');
     Route::delete('/{id}', [TransaksiController::class, 'destroy'])->name('destroy');
 });
+
 /* Nanti diluar middleware */
 Route::prefix('midtrans')->group(function () {
     Route::post('/notification', [MidtransController::class, 'handleNotification'])->name('midtrans.notification');
 });
-
 /* END ' Nanti diluar middleware */
+
 //Pengumuman
 Route::get('pengumuman-admin', [PengumumanController::class, 'index'])->name('pengumuman-admin');
 
@@ -51,5 +53,5 @@ Route::get('galeri-kamar', [LandingPageController::class, 'galeri'])->name('gale
 Route::get('booking', [BookingPageController::class, 'booking'])->name('booking');
 Route::get('booking-detail/{id}', [BookingPageController::class, 'bookingDetail'])->name('booking-detail');
 Route::middleware('auth')->group(function () {
-    Route::get('booking-pembayaran/{id}', [BookingPageController::class, 'pembayaran'])->name('pembayaran');
+    Route::get('booking-pembayaran/{id}', [PembayaranPageController::class, 'pembayaran'])->name('pembayaran');
 });

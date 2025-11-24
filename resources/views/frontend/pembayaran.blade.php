@@ -27,7 +27,6 @@
         }
     </style>
 
-
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-18" x-data="{ duration: 1, harga: 1500000 }">
         <div class="max-w-6xl mx-auto mb-2 py-0">
             <!-- Breadcrumb -->
