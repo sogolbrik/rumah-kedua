@@ -18,7 +18,7 @@
                 <a href="{{ url('/#kamar') }}" class="text-gray-700 hover:text-blue-500 font-medium transition-colors">Kamar</a>
                 <a href="{{ url('/#lokasi') }}" class="text-gray-700 hover:text-blue-500 font-medium transition-colors">Lokasi</a>
                 <a href="{{ Route('galeri-kamar') }}" class="text-gray-700 hover:text-blue-500 font-medium transition-colors">Galeri</a>
-                <a href="{{ url('/#kontak') }}" class="text-gray-700 hover:text-blue-500 font-medium transition-colors">Kontak</a>
+                <a href="{{ url('/#lokasi') }}" class="text-gray-700 hover:text-blue-500 font-medium transition-colors">Kontak</a>
             </div>
 
             <!-- CTA Button Desktop -->
