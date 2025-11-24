@@ -47,47 +47,48 @@
                 <div class="bg-white rounded-2xl shadow-soft p-6">
                     <h2 class="text-2xl font-bold text-gray-900 mb-6">Form Pembayaran</h2>
 
-                    <!-- Duration Selection -->
-                    <div class="mb-6">
-                        <label class="block text-sm font-medium text-gray-700 mb-3">Durasi Pembayaran</label>
-                        <div class="grid grid-cols-3 gap-3">
-                            <button @click="duration = 1" :class="duration === 1 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-600'"
-                                class="border-2 rounded-xl py-4 px-4 text-center transition-all duration-200 font-medium">
-                                <div class="text-lg font-semibold">1 Bulan</div>
-                                <div class="text-sm opacity-80" x-text="'Rp ' + (harga * 1).toLocaleString('id-ID')">
-                                </div>
-                            </button>
-                            <button @click="duration = 3" :class="duration === 3 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-600'"
-                                class="border-2 rounded-xl py-4 px-4 text-center transition-all duration-200 font-medium">
-                                <div class="text-lg font-semibold">3 Bulan</div>
-                                <div class="text-sm opacity-80" x-text="'Rp ' + (harga * 3).toLocaleString('id-ID')">
-                                </div>
-                            </button>
-                            <button @click="duration = 6" :class="duration === 6 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-600'"
-                                class="border-2 rounded-xl py-4 px-4 text-center transition-all duration-200 font-medium">
-                                <div class="text-lg font-semibold">6 Bulan</div>
-                                <div class="text-sm opacity-80" x-text="'Rp ' + (harga * 6).toLocaleString('id-ID')">
-                                </div>
-                            </button>
-                        </div>
-                    </div>
+                    <div x-data="{ duration: 1, harga: {{ (int) $kamar->harga }} }">
 
-                    <!-- Price Calculation -->
-                    <div class="bg-gray-50 rounded-xl p-4 mb-6">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-gray-600">Harga per bulan:</span>
-                            <span class="font-semibold">Rp{{ number_format($kamar->harga, 0, ',', '.') }}</span>
-                        </div>
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-gray-600">Durasi:</span>
-                            <span class="font-semibold" x-text="duration + ' Bulan'"></span>
-                        </div>
-                        <div class="border-t border-gray-200 pt-2 mt-2">
-                            <div class="flex justify-between items-center">
-                                <span class="text-lg font-bold text-gray-900">Total Pembayaran:</span>
-                                <span class="text-2xl font-bold text-blue-600" x-text="'Rp ' + (harga * duration).toLocaleString('id-ID')"></span>
+                        <!-- Duration Selection -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Durasi Pembayaran</label>
+                            <div class="grid grid-cols-3 gap-3">
+                                <button @click="duration = 1" :class="duration === 1 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-600'"
+                                    class="border-2 rounded-xl py-4 px-4 text-center transition-all duration-200 font-medium">
+                                    <div class="text-lg font-semibold">1 Bulan</div>
+                                    <div class="text-sm opacity-80" x-text="'Rp ' + (harga * 1).toLocaleString('id-ID')"></div>
+                                </button>
+                                <button @click="duration = 3" :class="duration === 3 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-600'"
+                                    class="border-2 rounded-xl py-4 px-4 text-center transition-all duration-200 font-medium">
+                                    <div class="text-lg font-semibold">3 Bulan</div>
+                                    <div class="text-sm opacity-80" x-text="'Rp ' + (harga * 3).toLocaleString('id-ID')"></div>
+                                </button>
+                                <button @click="duration = 6" :class="duration === 6 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-600'"
+                                    class="border-2 rounded-xl py-4 px-4 text-center transition-all duration-200 font-medium">
+                                    <div class="text-lg font-semibold">6 Bulan</div>
+                                    <div class="text-sm opacity-80" x-text="'Rp ' + (harga * 6).toLocaleString('id-ID')"></div>
+                                </button>
                             </div>
                         </div>
+
+                        <!-- Price Calculation -->
+                        <div class="bg-gray-50 rounded-xl p-4 mb-6">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-gray-600">Harga per bulan:</span>
+                                <span class="font-semibold" x-text="'Rp ' + harga.toLocaleString('id-ID')"></span>
+                            </div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-gray-600">Durasi:</span>
+                                <span class="font-semibold" x-text="duration + ' Bulan'"></span>
+                            </div>
+                            <div class="border-t border-gray-200 pt-2 mt-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-lg font-bold text-gray-900">Total Pembayaran:</span>
+                                    <span class="text-2xl font-bold text-blue-600" x-text="'Rp ' + (harga * duration).toLocaleString('id-ID')"></span>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                     <!-- User Data -->
@@ -95,11 +96,11 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">Data Penyewa</label>
                         <div class="space-y-3">
                             <div>
-                                <input type="text" value="Ahmad Rizki" readonly class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-gray-600 focus:outline-none">
-                                <p class="text-xs text-gray-500 mt-1">Nama lengkap sesuai KTP</p>
+                                <input type="text" value="{{ auth()->user()->name }}" readonly class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-gray-600 focus:outline-none">
+                                <p class="text-xs text-gray-500 mt-1">Nama Penyewa</p>
                             </div>
                             <div>
-                                <input type="email" value="ahmad.rizki@email.com" readonly class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-gray-600 focus:outline-none">
+                                <input type="email" value="{{ auth()->user()->email }}" readonly class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-gray-600 focus:outline-none">
                                 <p class="text-xs text-gray-500 mt-1">Email aktif untuk konfirmasi</p>
                             </div>
                         </div>
@@ -150,32 +151,38 @@
 
                     <!-- Room Image -->
                     <div class="rounded-xl overflow-hidden mb-4">
-                        <img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80"
-                            alt="Kamar Kos" class="w-full h-48 object-cover">
+                        <img src="{{ Storage::url($kamar->gambar) }}" alt="Kamar Kos" class="w-full h-48 object-cover">
                     </div>
 
                     <!-- Room Info -->
                     <div class="space-y-3">
                         <div class="flex justify-between items-center pb-2 border-b border-gray-200">
                             <span class="text-gray-600">Tipe Kamar</span>
-                            <span class="font-semibold">Executive</span>
+                            <span class="font-semibold">{{ $kamar->tipe }}</span>
                         </div>
                         <div class="flex justify-between items-center pb-2 border-b border-gray-200">
                             <span class="text-gray-600">Kode Kamar</span>
-                            <span class="font-semibold">EXC-301</span>
+                            <span class="font-semibold">{{ $kamar->kode_kamar }}</span>
                         </div>
                         <div class="flex justify-between items-center pb-2 border-b border-gray-200">
                             <span class="text-gray-600">Harga per Bulan</span>
-                            <span class="text-lg font-bold text-blue-600">Rp 1.500.000</span>
+                            <span class="text-lg font-bold text-blue-600">Rp {{ number_format($kamar->harga, 0, ',', '.') }}</span>
                         </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-gray-600">Fasilitas</span>
-                            <div class="flex space-x-2">
-                                <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">AC</span>
-                                <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">WiFi</span>
-                                <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">K. Mandi</span>
+                        @if ($kamar->detailKamar)
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Fasilitas</span>
+                                <div class="flex space-x-2">
+                                    @foreach ($kamar->detailKamar->take(3) as $detail)
+                                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">{{ $detail->fasilitas }}</span>
+                                    @endforeach
+                                    @if ($kamar->detailKamar->count() > 3)
+                                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
+                                            +{{ $kamar->detailKamar->count() - 3 }}
+                                        </span>
+                                    @endif
+                                </div>
                             </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
 
