@@ -50,4 +50,6 @@ Route::get('/', [LandingPageController::class, 'landingPage'])->name('landing-pa
 Route::get('galeri-kamar', [LandingPageController::class, 'galeri'])->name('galeri-kamar');
 Route::get('booking', [BookingPageController::class, 'booking'])->name('booking');
 Route::get('booking-detail/{id}', [BookingPageController::class, 'bookingDetail'])->name('booking-detail');
-Route::get('booking-pembayaran/{id}', [BookingPageController::class, 'pembayaran'])->name('pembayaran');
+Route::middleware('auth')->group(function () {
+    Route::get('booking-pembayaran/{id}', [BookingPageController::class, 'pembayaran'])->name('pembayaran');
+});

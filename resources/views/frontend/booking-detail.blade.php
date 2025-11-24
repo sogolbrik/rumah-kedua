@@ -383,47 +383,21 @@
                         </div>
 
                         <div class="mb-8 pb-8 border-b border-neutral-200">
-                            @if (auth()->check())
-                                <a href="{{ route('pembayaran', $kamar->id) }}">
-                                    <button
-                                        class="cursor-pointer w-full flex items-center justify-center gap-2 
+                            <a href="{{ route('pembayaran', $kamar->id) }}">
+                                <button
+                                    class="cursor-pointer w-full flex items-center justify-center gap-2 
                                     bg-blue-500 text-white font-semibold px-6 py-3 rounded-lg
                                     border-blue-600 border-b-[4px]
                                     transition-all
                                     hover:brightness-110 hover:-translate-y-[2px] hover:border-b-[6px]
                                     active:border-b-[2px] active:brightness-90 active:translate-y-[2px] shadow-md">
-
-                                        <!-- Icon Key -->
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd"
-                                                d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-
-                                        Pesan Sekarang
-                                    </button>
-                                </a>
-                            @else
-                                <a href="{{ Route('login') }}">
-                                    <button
-                                        class="cursor-pointer w-full flex items-center justify-center gap-2 
-                                bg-blue-500 text-white font-semibold px-6 py-3 rounded-lg
-                                border-blue-600 border-b-[4px]
-                                transition-all
-                                hover:brightness-110 hover:-translate-y-[2px] hover:border-b-[6px]
-                                active:border-b-[2px] active:brightness-90 active:translate-y-[2px] shadow-md">
-
-                                        <!-- Icon Key -->
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd"
-                                                d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-
-                                        Pesan Sekarang
-                                    </button>
-                                </a>
-                            @endif
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    Pesan Sekarang
+                                </button>
+                            </a>
                         </div>
 
                         <!-- Quick Facts -->

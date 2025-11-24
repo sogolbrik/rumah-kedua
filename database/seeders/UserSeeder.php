@@ -20,6 +20,13 @@ class UserSeeder extends Seeder
             'role'     => 'admin',
         ]);
 
+        User::create([
+            'name'     => 'sogol',
+            'email'    => 'sogol@gmail.com',
+            'password' => bcrypt('sogol123'),
+            'role'     => 'user',
+        ]);
+
         for ($i=1; $i < 11; $i++) { 
             User::create([
                 'name'     => 'User' . $i,
