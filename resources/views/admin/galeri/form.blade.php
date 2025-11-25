@@ -17,7 +17,7 @@
                 </a>
             </div>
 
-            <form action="{{ route('galeri.store') }}" method="POST" enctype="multipart/form-data" class="overflow-hidden rounded-2xl bg-white shadow-xl ring-1 ring-slate-200">
+            <form id="galeri-form" enctype="multipart/form-data" class="overflow-hidden rounded-2xl bg-white shadow-xl ring-1 ring-slate-200">
                 @csrf
 
                 <div class="border-b border-slate-200 bg-gradient-to-r from-cyan-50 to-blue-50 px-8 py-6">
@@ -226,22 +226,74 @@
             updateSubmitButton();
         }
 
-        // Update form to submit multiple files
-        document.querySelector('form').addEventListener('submit', function(e) {
+        document.getElementById('galeri-form').addEventListener('submit', function(e) {
+            e.preventDefault(); // Pastikan tidak submit biasa
+
             if (selectedFiles.length === 0) {
-                e.preventDefault();
-                alert('Harap pilih minimal satu gambar');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Harap pilih minimal satu gambar',
+                    timer: 3000,
+                    position: "top-end",
+                    toast: true,
+                    showConfirmButton: false,
+                    customClass: {
+                        popup: 'rounded-xl'
+                    }
+                });
                 return;
             }
 
-            // Create a new FormData and append all files
             const formData = new FormData();
-            selectedFiles.forEach((file, index) => {
+            selectedFiles.forEach(file => {
                 formData.append('gambar[]', file);
             });
+            formData.append('_token', document.querySelector('input[name="_token"]').value);
 
-            // You might want to send this via AJAX instead
-            // For now, we'll let the form submit normally
+            const submitBtn = document.getElementById('submit-btn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengunggah...';
+
+            fetch("{{ route('galeri.store') }}", {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest' // opsional, tapi bagus untuk kejelasan
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err?.message || 'Terjadi kesalahan validasi.');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success && data.redirect) {
+                        window.location.href = data.redirect;
+                    } else {
+                        throw new Error('Respons tidak valid dari server.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal mengupload gambar. Silakan coba lagi.',
+                        timer: 3000,
+                        position: "top-end",
+                        toast: true,
+                        showConfirmButton: false,
+                        customClass: {
+                            popup: 'rounded-xl'
+                        }
+                    });
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                });
         });
     </script>
 @endsection

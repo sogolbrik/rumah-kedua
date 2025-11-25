@@ -8,52 +8,68 @@
             <h1 class="text-3xl font-bold text-slate-900">Galeri Gambar</h1>
             <p class="mt-1 text-sm text-slate-600">Kelola semua gambar galeri kamar dengan mudah.</p>
         </div>
-        <a href="{{ Route('galeri.create') }}">
-            <button class="inline-flex items-center gap-2 rounded-lg bg-blue-600 text-white px-4 py-2.5 text-sm font-medium hover:bg-blue-700 transition-colors">
+        <a href="{{ route('galeri.create') }}">
+            <button
+                class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
                 <i class="fa-solid fa-plus-circle text-sm"></i>
                 Tambah Gambar
             </button>
         </a>
     </div>
 
-    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        @forelse($galeri as $item)
-            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md transition-all duration-300">
-                <div class="aspect-w-16 aspect-h-12 bg-slate-100 overflow-hidden">
-                    <img src="{{ Storage::url($item->gambar) }}" alt="Galeri Image" class="w-full h-48 object-cover hover:scale-105 transition-transform duration-300">
-                </div>
-                <div class="p-4">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-xs text-slate-700">#{{ ($galeri->currentPage() - 1) * $galeri->perPage() + $loop->iteration }}</span>
+    <!-- Alpine.js Zoom Modal -->
+    <div x-data="{ zoomedImage: null }">
+        <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5">
+            @forelse($galeri as $item)
+                <div class="group relative rounded-xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:shadow-lg overflow-hidden">
+                    <div class="aspect-w-16 aspect-h-12 bg-slate-50">
+                        <img src="{{ Storage::url($item->gambar) }}" alt="Galeri Image" class="h-48 w-full cursor-pointer object-cover transition-transform duration-300 group-hover:scale-105"
+                            @click="zoomedImage = '{{ Storage::url($item->gambar) }}'" loading="lazy">
                     </div>
-                    <div class="flex gap-2">
-                        <form action="{{ Route('galeri.destroy', $item->id) }}" method="POST" class="inline-block" id="hapus-data-{{ $item->id }}">
+                    <div class="p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-medium text-slate-700">#{{ ($galeri->currentPage() - 1) * $galeri->perPage() + $loop->iteration }}</span>
+                        </div>
+                        <form action="{{ route('galeri.destroy', $item->id) }}" method="POST" class="inline-block" id="hapus-data-{{ $item->id }}">
                             @csrf
                             @method('DELETE')
-                            <button type="button" class="flex-1 inline-flex items-center justify-center gap-1 px-3 py-1.5 text-xs bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
+                            <button type="button"
+                                class="w-full inline-flex items-center justify-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-medium text-red-700 transition-colors hover:bg-red-100 hover:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                                 onclick="konfirmasiHapusGaleri({{ $item->id }})">
                                 <i class="fa-solid fa-trash text-xs"></i>
-                                Hapus
+                                Hapus Gambar
                             </button>
                         </form>
                     </div>
                 </div>
-            </div>
-        @empty
-            <div class="col-span-full text-center py-12">
-                <div class="text-slate-400 mb-4">
-                    <i class="fa-solid fa-image text-4xl"></i>
+            @empty
+                <div class="col-span-full py-16 text-center">
+                    <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                        <i class="fa-solid fa-images text-2xl"></i>
+                    </div>
+                    <p class="text-slate-600 text-lg font-medium mb-1">Tidak ada gambar galeri</p>
+                    <p class="text-slate-500 text-sm">Tambahkan gambar pertama Anda untuk memulai</p>
                 </div>
-                <p class="text-slate-500 text-lg mb-2">Tidak ada gambar galeri</p>
-                <p class="text-slate-400 text-sm">Tambahkan gambar pertama Anda untuk memulai</p>
+            @endforelse
+        </div>
+
+        <!-- Zoom Modal -->
+        <div x-show="zoomedImage" x-on:click="zoomedImage = null" x-transition:enter="transition-opacity duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+            x-transition:leave="transition-opacity duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm" style="display: none;" x-cloak>
+            <div x-on:click.stop class="relative max-w-[90vw] max-h-[90vh] flex items-center justify-center">
+                <img :src="zoomedImage" alt="Zoomed image" class="max-w-full max-h-[85vh] rounded-lg shadow-2xl object-contain">
+                <button @click="zoomedImage = null" class="absolute -top-12 right-0 text-white bg-black/40 hover:bg-black/60 rounded-full p-2 transition-colors" aria-label="Close zoom">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
             </div>
-        @endforelse
+        </div>
     </div>
 
-    <!-- Pagination -->
+    <!-- Pagination (tidak diubah) -->
     @if (isset($galeri) && $galeri->hasPages())
-        <div class="mt-6 border-t border-slate-200 pt-6">
-            <div class="flex items-center justify-between">
+        <div class="mt-8 border-t border-slate-200 pt-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <p class="text-sm text-slate-700">
                     Menampilkan
                     <span class="font-medium">{{ $galeri->firstItem() }}</span>
@@ -63,30 +79,30 @@
                     <span class="font-medium">{{ $galeri->total() }}</span>
                     gambar
                 </p>
-                <div class="flex gap-1">
+                <div class="flex gap-1.5">
                     @if ($galeri->onFirstPage())
-                        <span class="inline-flex items-center px-3 py-1.5 rounded-md text-sm bg-slate-100 text-slate-400 cursor-not-allowed">
-                            <i class="fa-solid fa-chevron-left mr-1 text-xs"></i>
+                        <span class="inline-flex items-center gap-1 px-3.5 py-2 rounded-lg text-sm bg-slate-100 text-slate-400 cursor-not-allowed">
+                            <i class="fa-solid fa-chevron-left text-xs"></i>
                             Sebelumnya
                         </span>
                     @else
                         <a href="{{ $galeri->previousPageUrl() }}"
-                            class="inline-flex items-center px-3 py-1.5 rounded-md text-sm bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors">
-                            <i class="fa-solid fa-chevron-left mr-1 text-xs"></i>
+                            class="inline-flex items-center gap-1 px-3.5 py-2 rounded-lg text-sm bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors">
+                            <i class="fa-solid fa-chevron-left text-xs"></i>
                             Sebelumnya
                         </a>
                     @endif
 
                     @if ($galeri->hasMorePages())
                         <a href="{{ $galeri->nextPageUrl() }}"
-                            class="inline-flex items-center px-3 py-1.5 rounded-md text-sm bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors">
+                            class="inline-flex items-center gap-1 px-3.5 py-2 rounded-lg text-sm bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors">
                             Selanjutnya
-                            <i class="fa-solid fa-chevron-right ml-1 text-xs"></i>
+                            <i class="fa-solid fa-chevron-right text-xs"></i>
                         </a>
                     @else
-                        <span class="inline-flex items-center px-3 py-1.5 rounded-md text-sm bg-slate-100 text-slate-400 cursor-not-allowed">
+                        <span class="inline-flex items-center gap-1 px-3.5 py-2 rounded-lg text-sm bg-slate-100 text-slate-400 cursor-not-allowed">
                             Selanjutnya
-                            <i class="fa-solid fa-chevron-right ml-1 text-xs"></i>
+                            <i class="fa-solid fa-chevron-right text-xs"></i>
                         </span>
                     @endif
                 </div>
@@ -123,4 +139,22 @@
             });
         }
     </script>
+
+    @if (session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                Swal.fire({
+                    icon: 'success',
+                    title: "{{ session('success') }}",
+                    position: "top-end",
+                    toast: true,
+                    timer: 3000,
+                    showConfirmButton: false,
+                    customClass: {
+                        popup: 'rounded-xl'
+                    }
+                });
+            });
+        </script>
+    @endif
 @endsection

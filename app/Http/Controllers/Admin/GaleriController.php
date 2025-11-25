@@ -30,6 +30,7 @@ class GaleriController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
     public function store(Request $request)
     {
         $request->validate([
@@ -38,21 +39,25 @@ class GaleriController extends Controller
 
         $uploadedGambar = [];
 
-        if ($request->hasFile('gambar')) {
-            foreach ($request->file('gambar') as $image) {
-                $extension = $image->getClientOriginalExtension();
-                $gambarGaleri = 'galeri_' . time() . '_' . uniqid() . '.' . $extension;
-                $gambarPath = $image->storePubliclyAs('galeri', $gambarGaleri, 'public');
-
-                $uploadedGambar[] = ['gambar' => $gambarPath];
-            }
+        foreach ($request->file('gambar') as $image) {
+            $extension = $image->getClientOriginalExtension();
+            $gambarGaleri = 'galeri_' . time() . '_' . uniqid() . '.' . $extension;
+            $gambarPath = $image->storePubliclyAs('galeri', $gambarGaleri, 'public');
+            $uploadedGambar[] = ['gambar' => $gambarPath];
         }
 
         foreach ($uploadedGambar as $gambarData) {
             Galeri::create($gambarData);
         }
 
-        return redirect()->route('galeri.index')->with('success', 'Galeri berhasil ditambahkan');
+        session()->flash('success', 'Galeri berhasil ditambahkan');
+
+        // Hanya return JSON — karena AJAX-only
+        return response()->json([
+            'success' => true,
+            'message' => 'Galeri berhasil ditambahkan',
+            'redirect' => route('galeri.index'),
+        ]);
     }
 
     /**
