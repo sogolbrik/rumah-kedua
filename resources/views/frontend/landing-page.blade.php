@@ -476,7 +476,7 @@
     </section>
 
     <!-- 8. CALL TO ACTION SECTION -->
-    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-blue-500">
+    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-blue-500" id="kontak">
         <div class="max-w-4xl mx-auto text-center animate-fade-in">
             <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
                 Siap Merasakan Kenyamanan?
