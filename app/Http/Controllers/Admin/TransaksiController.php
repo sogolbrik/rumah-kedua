@@ -164,12 +164,12 @@ class TransaksiController extends Controller
     }
 
 
-    private $serverKey = "";
     public function checkStatus(Request $request)
     {
-         $orderId = $request->orderId;
+        $orderId = $request->orderId;
+        $serverKey = config('midtrans.server_key');
 
-        $response = Http::withBasicAuth($this->serverKey, '')
+        $response = Http::withBasicAuth($serverKey, '')
             ->get("https://api.sandbox.midtrans.com/v2/{$orderId}/status");
 
         $model = $response->json();
@@ -186,6 +186,8 @@ class TransaksiController extends Controller
         } elseif ($model["transaction_status"] === "settlement") {
             $trx->status_pembayaran = "paid";
         }
+
+        $this->updateUserAndKamar($trx->id_user, $trx->id_kamar, $trx->masuk_kamar);
 
         $trx->save();
 
@@ -237,30 +239,6 @@ class TransaksiController extends Controller
             ->with('success', 'Transaksi berhasil dihapus.');
     }
 
-    public function manualCheckStatus($id)
-    {
-        $transaksi = Transaksi::findOrFail($id);
-
-        if (!$transaksi->midtrans_order_id) {
-            return redirect()->back()->with('error', 'Transaksi tidak memiliki order ID Midtrans');
-        }
-
-        $statusResponse = $this->midtransService->checkTransactionStatus($transaksi->midtrans_order_id);
-
-        if ($statusResponse['success']) {
-            $statusData = $statusResponse['status'];
-
-            if (in_array($statusData['transaction_status'], ['settlement', 'capture'])) {
-                $this->processManualPaymentSuccess($transaksi, $statusData);
-                return redirect()->back()->with('success', 'Status diperbarui: Pembayaran berhasil');
-            }
-
-            return redirect()->back()->with('info', 'Status: ' . $statusData['transaction_status']);
-        } else {
-            return redirect()->back()->with('error', 'Gagal memeriksa status: ' . $statusResponse['message']);
-        }
-    }
-
     private function calculateDueDate($tanggalPembayaran, $durasi)
     {
         $tanggal = Carbon::parse($tanggalPembayaran);
@@ -298,51 +276,15 @@ class TransaksiController extends Controller
         $user = User::find($userId);
         if ($user) {
             $user->update([
-                'id_kamar'        => $kamarId,
-                'tanggal_masuk'   => $tanggalMasuk,
+                'id_kamar' => $kamarId,
+                'tanggal_masuk' => $tanggalMasuk,
                 'status_penghuni' => 'aktif',
-                'role'            => 'penghuni',
+                'role' => 'penghuni',
             ]);
         }
 
         Kamar::where('id', $kamarId)->update(['status' => 'Terisi']);
 
         return true;
-    }
-
-    private function processManualPaymentSuccess($transaksi, $statusData)
-    {
-        DB::beginTransaction();
-
-        $transaksi->update([
-            'status_pembayaran'       => 'paid',
-            'midtrans_payment_type'   => $statusData['payment_type'] ?? null,
-            'midtrans_transaction_id' => $statusData['transaction_id'] ?? null,
-            'midtrans_response'       => $statusData
-        ]);
-
-        $this->updateUserAndKamar($transaksi->id_user, $transaksi->id_kamar, $transaksi->masuk_kamar);
-
-        DB::commit();
-    }
-
-    public function forceUpdateStatus($id)
-    {
-        DB::beginTransaction();
-
-        $transaksi = Transaksi::findOrFail($id);
-
-        $transaksi->update([
-            'status_pembayaran' => 'paid',
-            'midtrans_payment_type' => 'manual_update',
-            'midtrans_transaction_id' => 'MANUAL_' . time()
-        ]);
-
-        $this->updateUserAndKamar($transaksi->id_user, $transaksi->id_kamar, $transaksi->masuk_kamar);
-
-        DB::commit();
-
-        return redirect()->route('transaksi.index')
-            ->with('success', 'Status transaksi berhasil diupdate menjadi paid secara manual.');
     }
 }

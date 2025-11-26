@@ -138,17 +138,4 @@ class MidtransController extends Controller
             ]);
         }
     }
-
-    public function checkPaymentStatus($id)
-    {
-        $transaksi = Transaksi::findOrFail($id);
-
-        return response()->json([
-            'status_pembayaran' => $transaksi->status_pembayaran,
-            'midtrans_order_id' => $transaksi->midtrans_order_id,
-            'midtrans_payment_type' => $transaksi->midtrans_payment_type,
-            'midtrans_transaction_id' => $transaksi->midtrans_transaction_id,
-            'expired_at' => $transaksi->expired_at
-        ]);
-    }
 }
