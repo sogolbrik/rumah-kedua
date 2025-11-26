@@ -235,7 +235,7 @@
 
                                 // Redirect ke halaman transaksi setelah pembayaran sukses
                                 setTimeout(() => {
-                                    window.location.href = '{{ route('transaksi.index') }}';
+                                    window.location.href = "/payment/check?orderId={{ $transaksi->midtrans_order_id }}";
                                 }, 3000);
                             },
                             onPending: function(result) {
@@ -308,5 +308,12 @@
                 }
             });
         </script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    fetch(`/payment/check?orderId={{ $transaksi->midtrans_order_id }}`);
+});
+</script>
+
+
     @endif
 @endsection

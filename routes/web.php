@@ -55,3 +55,7 @@ Route::get('booking-detail/{id}', [BookingPageController::class, 'bookingDetail'
 Route::middleware('auth')->group(function () {
     Route::get('booking-pembayaran/{id}', [PembayaranPageController::class, 'pembayaran'])->name('pembayaran');
 });
+
+
+// Check
+Route::get('/payment/check', [TransaksiController::class, 'checkStatus']);

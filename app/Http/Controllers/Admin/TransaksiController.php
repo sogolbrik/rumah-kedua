@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class TransaksiController extends Controller
 {
@@ -162,18 +163,34 @@ class TransaksiController extends Controller
         return view('admin.transaksi.pembayaran', compact('transaksi'));
     }
 
-    public function checkStatus($id)
-    {
-        $transaksi = Transaksi::findOrFail($id);
 
-        return response()->json([
-            'status_pembayaran'       => $transaksi->status_pembayaran,
-            'status_label'            => $this->getStatusLabel($transaksi->status_pembayaran),
-            'midtrans_order_id'       => $transaksi->midtrans_order_id,
-            'midtrans_payment_type'   => $transaksi->midtrans_payment_type,
-            'midtrans_transaction_id' => $transaksi->midtrans_transaction_id,
-            'expired_at'              => $transaksi->expired_at?->format('d M Y H: i')
-        ]);
+    private $serverKey = "";
+    public function checkStatus(Request $request)
+    {
+         $orderId = $request->orderId;
+
+        $response = Http::withBasicAuth($this->serverKey, '')
+            ->get("https://api.sandbox.midtrans.com/v2/{$orderId}/status");
+
+        $model = $response->json();
+
+        // Find DB record
+        $trx = Transaksi::where("midtrans_order_id", $model["order_id"])->first();
+
+        if (!$trx) {
+            return response()->json(["error" => "Transaction not found"], 404);
+        }
+
+        if ($model["transaction_status"] === "pending") {
+            $trx->status_pembayaran = "pending";
+        } elseif ($model["transaction_status"] === "settlement") {
+            $trx->status_pembayaran = "paid";
+        }
+
+        $trx->save();
+
+        return redirect()->route('transaksi.index')
+            ->with('success', 'Status transaksi berhasil diperbarui menjadi ' . $this->getStatusLabel($trx->status_pembayaran) . '.');
     }
 
     public function cancel($id)
