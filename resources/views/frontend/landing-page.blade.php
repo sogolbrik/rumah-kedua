@@ -30,8 +30,8 @@
                 </div>
 
                 <!-- Hero Image -->
-                <div class="relative h-80 md:h-96 bg-gray-200 rounded-2xl overflow-hidden shadow-lg animate-fade-in-right transform transition-transform duration-300">
-                    <img src="{{ asset('assets/image/landing-page/undraw_login_weas.svg') }}" alt="Kamar RumahKedua" class="w-full h-full object-cover">
+                <div class="relative h-80 md:h-96 rounded-2xl overflow-hidden animate-fade-in-right transform transition-transform duration-300 translate-x-15">
+                    <img src="{{ asset('assets/image/landing-page/hero.svg') }}" alt="Kamar RumahKedua" class="w-full h-full object-cover">
                 </div>
             </div>
         </div>
