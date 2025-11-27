@@ -185,6 +185,14 @@ class TransaksiController extends Controller
             $trx->status_pembayaran = "pending";
         } elseif ($model["transaction_status"] === "settlement") {
             $trx->status_pembayaran = "paid";
+        } elseif ($model["transaction_status"] === "failure" || $model["transaction_status"] === "deny") {
+            $trx->status_pembayaran = "failed";
+        } elseif ($model["transaction_status"] === "cancel") {
+            $trx->status_pembayaran = "cancelled";
+        } elseif ($model["transaction_status"] === "expire") {
+            $trx->status_pembayaran = "expired";
+        } elseif ($model["transaction_status"] === "challenge") {
+            $trx->status_pembayaran = "challenge";
         }
 
         $this->updateUserAndKamar($trx->id_user, $trx->id_kamar, $trx->masuk_kamar);
