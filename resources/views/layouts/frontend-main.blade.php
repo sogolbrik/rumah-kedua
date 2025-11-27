@@ -59,10 +59,10 @@
                 <div>
                     <h4 class="text-white font-semibold mb-4">Link Cepat</h4>
                     <ul class="space-y-3 text-gray-400">
-                        <li><a href="#fasilitas" class="hover:text-blue-400 transition-colors">Fasilitas</a></li>
-                        <li><a href="#kamar" class="hover:text-blue-400 transition-colors">Pilihan Kamar</a></li>
-                        <li><a href="#lokasi" class="hover:text-blue-400 transition-colors">Lokasi</a></li>
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">FAQ</a></li>
+                        <li><a href="{{ url('/#fasilitas') }}" class="hover:text-blue-400 transition-colors">Fasilitas</a></li>
+                        <li><a href="{{ url('/#kamar') }}" class="hover:text-blue-400 transition-colors">Pilihan Kamar</a></li>
+                        <li><a href="{{ url('/#lokasi') }}" class="hover:text-blue-400 transition-colors">Lokasi</a></li>
+                        <li><a href="{{ url('/#faq') }}" class="hover:text-blue-400 transition-colors">FAQ</a></li>
                     </ul>
                 </div>
 
@@ -70,9 +70,9 @@
                 <div>
                     <h4 class="text-white font-semibold mb-4">Kontak</h4>
                     <ul class="space-y-3 text-gray-400">
-                        <li class="flex gap-2"><i class="fas fa-phone w-4"></i> +62 812 3456 7890</li>
-                        <li class="flex gap-2"><i class="fas fa-envelope w-4"></i> info@rumahkedua.com</li>
-                        <li class="flex gap-2"><i class="fas fa-map-marker-alt w-4"></i> Jakarta Selatan</li>
+                        <li class="flex gap-2"><i class="fas fa-phone w-4"></i> +62 878 7032 7957</li>
+                        <li class="flex gap-2"><i class="fas fa-envelope w-4"></i> rumahkedua@gmail.com</li>
+                        <li class="flex gap-2"><i class="fas fa-map-marker-alt w-4"></i> Mojokerto Selatan</li>
                     </ul>
                 </div>
 

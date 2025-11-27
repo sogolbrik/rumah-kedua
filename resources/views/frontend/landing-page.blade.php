@@ -28,9 +28,8 @@
                         </a>
                     </div>
                 </div>
-
                 <!-- Hero Image -->
-                <div class="relative h-80 md:h-96 rounded-2xl overflow-hidden animate-fade-in-right transform transition-transform duration-300 translate-x-15">
+                <div class="relative h-80 md:h-96 rounded-2xl overflow-hidden animate-fade-in-right transform transition-transform duration-300 translate-x-6">
                     <img src="{{ asset('assets/image/landing-page/hero.svg') }}" alt="Kamar RumahKedua" class="w-full h-full object-cover">
                 </div>
             </div>
@@ -488,7 +487,7 @@
                 <a href="https://wa.me/+6287870327957" target="_blank" class="bg-white hover:bg-gray-100 text-blue-500 px-8 py-4 rounded-lg font-semibold transition-all transform hover:scale-100 hover:shadow-2xl">
                     <i class="fab fa-whatsapp mr-2"></i>WhatsApp
                 </a>
-                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=gilangsampurno125@gmail.com" target="_blank" class="border-2 border-white hover:bg-white/10 text-white px-8 py-4 rounded-lg font-semibold transition-all transform hover:scale-100">
+                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=rumahkedua@gmail.com" target="_blank" class="border-2 border-white hover:bg-white/10 text-white px-8 py-4 rounded-lg font-semibold transition-all transform hover:scale-100">
                     <i class="fas fa-envelope mr-2"></i>Hubungi Email
                 </a>
             </div>
