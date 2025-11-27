@@ -11,6 +11,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\frontend\BookingPageController;
 use App\Http\Controllers\frontend\LandingPageController;
 use App\Http\Controllers\frontend\PembayaranPageController;
+use App\Http\Controllers\frontend\user\PenghuniController;
 use Illuminate\Support\Facades\Route;
 
 //Authentication
@@ -25,7 +26,6 @@ Route::resource('kamar', KamarController::class);
 Route::resource('user', UserController::class);
 Route::resource('galeri', GaleriController::class);
 Route::put('user/{id}/nonaktifkan', [UserController::class, 'nonaktifkan'])->name('user.nonaktifkan');
-Route::put('user/{id}/aktifkan', [UserController::class, 'aktifkan'])->name('user.aktifkan');
 //Transaksi
 Route::prefix('transaksi')->name('transaksi.')->group(function () {
     Route::get('/', [TransaksiController::class, 'index'])->name('index');
@@ -58,4 +58,10 @@ Route::get('booking', [BookingPageController::class, 'booking'])->name('booking'
 Route::get('booking-detail/{id}', [BookingPageController::class, 'bookingDetail'])->name('booking-detail');
 Route::middleware('auth')->group(function () {
     Route::get('booking-pembayaran/{id}', [PembayaranPageController::class, 'pembayaran'])->name('pembayaran');
+    //pembayaran
+    Route::post('pembayaran', [PembayaranPageController::class, 'store'])->name('pembayaran.store');
+    Route::get('pembayaran-detail/{id}', [PembayaranPageController::class, 'pembayaranDetail'])->name('pembayaran.detail');
+    Route::get('/payment/check', [PembayaranPageController::class, 'checkStatus'])->name('payment.check');
+    //penghuni
+    Route::get('user/penghuni', [PenghuniController::class, 'index'])->name('user.penghuni');
 });

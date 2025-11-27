@@ -14,41 +14,48 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         User::create([
-            'name'     => 'Admin',
-            'email'    => 'admin@kos.com',
+            'name' => 'Admin',
+            'email' => 'admin@kos.com',
             'password' => bcrypt('admin123'),
-            'role'     => 'admin',
+            'role' => 'admin',
         ]);
 
         User::create([
-        'id_kamar'            => 2,
-            'name'            => 'rahmat',
-            'email'           => 'rahmat@kos.com',
-            'password'        => bcrypt('rahmat123'),
-            'role'            => 'penghuni',
-            'status_penghuni' => 'aktif',
-            'telepon'         => 6285710786509,
-            'tanggal_masuk'   => date('Y-m-d'),
+            'name' => 'sogol',
+            'email' => 'sogol@kos.com',
+            'password' => bcrypt('sogol123'),
+            'role' => 'user',
         ]);
 
-        for ($i=1; $i < 11; $i++) { 
+        User::create([
+            'id_kamar' => 2,
+            'name' => 'Penghuni-2',
+            'email' => 'penghuni2@kos.com',
+            'password' => bcrypt('penghuni2123'),
+            'role' => 'penghuni',
+            'status_penghuni' => 'aktif',
+            'telepon' => 6285710786509,
+            'tanggal_masuk' => date('Y-m-d'),
+        ]);
+
+        for ($i = 1; $i < 11; $i++) {
             User::create([
-                'name'     => 'User' . $i,
-                'email'    => 'user'. $i .'@kos.com',
+                'name' => 'User' . $i,
+                'email' => 'user' . $i . '@kos.com',
                 'password' => bcrypt('user123'),
-                'role'     => 'user',
+                'role' => 'user',
             ]);
         }
 
         User::create([
-            'id_kamar'        => 1,
-            'name'            => 'Penghuni',
-            'email'           => 'penghuni@kos.com',
-            'password'        => bcrypt('penghuni123'),
-            'role'            => 'penghuni',
+            'id_kamar' => 1,
+            'name' => 'Penghuni',
+            'email' => 'penghuni@kos.com',
+            'password' => bcrypt('penghuni123'),
+            'role' => 'penghuni',
             'status_penghuni' => 'aktif',
-            'telepon'         => 6281528284601,
-            'tanggal_masuk'   => date('Y-m-d'),
+            'telepon' => 6281528284601,
+            'tanggal_masuk' => date('Y-m-d'),
         ]);
     }
 }
