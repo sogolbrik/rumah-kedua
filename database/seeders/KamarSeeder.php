@@ -32,7 +32,7 @@ class KamarSeeder extends Seeder
                 'lebar' => 12.0,
                 'deskripsi' => 'Kamar Standard dengan desain minimalis, luas 12m² dilengkapi dengan fasilitas standar yang memadai.',
                 'gambar' => 'kamar/standard.jpg',
-                'status' => 'Tersedia'
+                'status' => 'Terisi'
             ],
             [
                 'kode_kamar' => 'A-103',

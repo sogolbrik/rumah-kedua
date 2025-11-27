@@ -21,10 +21,14 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
-            'name'     => 'sogol',
-            'email'    => 'sogol@gmail.com',
-            'password' => bcrypt('sogol123'),
-            'role'     => 'user',
+        'id_kamar'            => 2,
+            'name'            => 'rahmat',
+            'email'           => 'rahmat@kos.com',
+            'password'        => bcrypt('rahmat123'),
+            'role'            => 'penghuni',
+            'status_penghuni' => 'aktif',
+            'telepon'         => 6285710786509,
+            'tanggal_masuk'   => date('Y-m-d'),
         ]);
 
         for ($i=1; $i < 11; $i++) { 
@@ -43,7 +47,7 @@ class UserSeeder extends Seeder
             'password'        => bcrypt('penghuni123'),
             'role'            => 'penghuni',
             'status_penghuni' => 'aktif',
-            'telepon'         => 6285704229619,
+            'telepon'         => 6281528284601,
             'tanggal_masuk'   => date('Y-m-d'),
         ]);
     }

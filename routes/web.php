@@ -48,6 +48,7 @@ Route::prefix('midtrans')->group(function () {
 
 //Pengumuman
 Route::get('pengumuman-admin', [PengumumanController::class, 'index'])->name('pengumuman-admin');
+Route::post('pengumuman-admin', [PengumumanController::class, 'store'])->name('pengumuman-admin.store');
 
 //Frontend
 //Landingpage
