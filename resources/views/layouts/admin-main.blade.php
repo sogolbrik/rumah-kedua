@@ -109,6 +109,23 @@
             });
         </script>
     @endif
+
+    {{-- Info --}}
+    @if (session('info'))
+        <script>
+            Swal.fire({
+                icon: 'info',
+                title: '{{ session('info') }}',
+                position: "top-end",
+                toast: true,
+                timer: 4000,
+                showConfirmButton: false,
+                customClass: {
+                    popup: 'rounded-xl'
+                }
+            });
+        </script>
+    @endif
 </body>
 
 </html>

@@ -172,32 +172,41 @@ class TransaksiController extends Controller
         $response = Http::withBasicAuth($serverKey, '')
             ->get("https://api.sandbox.midtrans.com/v2/{$orderId}/status");
 
+        if (!$response->successful()) {
+            return redirect()->route('transaksi.index')
+                ->with('error', 'Gagal mengambil status pembayaran dari Midtrans.');
+        }
+
         $model = $response->json();
 
-        // Find DB record
-        $trx = Transaksi::where("midtrans_order_id", $model["order_id"])->first();
-
+        $trx = Transaksi::where('midtrans_order_id', $model['order_id'])->first();
         if (!$trx) {
-            return response()->json(["error" => "Transaction not found"], 404);
+            return redirect()->route('transaksi.index')
+                ->with('error', 'Transaksi tidak ditemukan di sistem.');
         }
 
-        if ($model["transaction_status"] === "pending") {
-            $trx->status_pembayaran = "pending";
-        } elseif ($model["transaction_status"] === "settlement") {
-            $trx->status_pembayaran = "paid";
-        } elseif ($model["transaction_status"] === "failure" || $model["transaction_status"] === "deny") {
-            $trx->status_pembayaran = "failed";
-        } elseif ($model["transaction_status"] === "cancel") {
-            $trx->status_pembayaran = "cancelled";
-        } elseif ($model["transaction_status"] === "expire") {
-            $trx->status_pembayaran = "expired";
-        } elseif ($model["transaction_status"] === "challenge") {
-            $trx->status_pembayaran = "challenge";
+        // Mapping status Midtrans ke status internal
+        $status = $model['transaction_status'] ?? 'unknown';
+        $newStatus = match ($status) {
+            'pending' => 'pending',
+            'settlement' => 'paid',
+            'failure', 'deny' => 'failed',
+            'cancel' => 'cancelled',
+            'expire' => 'expired',
+            'challenge' => 'challenge',
+            default => $trx->status_pembayaran, // jangan ubah jika tidak dikenali
+        };
+
+        // Hanya update jika status berubah
+        if ($trx->status_pembayaran !== $newStatus) {
+            $trx->status_pembayaran = $newStatus;
+            $trx->save();
+
+            // Hanya update user & kamar jika pembayaran SUKSES
+            if ($newStatus === 'paid') {
+                $this->updateUserAndKamar($trx->id_user, $trx->id_kamar, $trx->masuk_kamar);
+            }
         }
-
-        $this->updateUserAndKamar($trx->id_user, $trx->id_kamar, $trx->masuk_kamar);
-
-        $trx->save();
 
         return redirect()->route('transaksi.index')
             ->with('success', 'Status transaksi berhasil diperbarui menjadi ' . $this->getStatusLabel($trx->status_pembayaran) . '.');

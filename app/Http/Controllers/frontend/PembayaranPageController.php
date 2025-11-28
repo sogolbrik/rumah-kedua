@@ -134,7 +134,7 @@ class PembayaranPageController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
-            ], 422);
+            ], 500);
         }
     }
 

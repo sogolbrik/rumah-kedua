@@ -97,7 +97,7 @@
             </table>
         </div>
 
-        <!-- Pagination (jika menggunakan paginate) -->
+        <!-- Pagination -->
         @if ($kamar->hasPages())
             <div class="border-t border-slate-200 px-6 py-4 bg-slate-50">
                 <div class="flex items-center justify-between">

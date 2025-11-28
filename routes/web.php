@@ -41,9 +41,9 @@ Route::prefix('transaksi')->name('transaksi.')->group(function () {
 // Check
 Route::get('/payment/check', [TransaksiController::class, 'checkStatus']);
 
-Route::prefix('midtrans')->group(function () {
-    Route::post('/notification', [MidtransController::class, 'handleNotification'])->name('midtrans.notification');
-});
+// Route::prefix('midtrans')->group(function () {
+//     Route::post('/notification', [MidtransController::class, 'handleNotification'])->name('midtrans.notification');
+// });
 /* END ' Nanti diluar middleware */
 
 //Pengumuman
@@ -61,7 +61,7 @@ Route::middleware('auth')->group(function () {
     //pembayaran
     Route::post('pembayaran', [PembayaranPageController::class, 'store'])->name('pembayaran.store');
     Route::get('pembayaran-detail/{id}', [PembayaranPageController::class, 'pembayaranDetail'])->name('pembayaran.detail');
-    Route::get('/payment/check', [PembayaranPageController::class, 'checkStatus'])->name('payment.check');
+    Route::get('/pembayaran/check', [PembayaranPageController::class, 'checkStatus'])->name('payment.check');
     //penghuni
     Route::get('user/penghuni', [PenghuniController::class, 'index'])->name('user.penghuni');
 });

@@ -7,13 +7,14 @@ use App\Models\Pengumuman;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class PengumumanController extends Controller
 {
     public function index()
     {
         return view('admin.pengumuman.data', [
-            'pengumuman' => Pengumuman::all(),
+            'pengumuman' => Pengumuman::latest()->paginate(3),
         ]);
     }
 

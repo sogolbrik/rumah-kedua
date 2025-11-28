@@ -220,100 +220,36 @@
 
                 if (payButton && snapToken) {
                     payButton.addEventListener('click', function() {
-                        // Show loading state
                         const originalText = payButton.innerHTML;
-                        payButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Memuat Pembayaran...';
+                        payButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Memuat Pembayaran...';
                         payButton.disabled = true;
 
-                        console.log('Memulai pembayaran dengan token:', snapToken);
-
-                        // Panggil Snap popup
                         snap.pay(snapToken, {
                             onSuccess: function(result) {
-                                console.log('Pembayaran sukses:', result);
-                                showNotification('success', 'Pembayaran berhasil! Mengalihkan...');
-
-                                // Redirect ke halaman transaksi setelah pembayaran sukses
-                                setTimeout(() => {
-                                    window.location.href = "/payment/check?orderId={{ $transaksi->midtrans_order_id }}";
-                                }, 3000);
+                                // Cukup redirect — notifikasi akan muncul via session di halaman tujuan
+                                window.location.href = "/payment/check?orderId={{ $transaksi->midtrans_order_id }}";
                             },
                             onPending: function(result) {
-                                console.log('Pembayaran pending:', result);
-                                showNotification('info', 'Menunggu konfirmasi pembayaran...');
-
-                                // Tetap redirect, sistem akan update via notification
-                                setTimeout(() => {
-                                    window.location.href = '{{ route('transaksi.index') }}';
-                                }, 3000);
+                                // Redirect ke daftar transaksi — di sana bisa tampilkan status pending via session jika perlu
+                                window.location.href = '{{ route('transaksi.index') }}';
                             },
                             onError: function(result) {
-                                console.log('Pembayaran error:', result);
-                                showNotification('error', 'Pembayaran gagal: ' + (result.status_message || 'Silakan coba lagi.'));
-                                resetPayButton(originalText);
+                                // Opsional: bisa redirect ke check juga, atau langsung ke index
+                                window.location.href = "/payment/check?orderId={{ $transaksi->midtrans_order_id }}";
                             },
                             onClose: function() {
-                                console.log('Popup pembayaran ditutup');
-                                showNotification('warning', 'Pembayaran dibatalkan.');
-                                resetPayButton(originalText);
+                                // Kembali ke halaman transaksi (tanpa notifikasi khusus, karena dibatalkan)
+                                window.location.href = '{{ route('transaksi.index') }}';
                             }
                         });
                     });
                 }
-
-                function resetPayButton(originalText) {
-                    setTimeout(() => {
-                        payButton.innerHTML = originalText;
-                        payButton.disabled = false;
-                    }, 2000);
-                }
-
-                function showNotification(type, message) {
-                    // Create notification element
-                    const notification = document.createElement('div');
-                    notification.className = `fixed top-4 right-4 z-50 rounded-xl p-4 text-white shadow-lg transform transition-all duration-300 ${
-                    type === 'success' ? 'bg-emerald-500' : 
-                    type === 'error' ? 'bg-rose-500' : 
-                    type === 'warning' ? 'bg-amber-500' : 'bg-blue-500'
-                }`;
-
-                    const icon = type === 'success' ? 'fa-check-circle' :
-                        type === 'error' ? 'fa-exclamation-circle' :
-                        type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle';
-
-                    notification.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <i class="fa-solid ${icon} text-lg"></i>
-                        <span class="font-medium">${message}</span>
-                    </div>
-                `;
-
-                    document.body.appendChild(notification);
-
-                    // Animate in
-                    setTimeout(() => {
-                        notification.classList.add('translate-x-0', 'opacity-100');
-                    }, 10);
-
-                    // Remove after 5 seconds
-                    setTimeout(() => {
-                        notification.classList.remove('translate-x-0', 'opacity-100');
-                        notification.classList.add('translate-x-full', 'opacity-0');
-                        setTimeout(() => {
-                            if (document.body.contains(notification)) {
-                                document.body.removeChild(notification);
-                            }
-                        }, 300);
-                    }, 5000);
-                }
             });
         </script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    fetch(`/payment/check?orderId={{ $transaksi->midtrans_order_id }}`);
-});
-</script>
-
-
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                fetch(`/payment/check?orderId={{ $transaksi->midtrans_order_id }}`);
+            });
+        </script>
     @endif
 @endsection
