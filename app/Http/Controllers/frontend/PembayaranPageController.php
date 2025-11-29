@@ -147,7 +147,7 @@ class PembayaranPageController extends Controller
             ->get("https://api.sandbox.midtrans.com/v2/{$orderId}/status");
 
         if (!$response->successful()) {
-            return redirect()->route('user.penghuni')
+            return redirect()->route('pembayaran')
                 ->with('error', 'Gagal memeriksa status pembayaran.');
         }
 
@@ -155,7 +155,7 @@ class PembayaranPageController extends Controller
         $trx = Transaksi::where('midtrans_order_id', $model['order_id'])->first();
 
         if (!$trx) {
-            return redirect()->route('user.penghuni')
+            return redirect()->route('pembayaran')
                 ->with('error', 'Transaksi tidak ditemukan.');
         }
 
@@ -193,7 +193,7 @@ class PembayaranPageController extends Controller
             $this->updateUserAndKamar($trx->id_user, $trx->id_kamar, $trx->masuk_kamar);
         }
 
-        return redirect()->route('user.penghuni')
+        return redirect()->route('pembayaran.invoice', $trx->id)
             ->with('success', 'Status pembayaran diperbarui: ' . $this->getStatusLabel($newStatus));
     }
 

@@ -18,9 +18,29 @@ class TransaksiSeeder extends Seeder
         $now = Carbon::now();
 
         DB::table('transaksis')->insert([
-            // ✅ Transaksi 1 - Sudah dibayar
+            // ✅ Transaksi 1-2 - Sudah dibayar
             [
-                'id_user' => 1,
+                'id_user' => 3,
+                'id_kamar' => 1,
+                'kode' => 'INV-' . strtoupper(Str::random(8)),
+                'tanggal_pembayaran' => $now->subDays(10),
+                'tanggal_jatuhtempo' => $now->subDays(10)->addMonth(),
+                'periode_pembayaran' => 'Januari 2025',
+                'masuk_kamar' => $now->subDays(10),
+                'durasi' => '1 bulan',
+                'total_bayar' => 750000.00,
+                'metode_pembayaran' => 'midtrans',
+                'status_pembayaran' => 'paid',
+                'midtrans_order_id' => 'MID-' . strtoupper(Str::random(6)),
+                'midtrans_transaction_id' => 'TRX-' . strtoupper(Str::random(10)),
+                'midtrans_payment_type' => 'bank_transfer',
+                'midtrans_response' => json_encode(['status' => 'settlement', 'bank' => 'bca']),
+                'expired_at' => $now->subDays(9),
+                'created_at' => $now->subDays(10),
+                'updated_at' => $now->subDays(9),
+            ],
+            [
+                'id_user' => 14,
                 'id_kamar' => 2,
                 'kode' => 'INV-' . strtoupper(Str::random(8)),
                 'tanggal_pembayaran' => $now->subDays(10),
@@ -40,7 +60,7 @@ class TransaksiSeeder extends Seeder
                 'updated_at' => $now->subDays(9),
             ],
 
-            // ✅ Transaksi 2 - Pending
+            // ✅ Transaksi 3 - Pending
             [
                 'id_user' => 2,
                 'id_kamar' => 3,
@@ -62,9 +82,9 @@ class TransaksiSeeder extends Seeder
                 'updated_at' => $now,
             ],
 
-            // ✅ Transaksi 3 - Expired
+            // ✅ Transaksi 4 - Expired
             [
-                'id_user' => 3,
+                'id_user' => 4,
                 'id_kamar' => 4,
                 'kode' => 'INV-' . strtoupper(Str::random(8)),
                 'tanggal_pembayaran' => $now->subDays(40),

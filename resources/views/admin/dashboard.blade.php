@@ -10,14 +10,16 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-slate-500">Hunian Terisi</p>
-                    <p class="mt-1 text-2xl font-semibold text-slate-900">86%</p>
+                    <p class="mt-1 text-2xl font-semibold text-slate-900">
+                        {{ $kamar->where('status', 'Terisi')->count() ? round(($kamar->where('status', 'Terisi')->count() / $kamar->where('status', 'Tersedia')->count()) * 100, 0) : 0 }}%</p>
                 </div>
                 <div class="h-10 w-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
                     <i class="fa-solid fa-building-user"></i>
                 </div>
             </div>
             <div class="mt-4 h-2 w-full rounded-full bg-slate-100">
-                <div class="h-2 rounded-full bg-blue-600" style="width: 86%"></div>
+                <div class="h-2 rounded-full bg-blue-600"
+                    style="width: {{ $kamar->where('status', 'Terisi')->count() ? round(($kamar->where('status', 'Terisi')->count() / $kamar->where('status', 'Tersedia')->count()) * 100, 0) : 0 }}%"></div>
             </div>
         </div>
 
@@ -26,13 +28,13 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-slate-500">Kamar Tersedia</p>
-                    <p class="mt-1 text-2xl font-semibold text-slate-900">14</p>
+                    <p class="mt-1 text-2xl font-semibold text-slate-900">{{ $kamar->where('status', 'Tersedia')->count() }}</p>
                 </div>
                 <div class="h-10 w-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
                     <i class="fa-solid fa-door-open"></i>
                 </div>
             </div>
-            <p class="mt-3 text-xs text-slate-500">Dari total 100 kamar</p>
+            <p class="mt-3 text-xs text-slate-500">Dari total {{ $kamar->count() }} kamar</p>
         </div>
 
         {{-- Card: Pendapatan Bulan Ini --}}
@@ -40,15 +42,15 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-slate-500">Pendapatan Bulan Ini</p>
-                    <p class="mt-1 text-2xl font-semibold text-slate-900">Rp 42.500.000</p>
+                    <p class="mt-1 text-2xl font-semibold text-slate-900">Rp {{ number_format($transaksi->where('status_pembayaran', 'paid')->sum('total_bayar'), 0, ',', '.') }}</p>
                 </div>
                 <div class="h-10 w-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
                     <i class="fa-solid fa-wallet"></i>
                 </div>
             </div>
-            <p class="mt-3 text-xs text-blue-700 bg-blue-50 inline-flex items-center gap-1 px-2 py-0.5 rounded">
-                <i class="fa-solid fa-arrow-up"></i> +8.2% dari bulan lalu
-            </p>
+            {{-- <p class="mt-3 text-xs text-blue-700 bg-blue-50 inline-flex items-center gap-1 px-2 py-0.5 rounded">
+                <i class="fa-solid fa-arrow-{{ $selisih >= 0 ? 'up' : 'down' }}"></i> {{ $selisih >= 0 ? '+' : '' }}{{ number_format($selisih, 1) }}% dari bulan lalu
+            </p> --}}
         </div>
 
         {{-- Card: Transaksi Pending --}}
@@ -56,7 +58,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-slate-500">Transaksi Pending</p>
-                    <p class="mt-1 text-2xl font-semibold text-slate-900">7</p>
+                    <p class="mt-1 text-2xl font-semibold text-slate-900">{{ $transaksi->where('status_pembayaran', 'pending')->count() }}</p>
                 </div>
                 <div class="h-10 w-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
                     <i class="fa-solid fa-clock"></i>
@@ -80,38 +82,38 @@
                             <th class="py-2">Tanggal</th>
                             <th class="py-2">Penyewa</th>
                             <th class="py-2">Kamar</th>
-                            <th class="py-2">Jumlah</th>
+                            <th class="py-2">Total Bayar</th>
                             <th class="py-2 text-right">Status</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
-                        <tr>
-                            <td class="py-2">02 Okt 2025</td>
-                            <td class="py-2">Ayu Pratiwi</td>
-                            <td class="py-2">A-203</td>
-                            <td class="py-2">Rp 1.200.000</td>
-                            <td class="py-2 text-right">
-                                <span class="px-2 py-1 rounded text-xs bg-blue-50 text-blue-700">Berhasil</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="py-2">02 Okt 2025</td>
-                            <td class="py-2">Rizky Ananda</td>
-                            <td class="py-2">B-112</td>
-                            <td class="py-2">Rp 950.000</td>
-                            <td class="py-2 text-right">
-                                <span class="px-2 py-1 rounded text-xs bg-slate-100 text-slate-700">Pending</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="py-2">01 Okt 2025</td>
-                            <td class="py-2">Sari Wulandari</td>
-                            <td class="py-2">C-305</td>
-                            <td class="py-2">Rp 1.500.000</td>
-                            <td class="py-2 text-right">
-                                <span class="px-2 py-1 rounded text-xs bg-blue-50 text-blue-700">Berhasil</span>
-                            </td>
-                        </tr>
+                        @forelse ($transaksi as $item)
+                            <tr>
+                                <td class="py-2">{{ $item->created_at->format('d M Y') }}</td>
+                                <td class="py-2">{{ $item->user->name }}</td>
+                                <td class="py-2">{{ $item->kamar->kode_kamar }}</td>
+                                <td class="py-2">Rp {{ number_format($item->total_bayar, 0, ',', '.') }}</td>
+                                <td class="py-2 text-right">
+                                    @if ($item->status_pembayaran === 'paid')
+                                        <span class="px-2 py-1 rounded text-xs bg-green-50 text-green-700">Lunas</span>
+                                    @elseif ($item->status_pembayaran === 'pending')
+                                        <span class="px-2 py-1 rounded text-xs bg-yellow-50 text-yellow-700">Menunggu</span>
+                                    @elseif ($item->status_pembayaran === 'failed')
+                                        <span class="px-2 py-1 rounded text-xs bg-red-50 text-red-700">Gagal</span>
+                                    @elseif ($item->status_pembayaran === 'cancelled')
+                                        <span class="px-2 py-1 rounded text-xs bg-gray-50 text-gray-700">Dibatalkan</span>
+                                    @elseif ($item->status_pembayaran === 'expired')
+                                        <span class="px-2 py-1 rounded text-xs bg-orange-50 text-orange-700">Kadaluarsa</span>
+                                    @elseif ($item->status_pembayaran === 'challenge')
+                                        <span class="px-2 py-1 rounded text-xs bg-purple-50 text-purple-700">Tantangan</span>
+                                    @else
+                                        <span class="px-2 py-1 rounded text-xs bg-slate-50 text-slate-700">Tidak Diketahui</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <p class="text-center text-slate-500">Belum ada transaksi</p>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -124,18 +126,14 @@
                 <a href="{{ route('pengumuman-admin') }}" class="text-sm text-blue-700 hover:underline">Kelola</a>
             </div>
             <ul class="space-y-3">
-                <li class="p-3 rounded-lg border border-slate-100 bg-blue-50/40">
-                    <p class="text-sm font-medium text-blue-800">Perawatan Air (5–6 Okt)</p>
-                    <p class="text-xs text-blue-700">Aliran air akan bergilir pukul 10.00–14.00</p>
-                </li>
-                <li class="p-3 rounded-lg border border-slate-100 bg-white">
-                    <p class="text-sm font-medium text-slate-900">Pembayaran Online</p>
-                    <p class="text-xs text-slate-600">Dukungan e-wallet telah tersedia.</p>
-                </li>
-                <li class="p-3 rounded-lg border border-slate-100 bg-white">
-                    <p class="text-sm font-medium text-slate-900">Aturan Kebersihan</p>
-                    <p class="text-xs text-slate-600">Sampah dibuang sebelum jam 20.00.</p>
-                </li>
+                @forelse ($pengumuman->take(3) as $item)
+                    <li class="p-3 rounded-lg border border-slate-100 bg-white">
+                        <p class="text-sm font-medium text-slate-900">{{ $item->judul }}</p>
+                        <p class="text-xs text-slate-600">{{ $item->isi }}</p>
+                    </li>
+                @empty
+                    <p class="pt-15 text-sm text-center text-slate-900">Belum ada pengumuman</p>
+                @endforelse
             </ul>
         </div>
     </div>

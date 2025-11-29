@@ -59,9 +59,11 @@ Route::get('booking-detail/{id}', [BookingPageController::class, 'bookingDetail'
 Route::middleware('auth')->group(function () {
     Route::get('booking-pembayaran/{id}', [PembayaranPageController::class, 'pembayaran'])->name('pembayaran');
     //pembayaran
-    Route::post('pembayaran', [PembayaranPageController::class, 'store'])->name('pembayaran.store');
-    Route::get('pembayaran-detail/{id}', [PembayaranPageController::class, 'pembayaranDetail'])->name('pembayaran.detail');
-    Route::get('/pembayaran/check', [PembayaranPageController::class, 'checkStatus'])->name('payment.check');
+    Route::post('pembayaran/store', [PembayaranPageController::class, 'store'])->name('pembayaran.store');
+    Route::get('pembayaran/{id}', [PembayaranPageController::class, 'invoicePembayaran'])->name('pembayaran.invoice');
     //penghuni
     Route::get('user/penghuni', [PenghuniController::class, 'index'])->name('user.penghuni');
 });
+//diluar middleware
+Route::get('pembayaran/check', [PembayaranPageController::class, 'checkStatus'])->name('pembayaran.check');
+//end diluar middleware

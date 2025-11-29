@@ -283,11 +283,11 @@
                     snap.pay(this.transaksi.snap_token, {
                         onSuccess: (result) => {
                             this.showNotification('success', 'Pembayaran berhasil! Mengalihkan...');
-                            setTimeout(() => window.location.href = "{{ route('pembayaran.detail', ['id' => ':id']) }}".replace(':id', this.transaksi.id), 3000);
+                            setTimeout(() => window.location.href = "{{ route('pembayaran.invoice', ['id' => ':id']) }}".replace(':id', this.transaksi.id), 3000);
                         },
                         onPending: (result) => {
                             this.showNotification('info', 'Menunggu konfirmasi pembayaran...');
-                            setTimeout(() => window.location.href = "{{ route('pembayaran.detail', ['id' => ':id']) }}".replace(':id', this.transaksi.id), 3000);
+                            setTimeout(() => window.location.href = "{{ route('pembayaran', ['id' => ':id']) }}".replace(':id', this.transaksi.id), 3000);
                         },
                         onError: (result) => {
                             this.showNotification('error', 'Pembayaran gagal: ' + (result.status_message || 'Silakan coba lagi.'));

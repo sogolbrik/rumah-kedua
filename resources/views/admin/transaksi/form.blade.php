@@ -118,15 +118,18 @@
                         <!-- Tanggal Masuk Kamar -->
                         <div class="group">
                             <label for="masuk_kamar" class="mb-2 block text-sm font-semibold text-slate-700">
-                                Tanggal Masuk Kamar <span class="text-slate-400">(opsional)</span>
+                                Tanggal Masuk Kamar <span class="text-rose-500">*</span>
                             </label>
                             <div class="relative">
                                 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
                                     <i class="fa-solid fa-calendar-check text-sm"></i>
                                 </div>
-                                <input type="date" id="masuk_kamar" name="masuk_kamar" x-model="formState.masuk_kamar"
+                                <input type="date" id="masuk_kamar" name="masuk_kamar" required x-model="formState.masuk_kamar"
                                     class="w-full rounded-xl border-2 border-slate-200 bg-white py-3 pl-11 pr-4 text-sm font-medium text-slate-900 placeholder:text-slate-400 transition-all focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-500/10" />
                             </div>
+                            <p x-cloak x-show="formState.touched.masuk_kamar && !formState.masuk_kamar" class="mt-1 text-xs font-medium text-rose-600">
+                                <i class="fa-solid fa-circle-exclamation"></i> Tanggal masuk kamar wajib diisi
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -178,7 +181,6 @@
                                     <option value="1 bulan" {{ old('durasi') == '1 bulan' ? 'selected' : '' }}>1 Bulan</option>
                                     <option value="3 bulan" {{ old('durasi') == '3 bulan' ? 'selected' : '' }}>3 Bulan</option>
                                     <option value="6 bulan" {{ old('durasi') == '6 bulan' ? 'selected' : '' }}>6 Bulan</option>
-                                    <option value="1 tahun" {{ old('durasi') == '1 tahun' ? 'selected' : '' }}>1 Tahun</option>
                                 </select>
                             </div>
                             <p x-cloak x-show="formState.touched.durasi && !formState.durasi" class="mt-1 text-xs font-medium text-rose-600">
@@ -344,6 +346,7 @@
                     return this.formState.id_user &&
                         this.formState.id_kamar &&
                         this.formState.tanggal_pembayaran &&
+                        this.formState.masuk_kamar &&
                         this.formState.periode_pembayaran &&
                         this.formState.durasi &&
                         this.formState.total_bayar_raw &&
@@ -412,9 +415,6 @@
                             break;
                         case '6 bulan':
                             multiplier = 6;
-                            break;
-                        case '1 tahun':
-                            multiplier = 12;
                             break;
                         default:
                             multiplier = 1;
