@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\GaleriController;
 use App\Http\Controllers\Admin\KamarController;
+use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Admin\PengumumanController;
 use App\Http\Controllers\Admin\TransaksiController;
 use App\Http\Controllers\Admin\UserController;
@@ -25,6 +26,7 @@ Route::get('dashboard-admin', [DashboardController::class, 'index'])->name('dash
 Route::resource('kamar', KamarController::class);
 Route::resource('user', UserController::class);
 Route::resource('galeri', GaleriController::class);
+Route::get('laporan', [LaporanController::class, 'index'])->name('laporan');
 Route::put('user/{id}/nonaktifkan', [UserController::class, 'nonaktifkan'])->name('user.nonaktifkan');
 //Transaksi
 Route::prefix('transaksi')->name('transaksi.')->group(function () {
