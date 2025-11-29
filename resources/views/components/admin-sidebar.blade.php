@@ -80,9 +80,9 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('laporan') }}"
+                <a href="{{ route('laporan.index') }}"
                     class="flex items-center gap-3 px-3 py-2 rounded-md text-sm
-           {{ request()->routeIs('laporan') ? 'bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-200' : 'text-slate-700 hover:bg-slate-100' }}">
+           {{ request()->routeIs('laporan.index') ? 'bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-200' : 'text-slate-700 hover:bg-slate-100' }}">
                     <i class="fa-solid fa-file"></i>
                     <span>Laporan</span>
                 </a>

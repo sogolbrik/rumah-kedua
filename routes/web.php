@@ -26,7 +26,8 @@ Route::get('dashboard-admin', [DashboardController::class, 'index'])->name('dash
 Route::resource('kamar', KamarController::class);
 Route::resource('user', UserController::class);
 Route::resource('galeri', GaleriController::class);
-Route::get('laporan', [LaporanController::class, 'index'])->name('laporan');
+Route::get('laporan', [LaporanController::class, 'index'])->name('laporan.index');
+Route::get('/laporan/export/{type}', [LaporanController::class, 'export'])->name('laporan.export');
 Route::put('user/{id}/nonaktifkan', [UserController::class, 'nonaktifkan'])->name('user.nonaktifkan');
 //Transaksi
 Route::prefix('transaksi')->name('transaksi.')->group(function () {
