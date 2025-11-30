@@ -25,7 +25,9 @@ class PengumumanController extends Controller
             'isi' => 'required',
         ]);
 
-        $message = "*" . $request->judul . "*\n" . $request->isi;
+        $message = "*" . $request->judul . "*\n"
+            . $request->isi . "\n\n"
+            . "— *RumahKedua*";
 
         $number = User::where('role', 'penghuni')->pluck('telepon')->toArray();
         $this->sendChatWhatsApp($number, $message);

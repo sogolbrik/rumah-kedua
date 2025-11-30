@@ -88,7 +88,17 @@ class AuthController extends Controller
     private function sendWelcomeWhatsApp($number, $name)
     {
         try {
-            $message = "Halo *{$name}*! \n\nTerima kasih telah mendaftar di RumahKedua.\n\nKini Anda bisa:\n- Cari & pesan kamar kos secara online\n- Pantau status pembayaran\n- Dapat info kamar kosong terbaru\n\nSemoga cepat dapat kamar yang nyaman!\n@RumahKedua";
+            $message = "Halo *{$name}*! 👋
+
+            Terima kasih sudah mendaftar di *RumahKedua*.
+
+            Sekarang kamu bisa:
+            > • *Cari & pesan kamar kos* langsung dari Website  
+            > • *Pantau status pembayaran* dengan mudah  
+            > • *Dapat update kamar kosong* lebih cepat
+
+            Jika butuh bantuan, cukup balas pesan ini ya.  
+            - *RumahKedua*";
 
             $response = Http::timeout(30)->get("http://localhost:5000/api/Whatsapp/openandsend", [
                 'number' => $number,
