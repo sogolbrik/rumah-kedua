@@ -284,36 +284,31 @@
                         <tr>
                             <th class="py-2.5 px-2">Penyewa</th>
                             <th class="py-2.5 px-2">Tanggal Bayar</th>
+                            <th class="py-2.5 px-2">Jatuh Tempo</th>
                             <th class="py-2.5 px-2">Durasi</th>
                             <th class="py-2.5 px-2">Kamar</th>
                             <th class="py-2.5 px-2 text-right">Status</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
-                        @forelse ($transaksi as $item)
-                            <tr>
-                                <td class="py-3 px-2">{{ $item->user?->name ?? '—' }}</td>
-                                <td class="py-3 px-2">{{ $item->tanggal_pembayaran->translatedFormat('d F Y') ?? '—' }}</td>
-                                <td class="py-3 px-2">{{ $item->durasi ?? '—' }} Bulan</td>
-                                <td class="py-3 px-2">Rp {{ number_format($item->total_bayar, 0, ',', '.') }}</td>
-                                <td class="py-3 px-2 text-right">
-                                    @php
-                                        $statusMap = [
-                                            'paid' => ['label' => 'Lunas', 'color' => 'green'],
-                                            'pending' => ['label' => 'Menunggu', 'color' => 'yellow'],
-                                            'failed' => ['label' => 'Gagal', 'color' => 'red'],
-                                            'cancelled' => ['label' => 'Dibatalkan', 'color' => 'gray'],
-                                            'expired' => ['label' => 'Kadaluarsa', 'color' => 'orange'],
-                                            'challenge' => ['label' => 'Tantangan', 'color' => 'purple'],
-                                        ];
-                                        $status = $statusMap[$item->status_pembayaran] ?? ['label' => 'Tidak Diketahui', 'color' => 'slate'];
-                                    @endphp
-                                    <span class="px-2 py-1 rounded-full text-xs bg-{{ $status['color'] }}-50 text-{{ $status['color'] }}-700 font-medium">{{ $status['label'] }}</span>
-                                </td>
-                            </tr>
+                        @forelse ($penghuniMenunggak as $user)
+                            @foreach ($user->transaksi as $item)
+                                <tr>
+                                    <td class="py-3 px-2">{{ $user->name ?? '—' }}</td>
+                                    <td class="py-3 px-2">{{ $item->tanggal_pembayaran?->translatedFormat('d F Y') ?? '—' }}</td>
+                                    <td class="py-3 px-2">{{ $item->tanggal_jatuhtempo?->translatedFormat('d F Y') ?? '—' }}</td>
+                                    <td class="py-3 px-2">{{ $item->durasi ?? '—' }} Bulan</td>
+                                    <td class="py-3 px-2">{{ $user->kamar?->kode_kamar ?? '—' }}</td>
+                                    <td class="py-3 px-2 text-right">
+                                        <span class="px-2 py-1 rounded-full text-xs bg-red-50 text-red-700 font-medium">Menunggak</span>
+                                    </td>
+                                </tr>
+                            @endforeach
                         @empty
                             <tr>
-                                <td colspan="5" class="py-4 text-center text-slate-500">Tidak ada penghuni telat bayar</td>
+                                <td colspan="5" class="py-4 text-center text-gray-500">
+                                    Tidak ada penghuni menunggak
+                                </td>
                             </tr>
                         @endforelse
                     </tbody>

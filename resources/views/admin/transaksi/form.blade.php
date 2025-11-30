@@ -140,32 +140,14 @@
                             <i class="fa-solid fa-clock"></i>
                         </div>
                         <div>
-                            <h2 class="text-lg font-semibold text-slate-900">Periode & Durasi</h2>
-                            <p class="text-sm text-slate-600">Informasi periode sewa dan durasi</p>
+                            <h2 class="text-lg font-semibold text-slate-900">Durasi</h2>
+                            <p class="text-sm text-slate-600">Informasi durasi sewa</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="space-y-6 px-8 py-8">
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                        <!-- Periode Pembayaran -->
-                        <div class="group">
-                            <label for="periode_pembayaran" class="mb-2 block text-sm font-semibold text-slate-700">
-                                Periode Pembayaran <span class="text-rose-500">*</span>
-                            </label>
-                            <div class="relative">
-                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
-                                    <i class="fa-solid fa-calendar-alt text-sm"></i>
-                                </div>
-                                <input type="text" id="periode_pembayaran" name="periode_pembayaran" required placeholder="Contoh: Januari 2024" x-model="formState.periode_pembayaran"
-                                    @blur="formState.touched.periode_pembayaran = true"
-                                    class="w-full rounded-xl border-2 border-slate-200 bg-white py-3 pl-11 pr-4 text-sm font-medium text-slate-900 placeholder:text-slate-400 transition-all focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10" />
-                            </div>
-                            <p x-cloak x-show="formState.touched.periode_pembayaran && !formState.periode_pembayaran" class="mt-1 text-xs font-medium text-rose-600">
-                                <i class="fa-solid fa-circle-exclamation"></i> Periode pembayaran wajib diisi
-                            </p>
-                        </div>
-
                         <!-- Durasi -->
                         <div class="group">
                             <label for="durasi" class="mb-2 block text-sm font-semibold text-slate-700">
@@ -175,12 +157,12 @@
                                 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
                                     <i class="fa-solid fa-hourglass-half text-sm"></i>
                                 </div>
-                                <select id="durasi" name="durasi" required x-model="formState.durasi" x-on:change="updateTotalBayar()" @blur="formState.touched.durasi = true"
+                                <select id="durasi" name="durasi" required x-model="formState.durasi" x-on:change="updateTotalSeharusnya()" @blur="formState.touched.durasi = true"
                                     class="w-full rounded-xl border-2 border-slate-200 bg-white py-3 pl-11 pr-4 text-sm font-medium text-slate-900 placeholder:text-slate-400 transition-all focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10">
                                     <option value="">Pilih Durasi</option>
-                                    <option value="1 bulan" {{ old('durasi') == '1' ? 'selected' : '' }}>1 Bulan</option>
-                                    <option value="3 bulan" {{ old('durasi') == '3' ? 'selected' : '' }}>3 Bulan</option>
-                                    <option value="6 bulan" {{ old('durasi') == '6' ? 'selected' : '' }}>6 Bulan</option>
+                                    <option value="1" {{ old('durasi') == '1' ? 'selected' : '' }}>1 Bulan</option>
+                                    <option value="3" {{ old('durasi') == '3' ? 'selected' : '' }}>3 Bulan</option>
+                                    <option value="6" {{ old('durasi') == '6' ? 'selected' : '' }}>6 Bulan</option>
                                 </select>
                             </div>
                             <p x-cloak x-show="formState.touched.durasi && !formState.durasi" class="mt-1 text-xs font-medium text-rose-600">
@@ -272,12 +254,12 @@
                     </div>
 
                     <!-- Debug Information (bisa dihapus setelah testing) -->
-                    <div x-cloak x-show="false" class="rounded-xl bg-yellow-50 p-4 border border-yellow-200">
+                    {{-- <div x-cloak x-show="false" class="rounded-xl bg-yellow-50 p-4 border border-yellow-200">
                         <p class="text-sm font-medium text-yellow-800">Debug Info:</p>
                         <p class="text-xs text-yellow-700">Harga: <span x-text="formState.harga"></span></p>
                         <p class="text-xs text-yellow-700">Durasi: <span x-text="formState.durasi"></span></p>
                         <p class="text-xs text-yellow-700">Total Seharusnya: <span x-text="formState.total_seharusnya"></span></p>
-                    </div>
+                    </div> --}}
                 </div>
 
                 <div class="flex flex-col gap-4 border-t border-slate-200 bg-slate-50 px-8 py-6 sm:flex-row sm:items-center sm:justify-between">
@@ -309,8 +291,7 @@
                     id_user: '{{ old('id_user') }}',
                     id_kamar: '{{ old('id_kamar') }}',
                     tanggal_pembayaran: '{{ old('tanggal_pembayaran', date('Y-m-d')) }}',
-                    masuk_kamar: '{{ old('masuk_kamar') }}',
-                    periode_pembayaran: '{{ old('periode_pembayaran') }}',
+                    masuk_kamar: '{{ old('masuk_kamar', date('Y-m-d')) }}',
                     durasi: '{{ old('durasi') }}',
                     total_bayar: '',
                     total_bayar_raw: '',
@@ -321,7 +302,6 @@
                         id_user: false,
                         id_kamar: false,
                         tanggal_pembayaran: false,
-                        periode_pembayaran: false,
                         durasi: false,
                         total_bayar: false,
                         metode_pembayaran: false,
@@ -347,7 +327,6 @@
                         this.formState.id_kamar &&
                         this.formState.tanggal_pembayaran &&
                         this.formState.masuk_kamar &&
-                        this.formState.periode_pembayaran &&
                         this.formState.durasi &&
                         this.formState.total_bayar_raw &&
                         this.formState.metode_pembayaran;
@@ -384,6 +363,7 @@
                         this.formState.total_seharusnya = 0;
                         console.log('Harga kamar reset to 0');
                     }
+                    this.updateTotalSeharusnya();
                 },
 
                 updateTotalBayar() {
@@ -400,6 +380,8 @@
                 updateTotalSeharusnya() {
                     if (!this.formState.harga || !this.formState.durasi) {
                         this.formState.total_seharusnya = 0;
+                        this.formState.total_bayar_raw = '';
+                        this.formState.total_bayar = '';
                         return;
                     }
 
@@ -407,21 +389,23 @@
                     let multiplier = 1;
 
                     switch (this.formState.durasi) {
-                        case '1 bulan':
+                        case '1':
                             multiplier = 1;
                             break;
-                        case '3 bulan':
+                        case '3':
                             multiplier = 3;
                             break;
-                        case '6 bulan':
+                        case '6':
                             multiplier = 6;
                             break;
                         default:
                             multiplier = 1;
                     }
 
-                    this.formState.total_seharusnya = harga * multiplier;
-                    console.log('Total seharusnya updated:', this.formState.total_seharusnya, 'Harga:', harga, 'Multiplier:', multiplier);
+                    const total = harga * multiplier;
+                    this.formState.total_seharusnya = total;
+                    this.formState.total_bayar_raw = total.toString();
+                    this.formState.total_bayar = this.formatCurrency(total);
                 },
 
                 resetForm() {
@@ -430,7 +414,6 @@
                         id_kamar: '',
                         tanggal_pembayaran: '{{ date('Y-m-d') }}',
                         masuk_kamar: '',
-                        periode_pembayaran: '',
                         durasi: '',
                         total_bayar: '',
                         total_bayar_raw: '',
@@ -441,7 +424,6 @@
                             id_user: false,
                             id_kamar: false,
                             tanggal_pembayaran: false,
-                            periode_pembayaran: false,
                             durasi: false,
                             total_bayar: false,
                             metode_pembayaran: false,

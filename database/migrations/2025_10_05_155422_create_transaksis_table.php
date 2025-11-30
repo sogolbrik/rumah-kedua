@@ -19,7 +19,6 @@ return new class extends Migration {
 
             $table->date('tanggal_pembayaran');
             $table->date('tanggal_jatuhtempo');
-            $table->string('periode_pembayaran', 20); // contoh: November 2025
             $table->date('masuk_kamar')->nullable();
             $table->string('durasi', 20); // contoh: 1,3,6 "bulan"
 

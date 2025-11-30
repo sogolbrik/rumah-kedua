@@ -61,7 +61,6 @@ class TransaksiController extends Controller
             'kode' => $kode,
             'tanggal_pembayaran' => $request->tanggal_pembayaran,
             'tanggal_jatuhtempo' => $tanggalJatuhTempo,
-            'periode_pembayaran' => $request->periode_pembayaran,
             'masuk_kamar' => $request->masuk_kamar,
             'durasi' => $request->durasi,
             'total_bayar' => $total_bayar,
@@ -295,7 +294,6 @@ class TransaksiController extends Controller
             $user->update([
                 'id_kamar' => $kamarId,
                 'tanggal_masuk' => $tanggalMasuk,
-                'status_penghuni' => 'aktif',
                 'role' => 'penghuni',
             ]);
         }

@@ -223,7 +223,6 @@ class UserController extends Controller
             if ($kamarIdLama) {
                 Kamar::where('id', $kamarIdLama)->update(['status' => 'Tersedia']);
             }
-            $validation['status_penghuni'] = null;
             $validation['tanggal_masuk'] = null;
             $validation['id_kamar'] = null;
         }
@@ -244,7 +243,6 @@ class UserController extends Controller
             Kamar::where('id', $user->id_kamar)->update(['status' => 'Tersedia']);
         }
 
-        $user->status_penghuni = null;
         $user->role = 'user';
         $user->id_kamar = null;
         $user->save();

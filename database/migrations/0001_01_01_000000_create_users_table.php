@@ -19,7 +19,6 @@ return new class extends Migration {
             $table->string('password');
             $table->string('telepon')->nullable();
             $table->date('tanggal_masuk')->nullable();
-            $table->enum('status_penghuni', ['aktif', 'menunggak'])->nullable();
             $table->enum('role', ['admin', 'user', 'penghuni'])->default('user');
             $table->string('avatar')->nullable();
             $table->rememberToken();

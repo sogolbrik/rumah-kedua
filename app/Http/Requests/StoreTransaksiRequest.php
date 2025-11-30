@@ -17,7 +17,6 @@ class StoreTransaksiRequest extends FormRequest
             'id_user'            => 'required|exists:users,id',
             'id_kamar'           => 'required|exists:kamars,id',
             'tanggal_pembayaran' => 'required|date',
-            'periode_pembayaran' => 'required|string|max:20',
             'masuk_kamar'        => 'nullable|date',
             'durasi'             => 'required|string|max:20',
             'total_bayar'        => 'required|numeric|min:1000', // Minimal Rp 1.000

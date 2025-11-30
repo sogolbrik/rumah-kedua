@@ -381,7 +381,7 @@
             inactiveButton.style.display = 'none';
             inactiveButton.onclick = null;
 
-            if (user.status_penghuni === 'aktif') {
+            if (user.role === 'penghuni') {
                 statusElement.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Aktif';
                 statusElement.className = 'px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200';
 
@@ -393,19 +393,8 @@
                     nonaktifkanUser(user.id, user.name);
                 };
                 inactiveButton.style.display = 'inline-flex'; // Tampilkan tombol
-
-            } else if (user.status_penghuni === 'menunggak') {
-                statusElement.innerHTML = '<i class="fa-solid fa-clock mr-1"></i> Menunggak';
-                statusElement.className = 'px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200';
-
-                // Set tombol nonaktifkan (sama seperti status aktif)
-                inactiveButton.innerHTML = '<i class="fa-solid fa-user-slash mr-2"></i> Nonaktifkan User';
-                inactiveButton.className =
-                    'inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-amber-700 bg-amber-100 border border-amber-200 rounded-lg hover:bg-amber-200 transition-all duration-200 hover:shadow-sm';
-                inactiveButton.onclick = function() {
-                    nonaktifkanUser(user.id, user.name);
-                };
-                inactiveButton.style.display = 'inline-flex'; // Tampilkan tombol
+            } else {
+                statusElement.innerHTML = '-';
             }
 
             // Tampilkan informasi kamar jika user adalah penghuni dan memiliki id_kamar

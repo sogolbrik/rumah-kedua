@@ -29,6 +29,11 @@ class User extends Authenticatable
         'avatar',
     ];
 
+    public function transaksi()
+    {
+        return $this->hasMany(Transaksi::class, 'id_user');
+    }
+
     public function kamar()
     {
         return $this->belongsTo(Kamar::class, 'id_kamar');
