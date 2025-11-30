@@ -3,6 +3,13 @@
 @section('title', 'Pengumuman')
 
 @section('admin-main')
+    <div class="flex items-center justify-between mb-4">
+        <div>
+            <h1 class="text-3xl font-bold text-slate-900">Daftar Pengumuman</h1>
+            <p class="mt-1 text-sm text-slate-600">Kelola dan buat pengumuman dengan mudah di halaman ini.</p>
+        </div>
+    </div>
+
     <div x-data="{ submitting: false }" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Daftar Pengumuman -->
         <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">

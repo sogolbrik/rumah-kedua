@@ -3,11 +3,20 @@
 @section('title', 'Dashboard')
 
 @section('admin-main')
+    <div class="flex items-center justify-between mb-5">
+        <div>
+            <h1 class="text-3xl font-bold text-slate-900">Dashboard</h1>
+            <p class="mt-1 text-sm text-slate-600">Kelola kos RumahKedua lebih mudah dari dashboard ini.</p>
+        </div>
+    </div>
+
     <!-- Realtime Clock Card -->
     <div class="mb-6">
-        <div class="mx-auto max-w-sm rounded-lg bg-slate-100 p-3 text-slate-800 shadow-sm">
-            <div class="text-center">
-                <div id="realtime-clock" class="text-sm font-semibold tracking-wide" x-data="realtimeClock()" x-init="init()" x-text="time"></div>
+        <div class="mx-auto max-w-xs rounded-md bg-white p-2 text-slate-800 shadow-sm">
+            <div class="flex items-center justify-center gap-2 text-xs font-semibold tracking-wide">
+                <i class="fa-regular fa-clock"></i>
+                <span id="realtime-clock" x-data="realtimeClock()" x-init="init()" x-text="time"></span>
+                <span>WIB</span>
             </div>
         </div>
     </div>
@@ -139,7 +148,7 @@
                 @forelse ($pengumuman->take(3) as $item)
                     <li class="p-3 rounded-lg border border-slate-100 bg-slate-50">
                         <p class="text-sm font-semibold text-slate-900">{{ $item->judul }}</p>
-                        <p class="text-xs text-slate-600 mt-1">{{ Str::limit($item->isi, 100) }}</p>
+                        <p class="text-xs text-slate-600 mt-1">{{ Str::limit($item->isi, 35) }}</p>
                     </li>
                 @empty
                     <p class="pt-15 text-sm text-center text-slate-900">Belum ada pengumuman</p>
