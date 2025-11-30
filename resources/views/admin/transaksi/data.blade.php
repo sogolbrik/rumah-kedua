@@ -281,6 +281,10 @@
                                         <span class="text-slate-600">Kamar:</span>
                                         <span id="modalKamar" class="font-medium text-slate-900"></span>
                                     </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-slate-600">Durasi:</span>
+                                        <span id="modalDurasi" class="font-medium text-slate-900"></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -324,7 +328,8 @@
             document.getElementById('modalMetode').textContent = transaksi.metode_pembayaran.toUpperCase();
             document.getElementById('modalPelanggan').textContent = transaksi.user.name;
             document.getElementById('modalTotal').textContent = `Rp ${formatRupiah(transaksi.total_bayar)}`;
-            document.getElementById('modalKamar').textContent = transaksi.kamar.kode_kamar;
+            document.getElementById('modalKamar').textContent = transaksi.kamar?.kode_kamar ?? '—';
+            document.getElementById('modalDurasi').textContent = transaksi.durasi ? transaksi.durasi + ' Bulan' : '—';
 
             // Set status
             const statusElement = document.getElementById('modalStatus');

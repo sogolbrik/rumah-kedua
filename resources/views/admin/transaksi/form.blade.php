@@ -178,9 +178,9 @@
                                 <select id="durasi" name="durasi" required x-model="formState.durasi" x-on:change="updateTotalBayar()" @blur="formState.touched.durasi = true"
                                     class="w-full rounded-xl border-2 border-slate-200 bg-white py-3 pl-11 pr-4 text-sm font-medium text-slate-900 placeholder:text-slate-400 transition-all focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10">
                                     <option value="">Pilih Durasi</option>
-                                    <option value="1 bulan" {{ old('durasi') == '1 bulan' ? 'selected' : '' }}>1 Bulan</option>
-                                    <option value="3 bulan" {{ old('durasi') == '3 bulan' ? 'selected' : '' }}>3 Bulan</option>
-                                    <option value="6 bulan" {{ old('durasi') == '6 bulan' ? 'selected' : '' }}>6 Bulan</option>
+                                    <option value="1 bulan" {{ old('durasi') == '1' ? 'selected' : '' }}>1 Bulan</option>
+                                    <option value="3 bulan" {{ old('durasi') == '3' ? 'selected' : '' }}>3 Bulan</option>
+                                    <option value="6 bulan" {{ old('durasi') == '6' ? 'selected' : '' }}>6 Bulan</option>
                                 </select>
                             </div>
                             <p x-cloak x-show="formState.touched.durasi && !formState.durasi" class="mt-1 text-xs font-medium text-rose-600">

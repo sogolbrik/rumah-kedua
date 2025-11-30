@@ -34,7 +34,7 @@
             </div>
             <div class="mt-4 h-2 w-full rounded-full bg-slate-100 overflow-hidden">
                 <div class="h-full rounded-full bg-gradient-to-r from-blue-500 to-blue-600"
-                    style="width: {{ $kamar->where('status', 'Terisi')->count() ? round(($kamar->where('status', 'Terisi')->count() / $kamar->where('status', 'Tersedia')->count()) * 100, 0) : 0 }}%"">
+                    style="width: {{ $kamar->where('status', 'Terisi')->count() ? round(($kamar->where('status', 'Terisi')->count() / $kamar->where('status', 'Tersedia')->count()) * 100, 0) : 0 }}%">
                 </div>
             </div>
         </div>
@@ -64,9 +64,27 @@
                     <i class="fa-solid fa-wallet text-lg"></i>
                 </div>
             </div>
-            {{-- <p class="mt-3 text-xs text-green-700 bg-green-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full">
-                <i class="fa-solid fa-arrow-up"></i> +12.3% dari bulan lalu
-            </p> --}}
+            @php
+                // Hitung total penjualan bulan ini
+                $bulanIni = \Carbon\Carbon::now()->startOfMonth();
+                $bulanLalu = \Carbon\Carbon::now()->subMonth()->startOfMonth();
+
+                $penjualanBulanIni = $transaksi->where('status_pembayaran', 'paid')->where('created_at', '>=', $bulanIni)->sum('total_bayar');
+
+                $penjualanBulanLalu = $transaksi->where('status_pembayaran', 'paid')->where('created_at', '>=', $bulanLalu)->where('created_at', '<', $bulanIni)->sum('total_bayar');
+
+                if ($penjualanBulanLalu > 0) {
+                    $persentasePerubahan = round((($penjualanBulanIni - $penjualanBulanLalu) / $penjualanBulanLalu) * 100, 1);
+                } else {
+                    $persentasePerubahan = $penjualanBulanIni > 0 ? 100 : 0;
+                }
+
+                $trend = $persentasePerubahan >= 0 ? 'Naik' : 'Turun';
+                $warna = $persentasePerubahan >= 0 ? 'green' : 'red';
+            @endphp
+            <p class="mt-3 text-xs text-{{ $warna }}-700 bg-{{ $warna }}-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full">
+                <i class="fa-solid fa-arrow-{{ $persentasePerubahan >= 0 ? 'up' : 'down' }}"></i> {{ $persentasePerubahan >= 0 ? '+' : '' }}{{ $persentasePerubahan }}% dari bulan lalu
+            </p>
         </div>
 
         {{-- Card: Transaksi Pending --}}
