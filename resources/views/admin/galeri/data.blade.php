@@ -3,18 +3,21 @@
 @section('title', 'Galeri')
 
 @section('admin-main')
-    <div class="flex items-center justify-between">
+    <!-- Header Utama -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
         <div>
-            <h1 class="text-3xl font-bold text-slate-900">Galeri Gambar</h1>
-            <p class="mt-1 text-sm text-slate-600">Kelola semua gambar galeri kamar dengan mudah.</p>
+            <h1 class="text-2xl font-bold text-slate-900">Galeri Gambar</h1>
+            <p class="mt-0.5 text-sm text-slate-600">Kelola semua gambar galeri kamar dengan mudah.</p>
         </div>
-        <a href="{{ route('galeri.create') }}">
-            <button
-                class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
-                <i class="fa-solid fa-plus-circle text-sm"></i>
-                Tambah Gambar
-            </button>
-        </a>
+        <div>
+            <a href="{{ route('galeri.create') }}">
+                <button
+                    class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                    <i class="fa-solid fa-plus-circle text-sm"></i>
+                    Tambah Gambar
+                </button>
+            </a>
+        </div>
     </div>
 
     <!-- Alpine.js Zoom Modal -->

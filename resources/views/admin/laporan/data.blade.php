@@ -3,194 +3,187 @@
 @section('title', 'Laporan')
 
 @section('admin-main')
-    <div class="flex items-center justify-between mb-5">
+    <!-- Header Utama -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
         <div>
-            <h1 class="text-3xl font-bold text-slate-900">Laporan</h1>
-            <p class="mt-1 text-sm text-slate-600">Semua laporan ada di sini, mudah dipantau dan dikelola.</p>
+            <h1 class="text-2xl font-bold text-slate-900">Laporan</h1>
+            <p class="mt-0.5 text-sm text-slate-600">Pantau kinerja dan unduh laporan operasional.</p>
+        </div>
+
+        <!-- Realtime Clock - Integrasi Halus -->
+        <div class="inline-flex items-center gap-2 rounded-full bg-slate-100/70 px-3.5 py-2 text-xs font-medium text-slate-700 backdrop-blur-sm border border-slate-200/40">
+            <i class="fa-regular fa-clock text-slate-500"></i>
+            <span id="realtime-clock" x-data="realtimeClock()" x-init="init()" x-text="time"></span>
+            <span class="text-slate-500">WIB</span>
         </div>
     </div>
 
-    <!-- Realtime Clock Card -->
-    <div class="mb-6">
-        <div class="mx-auto max-w-xs rounded-md bg-white p-2 text-slate-800 shadow-sm">
-            <div class="flex items-center justify-center gap-2 text-xs font-semibold tracking-wide">
-                <i class="fa-regular fa-clock"></i>
-                <span id="realtime-clock" x-data="realtimeClock()" x-init="init()" x-text="time"></span>
-                <span>WIB</span>
+    <!-- Statistik Ringkas -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-6">
+        {{-- Penjualan Bulan Ini --}}
+        <div class="rounded-2xl border border-slate-200/50 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-300">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-slate-500 font-medium">Penjualan Bulan Ini</p>
+                    <p class="mt-1 text-xl font-bold text-slate-900">Rp {{ number_format($penjualanBulanIni ?? 45750000, 0, ',', '.') }}</p>
+                </div>
+                <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-pink-100 to-rose-100 flex items-center justify-center text-rose-600">
+                    <i class="fa-solid fa-chart-line text-base"></i>
+                </div>
             </div>
+            <p class="mt-2 text-xs text-slate-500">Naik <span class="text-green-600 font-medium">8%</span> dari bulan lalu</p>
+        </div>
+
+        {{-- Hunian Terisi --}}
+        <div class="rounded-2xl border border-slate-200/50 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-300">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-slate-500 font-medium">Hunian Terisi</p>
+                    <p class="mt-1 text-xl font-bold text-slate-900">{{ $persentaseHunian ?? 72 }}%</p>
+                </div>
+                <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-cyan-100 to-teal-100 flex items-center justify-center text-teal-600">
+                    <i class="fa-solid fa-house-user text-base"></i>
+                </div>
+            </div>
+            <div class="mt-3 h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
+                <div class="h-full rounded-full bg-gradient-to-r from-cyan-400 to-teal-500" style="width: {{ $persentaseHunian ?? 72 }}%"></div>
+            </div>
+        </div>
+
+        {{-- Total Transaksi Minggu Ini --}}
+        <div class="rounded-2xl border border-slate-200/50 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-300">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-slate-500 font-medium">Transaksi Minggu Ini</p>
+                    <p class="mt-1 text-xl font-bold text-slate-900">{{ $transaksiMingguIni ?? 142 }}</p>
+                </div>
+                <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center text-purple-600">
+                    <i class="fa-solid fa-receipt text-base"></i>
+                </div>
+            </div>
+            <p class="mt-2 text-xs text-slate-500">{{ $transaksiHariIni ?? 12 }} transaksi hari ini</p>
+        </div>
+
+        {{-- Total Penghuni --}}
+        <div class="rounded-2xl border border-slate-200/50 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-300">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-slate-500 font-medium">Total Penghuni</p>
+                    <p class="mt-1 text-xl font-bold text-slate-900">{{ $totalPenghuni ?? 186 }}</p>
+                </div>
+                <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-orange-600">
+                    <i class="fa-solid fa-users text-base"></i>
+                </div>
+            </div>
+            <p class="mt-2 text-xs text-slate-500">Aktif bulan ini</p>
         </div>
     </div>
 
-    <!-- Section Card Laporan (jumlah) -->
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mb-5">
-        {{-- Card: Penjualan Bulan Ini --}}
-        <div class="rounded-xl border border-slate-200/60 bg-white p-5 shadow-sm hover:shadow-md transition-shadow duration-300">
-            <div class="flex items-center justify-between">
+    <!-- Kartu Aksi Laporan -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 mb-6">
+        {{-- Laporan Transaksi --}}
+        <div class="rounded-2xl border border-slate-200/50 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
+            <div class="flex items-start gap-4">
+                <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center text-purple-600">
+                    <i class="fa-solid fa-receipt text-base"></i>
+                </div>
                 <div>
-                    <p class="text-sm text-slate-500">Penjualan Bulan Ini</p>
-                    <p class="mt-1 text-2xl font-bold text-slate-900">Rp 45.750.000</p>
-                </div>
-                <div class="h-11 w-11 rounded-xl bg-gradient-to-br from-pink-100 to-rose-100 flex items-center justify-center text-rose-600">
-                    <i class="fa-solid fa-chart-line text-lg"></i>
+                    <p class="text-xs text-slate-500 font-medium">Laporan Transaksi</p>
+                    <p class="mt-0.5 text-base font-bold text-slate-900">Semua transaksi</p>
                 </div>
             </div>
-            <p class="mt-3 text-xs text-slate-500">Naik 8% dari bulan lalu</p>
-        </div>
-
-        {{-- Card: Hunian Terisi --}}
-        <div class="rounded-xl border border-slate-200/60 bg-white p-5 shadow-sm hover:shadow-md transition-shadow duration-300">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-slate-500">Hunian Terisi</p>
-                    <p class="mt-1 text-2xl font-bold text-slate-900">72%</p>
-                </div>
-                <div class="h-11 w-11 rounded-xl bg-gradient-to-br from-cyan-100 to-teal-100 flex items-center justify-center text-teal-600">
-                    <i class="fa-solid fa-house-user text-lg"></i>
-                </div>
-            </div>
-            <div class="mt-4 h-2 w-full rounded-full bg-slate-100 overflow-hidden">
-                <div class="h-full rounded-full bg-gradient-to-r from-cyan-400 to-teal-500" style="width: 72%"></div>
-            </div>
-        </div>
-
-        {{-- Card: Total Transaksi Minggu Ini --}}
-        <div class="rounded-xl border border-slate-200/60 bg-white p-5 shadow-sm hover:shadow-md transition-shadow duration-300">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-slate-500">Total Transaksi Minggu Ini</p>
-                    <p class="mt-1 text-2xl font-bold text-slate-900">142</p>
-                </div>
-                <div class="h-11 w-11 rounded-xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center text-purple-600">
-                    <i class="fa-solid fa-receipt text-lg"></i>
-                </div>
-            </div>
-            <p class="mt-3 text-xs text-slate-500">12 transaksi hari ini</p>
-        </div>
-
-        {{-- Card: Total Penghuni --}}
-        <div class="rounded-xl border border-slate-200/60 bg-white p-5 shadow-sm hover:shadow-md transition-shadow duration-300">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-slate-500">Total Penghuni</p>
-                    <p class="mt-1 text-2xl font-bold text-slate-900">186</p>
-                </div>
-                <div class="h-11 w-11 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-orange-600">
-                    <i class="fa-solid fa-users text-lg"></i>
-                </div>
-            </div>
-            <p class="mt-3 text-xs text-slate-500">Aktif bulan ini</p>
-        </div>
-    </div>
-
-    <!-- Section Card Laporan -->
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-        {{-- Card: Laporan Transaksi --}}
-        <div class="rounded-xl border border-slate-200/60 bg-white p-5 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col">
-            <div class="flex items-start justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="h-11 w-11 rounded-xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center text-purple-600">
-                        <i class="fa-solid fa-receipt text-lg"></i>
-                    </div>
-                    <div>
-                        <p class="text-sm text-slate-500">Laporan Transaksi</p>
-                        <p class="mt-1 text-lg font-bold text-slate-900">Semua transaksi</p>
-                    </div>
-                </div>
-            </div>
-            <p class="mt-4 text-sm text-slate-600 flex-grow">Lihat dan unduh laporan transaksi sewa kamar secara lengkap.</p>
-            <button class="mt-4 w-1/2 rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 flex items-center justify-center gap-2">
-                <i class="fa-solid fa-file-lines"></i>
+            <p class="mt-3 text-sm text-slate-600 flex-grow">Lihat dan unduh laporan transaksi sewa kamar secara lengkap.</p>
+            <a href="#"
+                class="mt-4 w-full max-w-[140px] rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-2 text-sm font-medium text-white hover:from-purple-700 hover:to-indigo-700 shadow-sm transition-all flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-file-export text-xs"></i>
                 Buat Laporan
-            </button>
+            </a>
         </div>
 
-        {{-- Card: Laporan Kamar --}}
-        <div class="rounded-xl border border-slate-200/60 bg-white p-5 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col">
-            <div class="flex items-start justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="h-11 w-11 rounded-xl bg-gradient-to-br from-cyan-100 to-teal-100 flex items-center justify-center text-teal-600">
-                        <i class="fa-solid fa-house-user text-lg"></i>
-                    </div>
-                    <div>
-                        <p class="text-sm text-slate-500">Laporan Kamar</p>
-                        <p class="mt-1 text-lg font-bold text-slate-900">Status hunian</p>
-                    </div>
+        {{-- Laporan Kamar --}}
+        <div class="rounded-2xl border border-slate-200/50 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
+            <div class="flex items-start gap-4">
+                <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-cyan-100 to-teal-100 flex items-center justify-center text-teal-600">
+                    <i class="fa-solid fa-door-open text-base"></i>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-500 font-medium">Laporan Kamar</p>
+                    <p class="mt-0.5 text-base font-bold text-slate-900">Status hunian</p>
                 </div>
             </div>
-            <p class="mt-4 text-sm text-slate-600 flex-grow">Lihat dan unduh laporan ketersediaan serta status kamar.</p>
-            <button class="mt-4 w-1/2 rounded-lg bg-teal-600 px-4 py-2 text-sm font-medium text-white hover:bg-teal-700 flex items-center justify-center gap-2">
-                <i class="fa-solid fa-file-lines"></i>
+            <p class="mt-3 text-sm text-slate-600 flex-grow">Lihat dan unduh laporan ketersediaan serta status kamar.</p>
+            <a href="#"
+                class="mt-4 w-full max-w-[140px] rounded-lg bg-gradient-to-r from-teal-600 to-cyan-600 px-4 py-2 text-sm font-medium text-white hover:from-teal-700 hover:to-cyan-700 shadow-sm transition-all flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-file-export text-xs"></i>
                 Buat Laporan
-            </button>
+            </a>
         </div>
 
-        {{-- Card: Laporan Penghuni --}}
-        <div class="rounded-xl border border-slate-200/60 bg-white p-5 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col">
-            <div class="flex items-start justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="h-11 w-11 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-orange-600">
-                        <i class="fa-solid fa-users text-lg"></i>
-                    </div>
-                    <div>
-                        <p class="text-sm text-slate-500">Laporan Penghuni</p>
-                        <p class="mt-1 text-lg font-bold text-slate-900">Data penghuni</p>
-                    </div>
+        {{-- Laporan Penghuni --}}
+        <div class="rounded-2xl border border-slate-200/50 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
+            <div class="flex items-start gap-4">
+                <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-orange-600">
+                    <i class="fa-solid fa-users text-base"></i>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-500 font-medium">Laporan Penghuni</p>
+                    <p class="mt-0.5 text-base font-bold text-slate-900">Data penghuni</p>
                 </div>
             </div>
-            <p class="mt-4 text-sm text-slate-600 flex-grow">Lihat dan unduh laporan data seluruh penghuni kost.</p>
-            <button class="mt-4 w-1/2 rounded-lg bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700 flex items-center justify-center gap-2">
-                <i class="fa-solid fa-file-lines"></i>
+            <p class="mt-3 text-sm text-slate-600 flex-grow">Lihat dan unduh laporan data seluruh penghuni kost.</p>
+            <a href="#"
+                class="mt-4 w-full max-w-[140px] rounded-lg bg-gradient-to-r from-orange-600 to-amber-600 px-4 py-2 text-sm font-medium text-white hover:from-orange-700 hover:to-amber-700 shadow-sm transition-all flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-file-export text-xs"></i>
                 Buat Laporan
-            </button>
+            </a>
         </div>
     </div>
 
-    <!-- Section Table Data -->
-    <div class="mt-6 grid grid-cols-1 xl:grid-cols-2 gap-5">
+    <!-- Tabel Data Real -->
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
         {{-- Transaksi Terbaru --}}
-        <div class="rounded-xl border border-slate-200/60 bg-white p-5 shadow-sm">
+        <div class="rounded-2xl border border-slate-200/50 bg-white p-5 shadow-sm">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-base font-bold text-slate-900">Transaksi Terbaru</h2>
                 <a href="{{ route('transaksi.index') }}" class="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline">Lihat semua</a>
             </div>
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto -mx-1">
                 <table class="w-full text-sm">
                     <thead class="text-left text-slate-500 border-b border-slate-200/50">
                         <tr>
-                            <th class="py-2.5 px-1">Tanggal</th>
-                            <th class="py-2.5">Penyewa</th>
-                            <th class="py-2.5">Kamar</th>
-                            <th class="py-2.5">Total</th>
-                            <th class="py-2.5 text-right">Status</th>
+                            <th class="py-2.5 px-2">Tanggal</th>
+                            <th class="py-2.5 px-2">Penyewa</th>
+                            <th class="py-2.5 px-2">Kamar</th>
+                            <th class="py-2.5 px-2">Total</th>
+                            <th class="py-2.5 px-2 text-right">Status</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
-                        @forelse ($transaksi->take(20) as $item)
+                        @forelse ($transaksi->take(5) as $item)
                             <tr>
-                                <td class="py-3 px-1">{{ $item->created_at->format('d M Y') }}</td>
-                                <td class="py-3">{{ $item->user->name }}</td>
-                                <td class="py-3">{{ $item->kamar->kode_kamar }}</td>
-                                <td class="py-3">{{ number_format($item->total_bayar, 0, ',', '.') }}</td>
-                                <td class="py-3 text-right">
-                                    @if ($item->status_pembayaran === 'paid')
-                                        <span class="px-2.5 py-1 rounded-full text-xs bg-green-50 text-green-700 font-medium">Lunas</span>
-                                    @elseif ($item->status_pembayaran === 'pending')
-                                        <span class="px-2.5 py-1 rounded-full text-xs bg-yellow-50 text-yellow-700 font-medium">Menunggu</span>
-                                    @elseif ($item->status_pembayaran === 'failed')
-                                        <span class="px-2.5 py-1 rounded-full text-xs bg-red-50 text-red-700 font-medium">Gagal</span>
-                                    @elseif ($item->status_pembayaran === 'cancelled')
-                                        <span class="px-2.5 py-1 rounded-full text-xs bg-gray-50 text-gray-700 font-medium">Dibatalkan</span>
-                                    @elseif ($item->status_pembayaran === 'expired')
-                                        <span class="px-2.5 py-1 rounded-full text-xs bg-orange-50 text-orange-700 font-medium">Kadaluarsa</span>
-                                    @elseif ($item->status_pembayaran === 'challenge')
-                                        <span class="px-2.5 py-1 rounded-full text-xs bg-purple-50 text-purple-700 font-medium">Tantangan</span>
-                                    @else
-                                        <span class="px-2.5 py-1 rounded-full text-xs bg-slate-50 text-slate-700 font-medium">Tidak Diketahui</span>
-                                    @endif
+                                <td class="py-3 px-2">{{ $item->created_at->format('d M Y') }}</td>
+                                <td class="py-3 px-2">{{ $item->user?->name ?? '—' }}</td>
+                                <td class="py-3 px-2">{{ $item->kamar?->kode_kamar ?? '—' }}</td>
+                                <td class="py-3 px-2">Rp {{ number_format($item->total_bayar, 0, ',', '.') }}</td>
+                                <td class="py-3 px-2 text-right">
+                                    @php
+                                        $statusMap = [
+                                            'paid' => ['label' => 'Lunas', 'color' => 'green'],
+                                            'pending' => ['label' => 'Menunggu', 'color' => 'yellow'],
+                                            'failed' => ['label' => 'Gagal', 'color' => 'red'],
+                                            'cancelled' => ['label' => 'Dibatalkan', 'color' => 'gray'],
+                                            'expired' => ['label' => 'Kadaluarsa', 'color' => 'orange'],
+                                            'challenge' => ['label' => 'Tantangan', 'color' => 'purple'],
+                                        ];
+                                        $status = $statusMap[$item->status_pembayaran] ?? ['label' => 'Tidak Diketahui', 'color' => 'slate'];
+                                    @endphp
+                                    <span class="px-2 py-1 rounded-full text-xs bg-{{ $status['color'] }}-50 text-{{ $status['color'] }}-700 font-medium">{{ $status['label'] }}</span>
                                 </td>
                             </tr>
                         @empty
-                            <p class="text-center text-slate-500">Belum ada transaksi</p>
+                            <tr>
+                                <td colspan="5" class="py-4 text-center text-slate-500">Tidak ada transaksi</td>
+                            </tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -198,64 +191,70 @@
         </div>
 
         {{-- Data Penghuni --}}
-        <div class="rounded-xl border border-slate-200/60 bg-white p-5 shadow-sm">
+        <div class="rounded-2xl border border-slate-200/50 bg-white p-5 shadow-sm">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-base font-bold text-slate-900">Data Penghuni</h2>
-                <a href="#" class="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline">Lihat semua</a>
+                <a href="{{ route('user.index') }}" class="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline">Lihat semua</a>
             </div>
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto -mx-1">
                 <table class="w-full text-sm">
                     <thead class="text-left text-slate-500 border-b border-slate-200/50">
                         <tr>
-                            <th class="py-2.5 px-1">Nama</th>
-                            <th class="py-2.5">Kamar</th>
-                            <th class="py-2.5">Mulai</th>
-                            <th class="py-2.5 text-right">Status</th>
+                            <th class="py-2.5 px-2">Nama</th>
+                            <th class="py-2.5 px-2">Kamar</th>
+                            <th class="py-2.5 px-2">Mulai</th>
+                            <th class="py-2.5 px-2 text-right">Status</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
-                        {{-- Dummy data penghuni --}}
-                        <tr>
-                            <td class="py-3 px-1">Budi Santoso</td>
-                            <td class="py-3">A-05</td>
-                            <td class="py-3">01 Jun 2024</td>
-                            <td class="py-3 text-right">
-                                <span class="px-2.5 py-1 rounded-full text-xs bg-green-50 text-green-700 font-medium">Aktif</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="py-3 px-1">Siti Nurhaliza</td>
-                            <td class="py-3">B-12</td>
-                            <td class="py-3">15 Mei 2024</td>
-                            <td class="py-3 text-right">
-                                <span class="px-2.5 py-1 rounded-full text-xs bg-green-50 text-green-700 font-medium">Aktif</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="py-3 px-1">Ahmad Fauzi</td>
-                            <td class="py-3">C-08</td>
-                            <td class="py-3">20 Apr 2024</td>
-                            <td class="py-3 text-right">
-                                <span class="px-2.5 py-1 rounded-full text-xs bg-yellow-50 text-yellow-700 font-medium">Perpanjang</span>
-                            </td>
-                        </tr>
+                        <!-- Gunakan data asli jika tersedia, fallback ke dummy -->
+                        @if (isset($penghuni) && $penghuni->isNotEmpty())
+                            @foreach ($penghuni->take(5) as $p)
+                                <tr>
+                                    <td class="py-3 px-2">{{ $p->name }}</td>
+                                    <td class="py-3 px-2">{{ $p->kamar?->kode_kamar ?? '—' }}</td>
+                                    <td class="py-3 px-2">{{ $p->created_at?->format('d M Y') ?? '—' }}</td>
+                                    <td class="py-3 px-2 text-right">
+                                        <span class="px-2 py-1 rounded-full text-xs bg-green-50 text-green-700 font-medium">Aktif</span>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @else
+                            <!-- Dummy hanya untuk preview visual -->
+                            <tr>
+                                <td class="py-3 px-2">Budi Santoso</td>
+                                <td class="py-3 px-2">A-05</td>
+                                <td class="py-3 px-2">01 Jun 2024</td>
+                                <td class="py-3 px-2 text-right"><span class="px-2 py-1 rounded-full text-xs bg-green-50 text-green-700 font-medium">Aktif</span></td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-2">Siti Nurhaliza</td>
+                                <td class="py-3 px-2">B-12</td>
+                                <td class="py-3 px-2">15 Mei 2024</td>
+                                <td class="py-3 px-2 text-right"><span class="px-2 py-1 rounded-full text-xs bg-green-50 text-green-700 font-medium">Aktif</span></td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-2">Ahmad Fauzi</td>
+                                <td class="py-3 px-2">C-08</td>
+                                <td class="py-3 px-2">20 Apr 2024</td>
+                                <td class="py-3 px-2 text-right"><span class="px-2 py-1 rounded-full text-xs bg-yellow-50 text-yellow-700 font-medium">Perpanjang</span></td>
+                            </tr>
+                        @endif
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- Alpine.js for Realtime Clock -->
+    <!-- Alpine.js: Realtime Clock -->
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('realtimeClock', () => ({
                 time: '',
-
                 init() {
                     this.updateTime();
                     setInterval(() => this.updateTime(), 1000);
                 },
-
                 updateTime() {
                     const now = new Date();
                     const options = {
@@ -273,5 +272,4 @@
             }));
         });
     </script>
-
 @endsection

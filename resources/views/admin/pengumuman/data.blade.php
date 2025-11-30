@@ -3,10 +3,11 @@
 @section('title', 'Pengumuman')
 
 @section('admin-main')
-    <div class="flex items-center justify-between mb-4">
+    <!-- Header Utama -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
         <div>
-            <h1 class="text-3xl font-bold text-slate-900">Daftar Pengumuman</h1>
-            <p class="mt-1 text-sm text-slate-600">Kelola dan buat pengumuman dengan mudah di halaman ini.</p>
+            <h1 class="text-2xl font-bold text-slate-900">Daftar Pengumuman</h1>
+            <p class="mt-0.5 text-sm text-slate-600">Kelola dan buat pengumuman dengan mudah di halaman ini.</p>
         </div>
     </div>
 

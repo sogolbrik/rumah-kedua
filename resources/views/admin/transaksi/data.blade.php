@@ -3,15 +3,18 @@
 @section('title', 'Transaksi')
 
 @section('admin-main')
-    <div class="flex items-center justify-between">
+<!-- Header Utama -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
         <div>
-            <h1 class="text-3xl font-bold text-slate-900">Daftar Transaksi</h1>
-            <p class="mt-1 text-sm text-slate-600">Semua informasi transaksi ada di sini, gampang banget buat dilihat dan dikelola.</p>
+            <h1 class="text-2xl font-bold text-slate-900">Daftar Transaksi</h1>
+            <p class="mt-0.5 text-sm text-slate-600">Semua informasi transaksi ada di sini, gampang banget buat dilihat dan dikelola.</p>
         </div>
-        <a href="{{ route('transaksi.create') }}" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 text-white px-4 py-2.5 text-sm font-medium hover:bg-blue-700 transition-colors">
-            <i class="fa-solid fa-plus-circle text-sm"></i>
-            Tambah Transaksi
-        </a>
+        <div>
+            <a href="{{ route('transaksi.create') }}" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 text-white px-4 py-2.5 text-sm font-medium hover:bg-blue-700 transition-colors">
+                <i class="fa-solid fa-plus-circle text-sm"></i>
+                Tambah Transaksi
+            </a>
+        </div>
     </div>
 
     @if (session('success'))
