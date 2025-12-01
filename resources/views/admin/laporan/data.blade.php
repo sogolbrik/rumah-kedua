@@ -115,7 +115,7 @@
                 </div>
             </div>
             <p class="mt-3 text-sm text-slate-600 flex-grow">Lihat dan unduh laporan transaksi sewa kamar secara lengkap.</p>
-            <a href="#"
+            <a href="{{ Route('laporan.transaksi') }}"
                 class="mt-4 w-full max-w-[140px] rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-2 text-sm font-medium text-white hover:from-purple-700 hover:to-indigo-700 shadow-sm transition-all flex items-center justify-center gap-1.5">
                 <i class="fa-solid fa-file-export text-xs"></i>
                 Buat Laporan
@@ -134,7 +134,7 @@
                 </div>
             </div>
             <p class="mt-3 text-sm text-slate-600 flex-grow">Lihat dan unduh laporan ketersediaan serta status kamar.</p>
-            <a href="#"
+            <a href="{{ Route('laporan.kamar') }}"
                 class="mt-4 w-full max-w-[140px] rounded-lg bg-gradient-to-r from-teal-600 to-cyan-600 px-4 py-2 text-sm font-medium text-white hover:from-teal-700 hover:to-cyan-700 shadow-sm transition-all flex items-center justify-center gap-1.5">
                 <i class="fa-solid fa-file-export text-xs"></i>
                 Buat Laporan
@@ -153,7 +153,7 @@
                 </div>
             </div>
             <p class="mt-3 text-sm text-slate-600 flex-grow">Lihat dan unduh laporan data seluruh penghuni kos.</p>
-            <a href="#"
+            <a href="{{ Route('laporan.penghuni') }}"
                 class="mt-4 w-full max-w-[140px] rounded-lg bg-gradient-to-r from-orange-600 to-amber-600 px-4 py-2 text-sm font-medium text-white hover:from-orange-700 hover:to-amber-700 shadow-sm transition-all flex items-center justify-center gap-1.5">
                 <i class="fa-solid fa-file-export text-xs"></i>
                 Buat Laporan

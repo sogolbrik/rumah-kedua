@@ -95,7 +95,7 @@
             <li>
                 <a href="{{ route('laporan.index') }}"
                     class="flex items-center gap-3.5 px-4 py-2.5 rounded-xl transition-all duration-200 group
-                    {{ request()->routeIs('laporan.index') ? 'bg-gradient-to-r from-violet-500 to-purple-500 text-white shadow-md' : 'text-slate-700 hover:bg-slate-200/60 hover:text-slate-900' }}">
+                    {{ request()->routeIs('laporan.*') ? 'bg-gradient-to-r from-violet-500 to-purple-500 text-white shadow-md' : 'text-slate-700 hover:bg-slate-200/60 hover:text-slate-900' }}">
                     <i class="fa-solid fa-chart-line text-sm group-hover:scale-110 transition-transform"></i>
                     <span class="font-medium">Laporan</span>
                 </a>

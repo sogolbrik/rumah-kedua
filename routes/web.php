@@ -23,10 +23,16 @@ Route::post('login', [AuthController::class, 'authentication'])->name('authentic
 
 //AdminPanel
 Route::get('dashboard-admin', [DashboardController::class, 'index'])->name('dashboard-admin');
+//Master
 Route::resource('kamar', KamarController::class);
 Route::resource('user', UserController::class);
 Route::resource('galeri', GaleriController::class);
+//Laporan
 Route::get('laporan', [LaporanController::class, 'index'])->name('laporan.index');
+Route::get('laporan/transaksi', [LaporanController::class, 'laporanTransaksi'])->name('laporan.transaksi');
+Route::get('laporan/kamar', [LaporanController::class, 'laporanKamar'])->name('laporan.kamar');
+Route::get('laporan/penghuni', [LaporanController::class, 'laporanPenghuni'])->name('laporan.penghuni');
+//Nonaktif User
 Route::put('user/{id}/nonaktifkan', [UserController::class, 'nonaktifkan'])->name('user.nonaktifkan');
 //Transaksi
 Route::prefix('transaksi')->name('transaksi.')->group(function () {

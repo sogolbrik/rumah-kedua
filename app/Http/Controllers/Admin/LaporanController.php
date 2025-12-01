@@ -32,10 +32,31 @@ class LaporanController extends Controller
             });
 
         return view('admin.laporan.data', [
-            'transaksi' => Transaksi::where('status_pembayaran', 'paid')->get(),
-            'kamar' => Kamar::get(),
-            'penghuni' => User::where('role', 'penghuni')->get(),
+            'transaksi' => Transaksi::where('status_pembayaran', 'paid')->latest()->get(),
+            'kamar' => Kamar::latest()->get(),
+            'penghuni' => User::where('role', 'penghuni')->latest()->get(),
             'penghuniMenunggak' => $penghuniMenunggak,
+        ]);
+    }
+
+    public function laporanTransaksi()
+    {
+        return view('admin.laporan.detail.transaksi', [
+            'transaksi' => Transaksi::latest()->paginate(50),
+        ]);
+    }
+
+    public function laporanKamar()
+    {
+        return view('admin.laporan.detail.kamar', [
+            'kamar' => Kamar::latest()->paginate(50),
+        ]);
+    }
+
+    public function laporanPenghuni()
+    {
+        return view('admin.laporan.detail.penghuni', [
+            'penghuni' => User::where('role', 'penghuni')->latest()->paginate(50),
         ]);
     }
 }
