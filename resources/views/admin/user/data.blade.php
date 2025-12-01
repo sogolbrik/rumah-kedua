@@ -347,7 +347,7 @@
             if (user.avatar) {
                 avatarElement.src = `/storage/${user.avatar}`;
             } else {
-                avatarElement.src = '/assets/image/default-avatar.png';
+                avatarElement.src = '/assets/image/avatar/default-avatar.png';
             }
             avatarElement.alt = `Foto ${user.name}`;
 
@@ -356,7 +356,7 @@
             if (user.ktp) {
                 ktpElement.src = `/storage/${user.ktp}`;
             } else {
-                ktpElement.src = '/assets/image/default-ktp.jpg';
+                ktpElement.src = '/assets/image/avatar/default-ktp.jpg';
             }
             ktpElement.alt = `KTP ${user.name}`;
 

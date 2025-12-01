@@ -20,57 +20,55 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
         {{-- Card: Hunian Terisi --}}
-        <div class="rounded-xl border border-slate-200/60 bg-white p-5 shadow-sm hover:shadow-md transition-shadow duration-300">
+        <div class="rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300 bg-gradient-to-br from-blue-500 to-blue-600 text-white">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-slate-500">Hunian Terisi</p>
-                    <p class="mt-1 text-2xl font-bold text-slate-900">
-                        {{ $kamar->where('status', 'Terisi')->count() ? round(($kamar->where('status', 'Terisi')->count() / $kamar->where('status', 'Tersedia')->count()) * 100, 0) : 0 }}%</p>
+                    <p class="text-sm opacity-90">Hunian Terisi</p>
+                    <p class="mt-1 text-2xl font-bold">
+                        {{ $kamar->where('status', 'Terisi')->count() ? round(($kamar->where('status', 'Terisi')->count() / $kamar->where('status', 'Tersedia')->count()) * 100, 0) : 0 }}%
                     </p>
                 </div>
-                <div class="h-11 w-11 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
-                    <i class="fa-solid fa-building-user text-lg"></i>
+                <div class="h-11 w-11 rounded-xl bg-white/20 flex items-center justify-center">
+                    <i class="fa-solid fa-building-user text-lg text-white"></i>
                 </div>
             </div>
-            <div class="mt-4 h-2 w-full rounded-full bg-slate-100 overflow-hidden">
-                <div class="h-full rounded-full bg-gradient-to-r from-blue-500 to-blue-600"
+            <div class="mt-4 h-2 w-full rounded-full bg-white/30 overflow-hidden">
+                <div class="h-full rounded-full bg-white"
                     style="width: {{ $kamar->where('status', 'Terisi')->count() ? round(($kamar->where('status', 'Terisi')->count() / $kamar->where('status', 'Tersedia')->count()) * 100, 0) : 0 }}%">
                 </div>
             </div>
         </div>
 
         {{-- Card: Kamar Tersedia --}}
-        <div class="rounded-xl border border-slate-200/60 bg-white p-5 shadow-sm hover:shadow-md transition-shadow duration-300">
+        <div class="rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-slate-500">Kamar Tersedia</p>
-                    <p class="mt-1 text-2xl font-bold text-slate-900">{{ $kamar->where('status', 'Tersedia')->count() }}</p>
+                    <p class="text-sm opacity-90">Kamar Tersedia</p>
+                    <p class="mt-1 text-2xl font-bold">{{ $kamar->where('status', 'Tersedia')->count() }}</p>
                 </div>
-                <div class="h-11 w-11 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600">
-                    <i class="fa-solid fa-door-open text-lg"></i>
+                <div class="h-11 w-11 rounded-xl bg-white/20 flex items-center justify-center">
+                    <i class="fa-solid fa-door-open text-lg text-white"></i>
                 </div>
             </div>
-            <p class="mt-3 text-xs text-slate-500">Dari total {{ $kamar->count() }} kamar</p>
+            <p class="mt-3 text-xs opacity-90">Dari total {{ $kamar->count() }} kamar</p>
         </div>
 
         {{-- Card: Pendapatan Bulan Ini --}}
-        <div class="rounded-xl border border-slate-200/60 bg-white p-5 shadow-sm hover:shadow-md transition-shadow duration-300">
+        <div class="rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300 bg-gradient-to-br from-violet-500 to-violet-600 text-white">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-slate-500">Pendapatan Bulan Ini</p>
-                    <p class="mt-1 text-2xl font-bold text-slate-900">Rp {{ number_format($transaksi->where('status_pembayaran', 'paid')->sum('total_bayar'), 0, ',', '.') }}</p>
+                    <p class="text-sm opacity-90">Pendapatan Bulan Ini</p>
+                    <p class="mt-1 text-2xl font-bold">Rp {{ number_format($transaksi->where('status_pembayaran', 'paid')->sum('total_bayar'), 0, ',', '.') }}</p>
                 </div>
-                <div class="h-11 w-11 rounded-xl bg-violet-100 flex items-center justify-center text-violet-600">
-                    <i class="fa-solid fa-wallet text-lg"></i>
+                <div class="h-11 w-11 rounded-xl bg-white/20 flex items-center justify-center">
+                    <i class="fa-solid fa-wallet text-lg text-white"></i>
                 </div>
             </div>
             @php
-                // Hitung total penjualan bulan ini
                 $bulanIni = \Carbon\Carbon::now()->startOfMonth();
                 $bulanLalu = \Carbon\Carbon::now()->subMonth()->startOfMonth();
 
                 $penjualanBulanIni = $transaksi->where('status_pembayaran', 'paid')->where('created_at', '>=', $bulanIni)->sum('total_bayar');
-
                 $penjualanBulanLalu = $transaksi->where('status_pembayaran', 'paid')->where('created_at', '>=', $bulanLalu)->where('created_at', '<', $bulanIni)->sum('total_bayar');
 
                 if ($penjualanBulanLalu > 0) {
@@ -79,26 +77,26 @@
                     $persentasePerubahan = $penjualanBulanIni > 0 ? 100 : 0;
                 }
 
-                $trend = $persentasePerubahan >= 0 ? 'Naik' : 'Turun';
-                $warna = $persentasePerubahan >= 0 ? 'green' : 'red';
+                $trendNaik = $persentasePerubahan >= 0;
             @endphp
-            <p class="mt-3 text-xs text-{{ $warna }}-700 bg-{{ $warna }}-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full">
-                <i class="fa-solid fa-arrow-{{ $persentasePerubahan >= 0 ? 'up' : 'down' }}"></i> {{ $persentasePerubahan >= 0 ? '+' : '' }}{{ $persentasePerubahan }}% dari bulan lalu
+            <p class="mt-3 text-xs inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/20">
+                <i class="fa-solid fa-arrow-{{ $trendNaik ? 'up' : 'down' }} text-white"></i>
+                <span>{{ $trendNaik ? '+' : '' }}{{ $persentasePerubahan }}% dari bulan lalu</span>
             </p>
         </div>
 
         {{-- Card: Transaksi Pending --}}
-        <div class="rounded-xl border border-slate-200/60 bg-white p-5 shadow-sm hover:shadow-md transition-shadow duration-300">
+        <div class="rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300 bg-gradient-to-br from-amber-500 to-amber-600 text-white">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-slate-500">Transaksi Pending</p>
-                    <p class="mt-1 text-2xl font-bold text-slate-900">{{ $transaksi->where('status_pembayaran', 'pending')->count() }}</p>
+                    <p class="text-sm opacity-90">Transaksi Pending</p>
+                    <p class="mt-1 text-2xl font-bold">{{ $transaksi->where('status_pembayaran', 'pending')->count() }}</p>
                 </div>
-                <div class="h-11 w-11 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600">
-                    <i class="fa-solid fa-clock text-lg"></i>
+                <div class="h-11 w-11 rounded-xl bg-white/20 flex items-center justify-center">
+                    <i class="fa-solid fa-clock text-lg text-white"></i>
                 </div>
             </div>
-            <p class="mt-3 text-xs text-slate-500">Perlu verifikasi manual</p>
+            <p class="mt-3 text-xs opacity-90">Perlu verifikasi manual</p>
         </div>
     </div>
 
@@ -111,7 +109,7 @@
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
-                    <thead class="text-left text-slate-500 border-b border-slate-200/50">
+                    <thead class="text-left text-slate-500">
                         <tr>
                             <th class="py-2.5 px-1">Tanggal</th>
                             <th class="py-2.5">Penyewa</th>
@@ -120,14 +118,14 @@
                             <th class="py-2.5 text-right">Status</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-100">
+                    <tbody>
                         @forelse ($transaksi->take(3) as $item)
-                            <tr>
-                                <td class="py-3 px-1">{{ $item->created_at->format('d M Y') }}</td>
+                            <tr class="bg-slate-50 rounded-lg">
+                                <td class="py-3 px-1 rounded-l-lg">{{ $item->created_at->format('d M Y') }}</td>
                                 <td class="py-3">{{ $item->user->name }}</td>
                                 <td class="py-3">{{ $item->kamar->kode_kamar }}</td>
                                 <td class="py-3">{{ number_format($item->total_bayar, 0, ',', '.') }}</td>
-                                <td class="py-3 text-right">
+                                <td class="py-3 text-right rounded-r-lg">
                                     @if ($item->status_pembayaran === 'paid')
                                         <span class="px-2.5 py-1 rounded-full text-xs bg-green-50 text-green-700 font-medium">Lunas</span>
                                     @elseif ($item->status_pembayaran === 'pending')
@@ -145,6 +143,7 @@
                                     @endif
                                 </td>
                             </tr>
+                            <tr class="h-2"></tr>
                         @empty
                             <p class="text-center text-slate-500">Belum ada transaksi</p>
                         @endforelse

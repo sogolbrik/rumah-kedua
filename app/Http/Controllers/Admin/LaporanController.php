@@ -32,7 +32,7 @@ class LaporanController extends Controller
             });
 
         return view('admin.laporan.data', [
-            'transaksi' => Transaksi::with('user', 'kamar')->get(),
+            'transaksi' => Transaksi::where('status_pembayaran', 'paid')->get(),
             'kamar' => Kamar::get(),
             'penghuni' => User::where('role', 'penghuni')->get(),
             'penghuniMenunggak' => $penghuniMenunggak,
