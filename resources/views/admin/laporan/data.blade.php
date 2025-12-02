@@ -249,28 +249,37 @@
                     <thead class="text-left text-slate-500">
                         <tr>
                             <th class="py-2.5 px-2">Penyewa</th>
+                            <th class="py-2.5 px-2">Kamar</th>
                             <th class="py-2.5 px-2">Tanggal Bayar</th>
                             <th class="py-2.5 px-2">Jatuh Tempo</th>
                             <th class="py-2.5 px-2">Durasi</th>
-                            <th class="py-2.5 px-2">Kamar</th>
+                            <th class="py-2.5 px-2">Hari Tunggakan</th>
                             <th class="py-2.5 px-2 text-right">Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($penghuniMenunggak as $user)
-                            @foreach ($user->transaksi as $item)
-                                <tr class="bg-amber-50 rounded-lg">
-                                    <td class="py-3 px-2 rounded-l-lg">{{ $user->name ?? '—' }}</td>
-                                    <td class="py-3 px-2">{{ $item->tanggal_pembayaran?->translatedFormat('d F Y') ?? '—' }}</td>
-                                    <td class="py-3 px-2">{{ $item->tanggal_jatuhtempo?->translatedFormat('d F Y') ?? '—' }}</td>
-                                    <td class="py-3 px-2">{{ $item->durasi ?? '—' }} Bulan</td>
-                                    <td class="py-3 px-2">{{ $user->kamar?->kode_kamar ?? '—' }}</td>
-                                    <td class="py-3 px-2 text-right rounded-r-lg">
-                                        <span class="px-2 py-1 rounded-full text-xs bg-white text-amber-500 font-medium">Menunggak</span>
-                                    </td>
-                                </tr>
-                                <tr class="h-2"></tr>
-                            @endforeach
+                        @forelse ($penghuniMenunggak as $item)
+                            @php
+                                // Ambil transaksi aktif (yang paling baru atau satu-satunya)
+                                $transaksi = $item->transaksi->firstWhere('status_pembayaran', 'paid');
+                                if (!$transaksi) {
+                                    continue;
+                                } // lompat jika tidak ada
+                                $hariTunggakan = \Carbon\Carbon::parse($transaksi->tanggal_jatuhtempo)->diffInDays(\Carbon\Carbon::today());
+                            @endphp
+
+                            <tr class="bg-amber-50 rounded-lg">
+                                <td class="py-3 px-2 rounded-l-lg">{{ $item->name ?? '—' }}</td>
+                                <td class="py-3 px-2">{{ $item->kamar?->kode_kamar ?? '—' }}</td>
+                                <td class="py-3 px-2">{{ \Carbon\Carbon::parse($transaksi->tanggal_pembayaran)->translatedFormat('d F Y') }}</td>
+                                <td class="py-3 px-2">{{ \Carbon\Carbon::parse($transaksi->tanggal_jatuhtempo)->translatedFormat('d F Y') }}</td>
+                                <td class="py-3 px-2">{{ $transaksi->durasi ?? '—' }} Bulan</td>
+                                <td class="py-3 px-2">{{ $hariTunggakan ?? '—' }} Hari</td>
+                                <td class="py-3 px-2 text-right rounded-r-lg">
+                                    <span class="px-2 py-1 rounded-full text-xs bg-white text-amber-500 font-medium">Menunggak</span>
+                                </td>
+                            </tr>
+                            <tr class="h-2"></tr>
                         @empty
                             <tr>
                                 <td colspan="5" class="py-4 text-center text-gray-500">

@@ -102,98 +102,68 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
-                    <!-- Row 1 -->
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="px-6 py-4">
-                            <span class="font-mono font-bold text-indigo-700">TRX-20251201-001</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="text-sm text-slate-500">01 Des 2025</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="text-sm font-medium text-slate-800">Budi Santoso</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="font-semibold text-teal-700">Kamar 302</span>
-                        </td>
-                        <td class="px-6 py-4 text-right">
-                            <span class="font-semibold text-emerald-700">Rp 1.250.000</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-medium">
-                                <i class="fas fa-credit-card text-blue-600 text-xs"></i>
-                                Bank
-                            </span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-medium">
-                                <i class="fas fa-check-circle text-emerald-600 text-xs"></i>
-                                Berhasil
-                            </span>
-                        </td>
-                    </tr>
-
-                    <!-- Row 2 -->
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="px-6 py-4">
-                            <span class="font-mono font-bold text-indigo-700">TRX-20251128-045</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="text-sm text-slate-500">28 Nov 2025</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="text-sm font-medium text-slate-800">Siti Rahayu</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="font-semibold text-teal-700">Kamar 205</span>
-                        </td>
-                        <td class="px-6 py-4 text-right">
-                            <span class="font-semibold text-emerald-700">Rp 950.000</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-purple-100 text-purple-800 text-xs font-medium">
-                                <i class="fas fa-qrcode text-purple-600 text-xs"></i>
-                                QRIS
-                            </span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-medium">
-                                <i class="fas fa-clock text-amber-600 text-xs"></i>
-                                Pending
-                            </span>
-                        </td>
-                    </tr>
-
-                    <!-- Row 3 -->
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="px-6 py-4">
-                            <span class="font-mono font-bold text-indigo-700">TRX-20251120-112</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="text-sm text-slate-500">20 Nov 2025</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="text-sm font-medium text-slate-800">Agus Firmansyah</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="font-semibold text-teal-700">Kamar 101</span>
-                        </td>
-                        <td class="px-6 py-4 text-right">
-                            <span class="font-semibold text-emerald-700">Rp 1.100.000</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-100 text-green-800 text-xs font-medium">
-                                <i class="fas fa-money-bill-wave text-green-600 text-xs"></i>
-                                Cash
-                            </span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 text-xs font-medium">
-                                <i class="fas fa-times-circle text-rose-600 text-xs"></i>
-                                Ditolak
-                            </span>
-                        </td>
-                    </tr>
+                    @forelse ($transaksi->take(50) as $item)
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="px-6 py-4">
+                                <span class="font-mono font-bold text-indigo-700">{{ $item->kode ?? '—' }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-sm text-slate-500">{{ $item->created_at?->translatedFormat('d F Y H:i') ?? '—' }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-sm font-medium text-slate-800">{{ $item->user->name ?? '—' }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="font-semibold text-teal-700">{{ $item->kamar->kode_kamar ?? '—' }}</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="font-semibold text-emerald-700">Rp {{ number_format($item->total_bayar, 0, ',', '.') ?? '—' }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                @if ($item->midtrans_payment_type == 'bank_transfer')
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-medium">
+                                        <i class="fas fa-credit-card text-blue-600 text-xs"></i>
+                                        Bank Transfer
+                                    </span>
+                                @elseif($item->midtrans_payment_type == 'qris')
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-purple-100 text-purple-800 text-xs font-medium">
+                                        <i class="fas fa-qrcode text-purple-600 text-xs"></i>
+                                        QRIS
+                                    </span>
+                                @elseif($item->midtrans_payment_type == 'credit_card')
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs font-medium">
+                                        <i class="fas fa-credit-card text-yellow-600 text-xs"></i>
+                                        Credit Card
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-100 text-green-800 text-xs font-medium">
+                                        <i class="fas fa-money-bill-wave text-green-600 text-xs"></i>
+                                        Cash
+                                    </span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-medium">
+                                    <i class="fas fa-check-circle text-emerald-600 text-xs"></i>
+                                    Berhasil
+                                </span>
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-medium">
+                                    <i class="fas fa-clock text-amber-600 text-xs"></i>
+                                    Pending
+                                </span>
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 text-xs font-medium">
+                                    <i class="fas fa-times-circle text-rose-600 text-xs"></i>
+                                    Ditolak
+                                </span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="px-6 py-4 text-center text-slate-500">
+                                Tidak ada transaksi dalam periode ini.
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
