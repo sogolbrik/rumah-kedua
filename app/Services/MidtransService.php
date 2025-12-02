@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Midtrans\Config;
 use Midtrans\Snap;
+use Exception;
 use Midtrans\Transaction;
 
 class MidtransService
@@ -22,16 +23,25 @@ class MidtransService
         Config::$is3ds = config('midtrans.is_3ds', true);
     }
 
+
     public function createTransaction(array $transactionData)
     {
-        $this->validateTransactionData($transactionData);
-        $snapToken = Snap::getSnapToken($transactionData);
+        try {
+            $this->validateTransactionData($transactionData);
+            $snapToken = Snap::getSnapToken($transactionData);
 
-        return [
-            'success' => true,
-            'snap_token' => $snapToken,
-            'redirect_url' => null
-        ];
+            return [
+                'success' => true,
+                'snap_token' => $snapToken,
+                'redirect_url' => null
+            ];
+        } catch (Exception $e) {
+            // Kembalikan pesan yang bisa ditampilkan ke user
+            return [
+                'success' => false,
+                'message' => 'Gagal terhubung ke Midtrans. Coba lagi nanti'
+            ];
+        }
     }
 
     private function validateTransactionData(array $transactionData)
