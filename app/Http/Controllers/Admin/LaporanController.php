@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\KamarExport;
 use App\Exports\TransaksiExport;
 use App\Http\Controllers\Controller;
 use App\Models\Kamar;
@@ -10,7 +11,7 @@ use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Excel;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LaporanController extends Controller
 {
@@ -32,6 +33,7 @@ class LaporanController extends Controller
         ]);
     }
 
+    // VIEW SECTION
     public function laporanTransaksi(Request $request)
     {
         $tanggalMulai = $request->get('tanggal_mulai', now()->subMonth()->startOfMonth()->toDateString());
@@ -49,10 +51,25 @@ class LaporanController extends Controller
         ]);
     }
 
-    public function laporanKamar()
+    public function laporanKamar(Request $request)
     {
+        $tipe = $request->get('tipe');
+        $status = $request->get('status');
+
+        $query = Kamar::query();
+
+        if ($tipe) {
+            $query->where('tipe', $tipe);
+        }
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
         return view('admin.laporan.detail.kamar', [
-            'kamar' => Kamar::latest()->paginate(50),
+            'kamar' => $query->latest()->paginate(50),
+            'tipe' => $tipe,
+            'status' => $status,
         ]);
     }
 
@@ -63,6 +80,8 @@ class LaporanController extends Controller
         ]);
     }
 
+    // EXPORT SECTION
+    /* Transaksi */
     public function exportTransaksiPdf(Request $request)
     {
         $tanggalMulai = $request->get('tanggal_mulai', now()->subMonth()->startOfMonth()->format('Y-m-d'));
@@ -95,6 +114,56 @@ class LaporanController extends Controller
         return Excel::download(
             new TransaksiExport($transaksi),
             "laporan-transaksi-{$tanggalMulai}-{$tanggalSelesai}.xlsx"
+        );
+    }
+
+    /* Kamar */
+    public function exportKamarPdf(Request $request)
+    {
+        $tipe = $request->get('tipe');
+        $status = $request->get('status');
+
+        $query = Kamar::query();
+
+        if ($tipe) {
+            $query->where('tipe', $tipe);
+        }
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        $kamar = $query->latest()->get();
+
+        $pdf = Pdf::loadView('admin.laporan.export.kamar-pdf', [
+            'kamar' => $kamar,
+            'tipe' => $tipe,
+            'status' => $status,
+        ]);
+
+        return $pdf->download("laporan-kamar" . ($tipe ? "-{$tipe}" : '') . ($status ? "-{$status}" : '') . ".pdf");
+    }
+
+    public function exportKamarExcel(Request $request)
+    {
+        $tipe = $request->get('tipe');
+        $status = $request->get('status');
+
+        $query = Kamar::query();
+
+        if ($tipe) {
+            $query->where('tipe', $tipe);
+        }
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        $kamar = $query->latest()->get();
+
+        return Excel::download(
+            new KamarExport($kamar),
+            "laporan-kamar" . ($tipe ? "-{$tipe}" : '') . ($status ? "-{$status}" : '') . ".xlsx"
         );
     }
 }

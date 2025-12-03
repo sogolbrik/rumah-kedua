@@ -9,9 +9,15 @@
             <h1 class="text-2xl font-bold text-slate-900">Laporan Transaksi</h1>
             <p class="mt-0.5 text-sm text-slate-600">Pantau kinerja dan unduh laporan transaksi.</p>
         </div>
+        <div>
+            <a href="{{ route('laporan.index') }}"
+                    class="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-slate-200 transition-all hover:bg-slate-50 hover:shadow">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Kembali
+                </a>
+        </div>
     </div>
 
-    <!-- Wrap dalam x-data Alpine.js -->
     <!-- Wrap dalam x-data Alpine.js -->
     <div x-data="{
         tanggalMulai: '{{ request('tanggal_mulai', now()->subMonth()->startOfMonth()->format('Y-m-d')) }}',
@@ -28,7 +34,6 @@
             const url = new URL('{{ route('laporan.transaksi.pdf') }}', window.location.origin);
             url.searchParams.set('tanggal_mulai', this.tanggalMulai);
             url.searchParams.set('tanggal_selesai', this.tanggalSelesai);
-            // HANYA rentang tanggal, TANPA halaman
             window.open(url.toString(), '_blank');
         },
     

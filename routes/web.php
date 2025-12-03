@@ -34,6 +34,8 @@ Route::get('laporan/penghuni', [LaporanController::class, 'laporanPenghuni'])->n
 //export
 Route::get('/laporan/transaksi/export/pdf', [LaporanController::class, 'exportTransaksiPdf'])->name('laporan.transaksi.pdf');
 Route::get('/laporan/transaksi/export/excel', [LaporanController::class, 'exportTransaksiExcel'])->name('laporan.transaksi.excel');
+Route::get('/laporan/kamar/export/pdf', [LaporanController::class, 'exportKamarPdf'])->name('laporan.kamar.pdf');
+Route::get('/laporan/kamar/export/excel', [LaporanController::class, 'exportKamarExcel'])->name('laporan.kamar.excel');
 //Nonaktif User
 Route::put('user/{id}/nonaktifkan', [UserController::class, 'nonaktifkan'])->name('user.nonaktifkan');
 //Transaksi
