@@ -7,7 +7,6 @@ use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Admin\PengumumanController;
 use App\Http\Controllers\Admin\TransaksiController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\api\MidtransController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\frontend\BookingPageController;
 use App\Http\Controllers\frontend\LandingPageController;
@@ -32,6 +31,9 @@ Route::get('laporan', [LaporanController::class, 'index'])->name('laporan.index'
 Route::get('laporan/transaksi', [LaporanController::class, 'laporanTransaksi'])->name('laporan.transaksi');
 Route::get('laporan/kamar', [LaporanController::class, 'laporanKamar'])->name('laporan.kamar');
 Route::get('laporan/penghuni', [LaporanController::class, 'laporanPenghuni'])->name('laporan.penghuni');
+//export
+Route::get('/laporan/transaksi/export/pdf', [LaporanController::class, 'exportTransaksiPdf'])->name('laporan.transaksi.pdf');
+Route::get('/laporan/transaksi/export/excel', [LaporanController::class, 'exportTransaksiExcel'])->name('laporan.transaksi.excel');
 //Nonaktif User
 Route::put('user/{id}/nonaktifkan', [UserController::class, 'nonaktifkan'])->name('user.nonaktifkan');
 //Transaksi
