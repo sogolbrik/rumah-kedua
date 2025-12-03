@@ -143,17 +143,50 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4">
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-medium">
-                                    <i class="fas fa-check-circle text-emerald-600 text-xs"></i>
-                                    Berhasil
-                                </span>
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-medium">
-                                    <i class="fas fa-clock text-amber-600 text-xs"></i>
-                                    Pending
-                                </span>
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 text-xs font-medium">
-                                    <i class="fas fa-times-circle text-rose-600 text-xs"></i>
-                                    Ditolak
+                                @php
+                                    $statusMap = [
+                                        'pending' => [
+                                            'label' => 'Menunggu Pembayaran',
+                                            'color' => 'bg-amber-100 text-amber-800',
+                                            'icon' => 'fa-clock',
+                                        ],
+                                        'paid' => [
+                                            'label' => 'Lunas',
+                                            'color' => 'bg-emerald-100 text-emerald-800',
+                                            'icon' => 'fa-check-circle',
+                                        ],
+                                        'failed' => [
+                                            'label' => 'Gagal',
+                                            'color' => 'bg-rose-100 text-rose-800',
+                                            'icon' => 'fa-times-circle',
+                                        ],
+                                        'cancelled' => [
+                                            'label' => 'Dibatalkan',
+                                            'color' => 'bg-slate-100 text-slate-800',
+                                            'icon' => 'fa-ban',
+                                        ],
+                                        'expired' => [
+                                            'label' => 'Kadaluarsa',
+                                            'color' => 'bg-gray-100 text-gray-800',
+                                            'icon' => 'fa-calendar-times',
+                                        ],
+                                        'challenge' => [
+                                            'label' => 'Dalam Tantangan',
+                                            'color' => 'bg-purple-100 text-purple-800',
+                                            'icon' => 'fa-shield-alt',
+                                        ],
+                                    ];
+
+                                    $status = strtolower($item->status_pembayaran ?? '');
+                                    $badge = $statusMap[$status] ?? [
+                                        'label' => 'Tidak Diketahui',
+                                        'color' => 'bg-gray-100 text-gray-800',
+                                        'icon' => 'fa-question-circle',
+                                    ];
+                                @endphp
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full {{ $badge['color'] }} text-xs font-medium">
+                                    <i class="fas {{ $badge['icon'] }} text-xs"></i>
+                                    {{ $badge['label'] }}
                                 </span>
                             </td>
                         </tr>

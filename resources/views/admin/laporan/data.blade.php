@@ -215,11 +215,17 @@
                     <tbody>
                         @forelse ($penghuni->take(10) as $item)
                             <tr class="bg-slate-50 rounded-lg">
-                                <td class="py-3 px-2 rounded-l-lg">{{ $item->name ?? '—' }}</td>
-                                <td class="py-3 px-2">{{ $item->kamar?->kode_kamar ?? '—' }}</td>
-                                <td class="py-3 px-2">{{ $item->created_at?->translatedFormat('d F Y') ?? '—' }}</td>
+                                <td class="py-3 px-2 rounded-l-lg">
+                                    <span class="font-semibold text-slate-800 tracking-wide">{{ $item->name ?? '—' }}</span>
+                                </td>
+                                <td class="py-3 px-2">
+                                    <span class="font-medium text-slate-600">{{ $item->kamar?->kode_kamar ?? '—' }}</span>
+                                </td>
+                                <td class="py-3 px-2">
+                                    <span class="text-sm text-slate-500 italic">{{ $item->created_at?->translatedFormat('d F Y') ?? '—' }}</span>
+                                </td>
                                 <td class="py-3 px-2 text-right rounded-r-lg">
-                                    <span class="px-2 py-1 rounded-full text-xs bg-green-50 text-green-700 font-medium">Aktif</span>
+                                    <span class="px-2.5 py-1 rounded-full text-xs bg-green-100 text-green-700 font-semibold tracking-wide shadow-sm">Aktif</span>
                                 </td>
                             </tr>
                             <tr class="h-2"></tr>
@@ -269,14 +275,38 @@
                             @endphp
 
                             <tr class="bg-amber-50 rounded-lg">
-                                <td class="py-3 px-2 rounded-l-lg">{{ $item->name ?? '—' }}</td>
-                                <td class="py-3 px-2">{{ $item->kamar?->kode_kamar ?? '—' }}</td>
-                                <td class="py-3 px-2">{{ \Carbon\Carbon::parse($transaksi->tanggal_pembayaran)->translatedFormat('d F Y') }}</td>
-                                <td class="py-3 px-2">{{ \Carbon\Carbon::parse($transaksi->tanggal_jatuhtempo)->translatedFormat('d F Y') }}</td>
-                                <td class="py-3 px-2">{{ $transaksi->durasi ?? '—' }} Bulan</td>
-                                <td class="py-3 px-2">{{ $hariTunggakan ?? '—' }} Hari</td>
+                                <td class="py-3 px-2 rounded-l-lg">
+                                    <span class="font-semibold text-slate-800 tracking-wide">{{ $item->name ?? '—' }}</span>
+                                </td>
+                                <td class="py-3 px-2">
+                                    <span class="inline-flex items-center gap-1.5 text-slate-700">
+                                        <i class="fa-solid fa-door-open text-xs text-slate-400"></i>
+                                        {{ $item->kamar?->kode_kamar ?? '—' }}
+                                    </span>
+                                </td>
+                                <td class="py-3 px-2">
+                                    <span class="text-sm text-slate-600 italic">{{ \Carbon\Carbon::parse($transaksi->tanggal_pembayaran)->translatedFormat('d F Y') }}</span>
+                                </td>
+                                <td class="py-3 px-2">
+                                    <span class="text-sm text-slate-600 italic">{{ \Carbon\Carbon::parse($transaksi->tanggal_jatuhtempo)->translatedFormat('d F Y') }}</span>
+                                </td>
+                                <td class="py-3 px-2">
+                                    <span class="inline-flex items-center gap-1 text-slate-700">
+                                        <i class="fa-solid fa-calendar-days text-xs text-slate-400"></i>
+                                        {{ $transaksi->durasi ?? '—' }} Bulan
+                                    </span>
+                                </td>
+                                <td class="py-3 px-2">
+                                    <span class="inline-flex items-center gap-1 text-slate-700">
+                                        <i class="fa-solid fa-clock text-xs text-slate-400"></i>
+                                        {{ $hariTunggakan ?? '—' }} Hari
+                                    </span>
+                                </td>
                                 <td class="py-3 px-2 text-right rounded-r-lg">
-                                    <span class="px-2 py-1 rounded-full text-xs bg-white text-amber-500 font-medium">Menunggak</span>
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-white text-amber-600 font-semibold shadow-sm border border-amber-200">
+                                        <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
+                                        Menunggak
+                                    </span>
                                 </td>
                             </tr>
                             <tr class="h-2"></tr>
