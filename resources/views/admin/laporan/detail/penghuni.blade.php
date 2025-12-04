@@ -1,13 +1,13 @@
 @extends('layouts.admin-main')
 
-@section('title', 'Laporan Kamar')
+@section('title', 'Laporan Penghuni')
 
 @section('admin-main')
     <!-- Header Utama -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
         <div>
-            <h1 class="text-2xl font-bold text-slate-900">Laporan Kamar</h1>
-            <p class="mt-0.5 text-sm text-slate-600">Pantau kinerja dan unduh laporan kamar.</p>
+            <h1 class="text-2xl font-bold text-slate-900">Laporan Penghuni</h1>
+            <p class="mt-0.5 text-sm text-slate-600">Pantau kinerja dan unduh laporan penghuni.</p>
         </div>
         <div>
             <a href="{{ route('laporan.index') }}"
@@ -18,73 +18,30 @@
         </div>
     </div>
 
-    <!-- Wrap dalam x-data Alpine.js -->
-    <div x-data="{
-        tanggalMulai: '{{ now()->subMonth()->startOfMonth()->format('Y-m-d') }}',
-        tanggalSelesai: '{{ now()->format('Y-m-d') }}',
-    
-        formatDate(dateString) {
-            if (!dateString) return '';
-            const options = { day: '2-digit', month: 'short', year: 'numeric' };
-            return new Date(dateString).toLocaleDateString('id-ID', options).replace(/ /g, ' ');
-        }
-    }" class="space-y-6 mb-6">
-
-        <!-- Filter Tanggal -->
-        <div class="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-4 bg-white p-6 rounded-xl shadow border border-slate-200 items-end">
-            <!-- Tanggal Mulai -->
-            <div class="flex flex-col">
-                <label for="tanggal_mulai" class="block text-sm font-medium text-slate-700 mb-2">Tanggal Mulai</label>
-                <input type="date" id="tanggal_mulai" name="tanggal_mulai" x-model="tanggalMulai"
-                    class="w-full rounded-lg border border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm px-4 py-2.5 outline-none ring-1 ring-slate-200 focus:ring-2">
+    <!-- Section Export Laporan -->
+    <div class="bg-white p-6 rounded-xl shadow border border-slate-200 mb-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <!-- Kiri: Teks Export -->
+            <div>
+                <h3 class="text-lg font-semibold text-slate-800">Export Laporan</h3>
+                <p class="text-sm text-slate-600 mt-1">Semua data tersedia untuk diunduh.</p>
             </div>
 
-            <!-- Tanggal Selesai -->
-            <div class="flex flex-col">
-                <label for="tanggal_selesai" class="block text-sm font-medium text-slate-700 mb-2">Tanggal Selesai</label>
-                <input type="date" id="tanggal_selesai" name="tanggal_selesai" x-model="tanggalSelesai"
-                    class="w-full rounded-lg border border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm px-4 py-2.5 outline-none ring-1 ring-slate-200 focus:ring-2">
-            </div>
+            <!-- Kanan: Tombol Export -->
+            <div class="flex flex-wrap gap-3">
+                <!-- Download PDF -->
+                <a href="{{ route('laporan.penghuni.pdf') }}"
+                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition">
+                    <i class="fas fa-file-pdf"></i>
+                    Download PDF
+                </a>
 
-            <!-- Tombol Filter -->
-            <div class="flex flex-col">
-                <label class="block text-sm font-medium text-slate-700 mb-2 opacity-0 pointer-events-none">Filter</label>
-                <button type="button"
-                    class="inline-flex items-center justify-center gap-2 px-5 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm transition h-fit">
-                    <i class="fas fa-filter"></i>
-                    Filter
-                </button>
-            </div>
-        </div>
-
-        <!-- Section Export Laporan -->
-        <div class="bg-white p-6 rounded-xl shadow border border-slate-200">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <!-- Kiri: Teks Export & Periode -->
-                <div>
-                    <h3 class="text-lg font-semibold text-slate-800">Export Laporan</h3>
-                    <p class="text-sm text-slate-600 mt-1">
-                        Periode:
-                        <span class="font-medium" x-text="formatDate(tanggalMulai) + ' – ' + formatDate(tanggalSelesai)"></span>
-                    </p>
-                </div>
-
-                <!-- Kanan: Tombol Export -->
-                <div class="flex flex-wrap gap-3">
-                    <!-- Download PDF -->
-                    <button type="button"
-                        class="inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition">
-                        <i class="fas fa-file-pdf"></i>
-                        Download PDF
-                    </button>
-
-                    <!-- Download Excel -->
-                    <button type="button"
-                        class="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition">
-                        <i class="fas fa-file-excel"></i>
-                        Download Excel
-                    </button>
-                </div>
+                <!-- Download Excel -->
+                <a href="{{ route('laporan.penghuni.excel') }}"
+                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition">
+                    <i class="fas fa-file-excel"></i>
+                    Download Excel
+                </a>
             </div>
         </div>
     </div>
@@ -92,129 +49,110 @@
     <!-- Section Tabel Kamar -->
     <div class="bg-white rounded-xl shadow border border-slate-200 overflow-hidden">
         <div class="px-6 py-5 border-b border-slate-200">
-            <h2 class="text-lg font-semibold text-slate-800">Daftar Kamar</h2>
+            <h2 class="text-lg font-semibold text-slate-800">Daftar Penghuni</h2>
         </div>
 
         <div class="overflow-x-auto">
             <table class="w-full min-w-[600px]">
                 <thead>
                     <tr class="text-left text-xs text-slate-500 uppercase tracking-wider">
+                        <th class="px-6 py-3 font-medium">Nama Penghuni</th>
                         <th class="px-6 py-3 font-medium">Kode Kamar</th>
-                        <th class="px-6 py-3 font-medium">Tipe</th>
-                        <th class="px-6 py-3 font-medium">Lebar (m²)</th>
-                        <th class="px-6 py-3 font-medium">Harga</th>
-                        <th class="px-6 py-3 font-medium">Deskripsi</th>
+                        <th class="px-6 py-3 font-medium">No. Telepon</th>
+                        <th class="px-6 py-3 font-medium">Email</th>
+                        <th class="px-6 py-3 font-medium">Tanggal Masuk</th>
+                        <th class="px-6 py-3 font-medium">Hari Tunggakan</th>
                         <th class="px-6 py-3 font-medium">Status</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
-                    <!-- Row 1 -->
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="px-6 py-4">
-                            <span class="font-mono font-bold text-indigo-700">KMR-302</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="text-sm font-medium text-slate-800">Deluxe</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="text-sm text-slate-600">24</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="font-semibold text-emerald-700">Rp 1.250.000</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="text-sm text-slate-600">Kamar luas dengan AC, TV, kamar mandi dalam.</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-medium">
-                                <i class="fas fa-check-circle text-emerald-600 text-xs"></i>
-                                Tersedia
-                            </span>
-                        </td>
-                    </tr>
+                    @forelse ($penghuni as $item)
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="px-6 py-4">
+                                <span class="text-sm font-semibold text-slate-900 tracking-tight">{{ $item->name ?? '—' }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-sm font-medium text-slate-700">{{ $item->kamar->kode_kamar ?? '—' }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-sm text-slate-600">{{ $item->telepon ?? '—' }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-sm text-slate-700">{{ $item->email ?? '—' }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-sm text-slate-600">{{ \Carbon\Carbon::parse($item->tanggal_masuk)->translatedFormat('d F Y') ?? '—' }}</span>
+                            </td>
 
-                    <!-- Row 2 -->
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="px-6 py-4">
-                            <span class="font-mono font-bold text-indigo-700">KMR-205</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="text-sm font-medium text-slate-800">Standard</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="text-sm text-slate-600">18</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="font-semibold text-emerald-700">Rp 950.000</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="text-sm text-slate-600">Kamar nyaman dengan kipas, TV, kamar mandi dalam.</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 text-xs font-medium">
-                                <i class="fas fa-times-circle text-rose-600 text-xs"></i>
-                                Terisi
-                            </span>
-                        </td>
-                    </tr>
+                            @php
+                                $lastTransaksi = $item->transaksi->first();
+                            @endphp
+                            {{-- Kolom Hari Tunggakan --}}
+                            <td class="px-6 py-4">
+                                @if ($lastTransaksi && $lastTransaksi->tanggal_jatuhtempo < \Carbon\Carbon::today())
+                                    <span class="text-sm font-semibold text-rose-600">
+                                         {{ \Carbon\Carbon::parse($lastTransaksi->tanggal_jatuhtempo)->diffInDays(\Carbon\Carbon::today()) }} hari
+                                    </span>
+                                @else
+                                    <span class="text-sm text-slate-500">—</span>
+                                @endif
+                            </td>
 
-                    <!-- Row 3 -->
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="px-6 py-4">
-                            <span class="font-mono font-bold text-indigo-700">KMR-101</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="text-sm font-medium text-slate-800">Superior</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="text-sm text-slate-600">30</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="font-semibold text-emerald-700">Rp 1.100.000</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="text-sm text-slate-600">Kamar premium dengan AC, TV 32", kamar mandi dalam, sofa.</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 text-xs font-medium">
-                                <i class="fas fa-times-circle text-rose-600 text-xs"></i>
-                                Terisi
-                            </span>
-                        </td>
-                    </tr>
+                            {{-- Kolom Status --}}
+                            <td class="px-6 py-4">
+                                @if ($lastTransaksi && $lastTransaksi->tanggal_jatuhtempo < \Carbon\Carbon::today())
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-medium">
+                                        <i class="fas fa-exclamation-circle text-amber-600 text-xs"></i>
+                                        Menunggak
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-medium">
+                                        <i class="fas fa-check-circle text-emerald-600 text-xs"></i>
+                                        Aktif
+                                    </span>
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="px-6 py-4 text-center text-slate-500">
+                                Tidak ada data penghuni.
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
 
         <!-- Pagination -->
-        @if ($transaksi->hasPages())
+        @if ($penghuni->hasPages())
             <div class="border-t border-slate-200 px-6 py-4 bg-slate-50">
                 <div class="flex items-center justify-between">
                     <p class="text-sm text-slate-700">
                         Menampilkan
-                        <span class="font-medium">{{ $transaksi->firstItem() }}</span>
+                        <span class="font-medium">{{ $penghuni->firstItem() }}</span>
                         sampai
-                        <span class="font-medium">{{ $transaksi->lastItem() }}</span>
+                        <span class="font-medium">{{ $penghuni->lastItem() }}</span>
                         dari
-                        <span class="font-medium">{{ $transaksi->total() }}</span>
+                        <span class="font-medium">{{ $penghuni->total() }}</span>
                         hasil
                     </p>
                     <div class="flex gap-1">
-                        @if ($transaksi->onFirstPage())
+                        @if ($penghuni->onFirstPage())
                             <span class="inline-flex items-center px-3 py-1.5 rounded-md text-sm bg-slate-100 text-slate-400 cursor-not-allowed">
                                 <i class="fa-solid fa-chevron-left mr-1 text-xs"></i>
                                 Sebelumnya
                             </span>
                         @else
-                            <a href="{{ $transaksi->previousPageUrl() }}"
+                            <a href="{{ $penghuni->previousPageUrl() }}"
                                 class="inline-flex items-center px-3 py-1.5 rounded-md text-sm bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors">
                                 <i class="fa-solid fa-chevron-left mr-1 text-xs"></i>
                                 Sebelumnya
                             </a>
                         @endif
 
-                        @if ($transaksi->hasMorePages())
-                            <a href="{{ $transaksi->nextPageUrl() }}"
+                        @if ($penghuni->hasMorePages())
+                            <a href="{{ $penghuni->nextPageUrl() }}"
                                 class="inline-flex items-center px-3 py-1.5 rounded-md text-sm bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors">
                                 Selanjutnya
                                 <i class="fa-solid fa-chevron-right ml-1 text-xs"></i>

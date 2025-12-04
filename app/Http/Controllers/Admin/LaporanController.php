@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Exports\KamarExport;
+use App\Exports\PenghuniExport;
 use App\Exports\TransaksiExport;
 use App\Http\Controllers\Controller;
 use App\Models\Kamar;
@@ -11,19 +12,36 @@ use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class LaporanController extends Controller
 {
     public function index()
     {
-        $penghuniMenunggak = User::with(['transaksi', 'kamar'])
-            ->whereHas('transaksi', function ($query) {
-                $query->where('status_pembayaran', 'paid')
-                    ->whereDate('tanggal_jatuhtempo', '<', Carbon::today());
-            })
-            ->where('role', 'penghuni') // pastikan hanya penghuni
+        // 1. Ambil semua penghuni + transaksi terakhir + kamar
+        $penghuni = User::with([
+            'transaksi' => function ($q) {
+                $q->orderBy('id', 'desc')->limit(1); // transaksi terakhir
+            },
+            'kamar'
+        ])
+            ->where('role', 'penghuni')
             ->get();
+
+        // 2. Filter penghuni yang menunggak
+        $penghuniMenunggak = $penghuni->filter(function ($user) {
+            $trx = $user->transaksi->first();
+
+            if (!$trx)
+                return false; // tidak punya transaksi → bukan menunggak
+            if (!$trx->tanggal_jatuhtempo)
+                return false;
+
+            // jatuh tempo < hari ini → menunggak
+            return Carbon::parse($trx->tanggal_jatuhtempo)
+                ->lt(Carbon::today());
+        });
 
         return view('admin.laporan.data', [
             'transaksi' => Transaksi::where('status_pembayaran', 'paid')->latest()->get(),
@@ -75,8 +93,19 @@ class LaporanController extends Controller
 
     public function laporanPenghuni()
     {
+        // Ambil semua penghuni + transaksi terbaru
+        $penghuni = User::with([
+            'transaksi' => function ($q) {
+                $q->orderBy('id', 'desc')->limit(1); // transaksi terakhir
+            },
+            'kamar'
+        ])
+            ->where('role', 'penghuni')
+            ->latest()
+            ->paginate(50);
+
         return view('admin.laporan.detail.penghuni', [
-            'penghuni' => User::where('role', 'penghuni')->latest()->paginate(50),
+            'penghuni' => $penghuni,
         ]);
     }
 
@@ -166,4 +195,54 @@ class LaporanController extends Controller
             "laporan-kamar" . ($tipe ? "-{$tipe}" : '') . ($status ? "-{$status}" : '') . ".xlsx"
         );
     }
+
+    /* Penghuni */
+    public function exportPenghuniPdf(Request $request)
+    {
+        // Ambil semua penghuni, beserta kamar dan transaksi terakhir
+        $penghuni = User::where('role', 'penghuni')
+            ->with([
+                'kamar',
+                'transaksi' => function ($q) {
+                    $q->orderByDesc('id')->limit(1); // transaksi terakhir
+                }
+            ])
+            ->latest()
+            ->get();
+
+        $pdf = Pdf::loadView('admin.laporan.export.penghuni-pdf', [
+            'penghuni' => $penghuni,
+        ]);
+
+        return $pdf->download('laporan-penghuni.pdf');
+    }
+
+    public function exportPenghuniExcel(Request $request)
+    {
+        $penghuni = User::where('role', 'penghuni')
+            ->with([
+                'kamar',
+                'transaksi' => function ($q) {
+                    $q->orderByDesc('id')->limit(1);
+                }
+            ])
+            ->latest()->get();
+
+        $penghuniMenunggakData = collect();
+
+        foreach ($penghuni as $p) {
+            $last = $p->transaksi->first();
+
+            if ($last && $last->tanggal_jatuhtempo < Carbon::today()) {
+                $hariTunggakan = Carbon::parse($last->tanggal_jatuhtempo)->diffInDays(Carbon::today());
+                $penghuniMenunggakData->put($p->id, $hariTunggakan);
+            }
+        }
+
+        return Excel::download(
+            new PenghuniExport($penghuni, $penghuniMenunggakData),
+            "laporan-penghuni.xlsx"
+        );
+    }
+
 }

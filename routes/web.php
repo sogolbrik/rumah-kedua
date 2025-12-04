@@ -20,6 +20,7 @@ Route::get('register', [AuthController::class, 'register'])->name('register');
 Route::post('register', [AuthController::class, 'store'])->name('register.store');
 Route::post('login', [AuthController::class, 'authentication'])->name('authentication');
 
+/* MiddlewareAdmin */
 //AdminPanel
 Route::get('dashboard-admin', [DashboardController::class, 'index'])->name('dashboard-admin');
 //Master
@@ -31,11 +32,13 @@ Route::get('laporan', [LaporanController::class, 'index'])->name('laporan.index'
 Route::get('laporan/transaksi', [LaporanController::class, 'laporanTransaksi'])->name('laporan.transaksi');
 Route::get('laporan/kamar', [LaporanController::class, 'laporanKamar'])->name('laporan.kamar');
 Route::get('laporan/penghuni', [LaporanController::class, 'laporanPenghuni'])->name('laporan.penghuni');
-//export
+//Export Laporan
 Route::get('/laporan/transaksi/export/pdf', [LaporanController::class, 'exportTransaksiPdf'])->name('laporan.transaksi.pdf');
 Route::get('/laporan/transaksi/export/excel', [LaporanController::class, 'exportTransaksiExcel'])->name('laporan.transaksi.excel');
 Route::get('/laporan/kamar/export/pdf', [LaporanController::class, 'exportKamarPdf'])->name('laporan.kamar.pdf');
 Route::get('/laporan/kamar/export/excel', [LaporanController::class, 'exportKamarExcel'])->name('laporan.kamar.excel');
+Route::get('/laporan/penghuni/export/pdf', [LaporanController::class, 'exportPenghuniPdf'])->name('laporan.penghuni.pdf');
+Route::get('/laporan/penghuni/export/excel', [LaporanController::class, 'exportPenghuniExcel'])->name('laporan.penghuni.excel');
 //Nonaktif User
 Route::put('user/{id}/nonaktifkan', [UserController::class, 'nonaktifkan'])->name('user.nonaktifkan');
 //Transaksi
@@ -48,19 +51,15 @@ Route::prefix('transaksi')->name('transaksi.')->group(function () {
     Route::put('/{id}/cancel', [TransaksiController::class, 'cancel'])->name('cancel');
     Route::delete('/{id}', [TransaksiController::class, 'destroy'])->name('destroy');
 });
-
-/* Nanti diluar middleware */
-// Check
-Route::get('/payment/check', [TransaksiController::class, 'checkStatus']);
-
-// Route::prefix('midtrans')->group(function () {
-//     Route::post('/notification', [MidtransController::class, 'handleNotification'])->name('midtrans.notification');
-// });
-/* END ' Nanti diluar middleware */
-
 //Pengumuman
 Route::get('pengumuman-admin', [PengumumanController::class, 'index'])->name('pengumuman-admin');
 Route::post('pengumuman-admin', [PengumumanController::class, 'store'])->name('pengumuman-admin.store');
+/* EndMiddlewareAdmin */
+
+/* OutMiddleware */
+// Check
+Route::get('/payment/check', [TransaksiController::class, 'checkStatus']);
+/* EndOutMiddleware */
 
 //Frontend
 //Landingpage
@@ -76,6 +75,6 @@ Route::middleware('auth')->group(function () {
     //penghuni
     Route::get('user/penghuni', [PenghuniController::class, 'index'])->name('user.penghuni');
 });
-//diluar middleware
+/* OutMiddleware */
 Route::get('pembayaran/check', [PembayaranPageController::class, 'checkStatus'])->name('pembayaran.check');
-//end diluar middleware
+/* EndOutMiddleware */

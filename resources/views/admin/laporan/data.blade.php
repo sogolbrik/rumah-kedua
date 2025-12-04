@@ -266,42 +266,63 @@
                     <tbody>
                         @forelse ($penghuniMenunggak as $item)
                             @php
-                                // Ambil transaksi aktif (yang paling baru atau satu-satunya)
-                                $transaksi = $item->transaksi->firstWhere('status_pembayaran', 'paid');
+                                $transaksi = $item->transaksi->first();
                                 if (!$transaksi) {
                                     continue;
-                                } // lompat jika tidak ada
-                                $hariTunggakan = \Carbon\Carbon::parse($transaksi->tanggal_jatuhtempo)->diffInDays(\Carbon\Carbon::today());
+                                }
+
+                                $hariTunggakan = null;
+
+                                if ($transaksi->tanggal_jatuhtempo) {
+                                    $jatuhTempo = \Carbon\Carbon::parse($transaksi->tanggal_jatuhtempo);
+                                    if ($jatuhTempo->lt(\Carbon\Carbon::today())) {
+                                        $hariTunggakan = $jatuhTempo->diffInDays(\Carbon\Carbon::today());
+                                    } else {
+                                        continue;
+                                    }
+                                } else {
+                                    continue;
+                                }
                             @endphp
 
                             <tr class="bg-amber-50 rounded-lg">
                                 <td class="py-3 px-2 rounded-l-lg">
-                                    <span class="font-semibold text-slate-800 tracking-wide">{{ $item->name ?? '—' }}</span>
+                                    <span class="font-semibold text-slate-800 tracking-wide">{{ $item->name }}</span>
                                 </td>
+
                                 <td class="py-3 px-2">
                                     <span class="inline-flex items-center gap-1.5 text-slate-700">
                                         <i class="fa-solid fa-door-open text-xs text-slate-400"></i>
                                         {{ $item->kamar?->kode_kamar ?? '—' }}
                                     </span>
                                 </td>
+
                                 <td class="py-3 px-2">
-                                    <span class="text-sm text-slate-600 italic">{{ \Carbon\Carbon::parse($transaksi->tanggal_pembayaran)->translatedFormat('d F Y') }}</span>
+                                    <span class="text-sm text-slate-600 italic">
+                                        {{ $transaksi->tanggal_pembayaran ? \Carbon\Carbon::parse($transaksi->tanggal_pembayaran)->translatedFormat('d F Y') : '—' }}
+                                    </span>
                                 </td>
+
                                 <td class="py-3 px-2">
-                                    <span class="text-sm text-slate-600 italic">{{ \Carbon\Carbon::parse($transaksi->tanggal_jatuhtempo)->translatedFormat('d F Y') }}</span>
+                                    <span class="text-sm text-slate-600 italic">
+                                        {{ \Carbon\Carbon::parse($transaksi->tanggal_jatuhtempo)->translatedFormat('d F Y') }}
+                                    </span>
                                 </td>
+
                                 <td class="py-3 px-2">
                                     <span class="inline-flex items-center gap-1 text-slate-700">
                                         <i class="fa-solid fa-calendar-days text-xs text-slate-400"></i>
                                         {{ $transaksi->durasi ?? '—' }} Bulan
                                     </span>
                                 </td>
+
                                 <td class="py-3 px-2">
                                     <span class="inline-flex items-center gap-1 text-slate-700">
                                         <i class="fa-solid fa-clock text-xs text-slate-400"></i>
-                                        {{ $hariTunggakan ?? '—' }} Hari
+                                        {{ $hariTunggakan }} Hari
                                     </span>
                                 </td>
+
                                 <td class="py-3 px-2 text-right rounded-r-lg">
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-white text-amber-600 font-semibold shadow-sm border border-amber-200">
                                         <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
@@ -309,10 +330,11 @@
                                     </span>
                                 </td>
                             </tr>
+
                             <tr class="h-2"></tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="py-4 text-center text-gray-500">
+                                <td colspan="7" class="py-4 text-center text-gray-500">
                                     Tidak ada penghuni menunggak
                                 </td>
                             </tr>
