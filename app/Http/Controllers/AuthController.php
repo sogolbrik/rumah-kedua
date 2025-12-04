@@ -85,6 +85,18 @@ class AuthController extends Controller
         return redirect()->back()->with('error', 'Email atau password salah.');
     }
 
+    public function logout(Request $request)
+    {
+        if (Auth::check()) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return redirect('/')->with('success', 'Logout Berhasil');
+        } else {
+            return redirect()->back()->with('error', 'Logout Gagal');
+        }
+    }
+
     private function sendWelcomeWhatsApp($number, $name)
     {
         try {
