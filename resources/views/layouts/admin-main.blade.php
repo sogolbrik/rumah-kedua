@@ -44,18 +44,53 @@
 
                     <div class="flex-1 flex items-center gap-3">
                         <h1 class="text-lg md:text-xl font-semibold text-slate-900 text-balance">@yield('title', 'Admin Panel')</h1>
-                        <div class="relative hidden md:block w-full max-w-md ml-auto">
-                            <i class="fa-solid fa-magnifying-glass text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-                            <input type="search" placeholder="Cari apa saja..."
-                                class="w-full rounded-lg border border-slate-200 pl-9 pr-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white" aria-label="Pencarian" />
-                        </div>
-                        <div class="ml-auto md:ml-0 flex items-center gap-3">
-                            <button class="relative p-2 rounded-md hover:bg-slate-100 text-slate-600" aria-label="Notifikasi">
-                                <i class="fa-regular fa-bell text-lg"></i>
-                                <span class="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-blue-600"></span>
-                            </button>
-                            <div class="h-9 w-9 rounded-full bg-blue-100 flex items-center justify-center ring-1 ring-blue-200">
-                                <i class="fa-solid fa-user text-blue-600"></i>
+                        <div class="ml-auto flex items-center gap-3">
+                            <div class="relative" x-data="{ open: false }">
+                                <button @click="open = !open" class="relative p-2 rounded-md hover:bg-slate-100 text-slate-600" aria-label="Notifikasi">
+                                    <i class="fa-regular fa-bell text-lg"></i>
+                                    @if ($penghuniCount > 0)
+                                        <span class="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-blue-600"></span>
+                                    @endif
+                                </button>
+                                <div x-show="open" @click.outside="open = false" x-cloak class="absolute right-0 mt-3 w-72 bg-white rounded-xl shadow-2xl border border-slate-200/80 py-3 z-30">
+                                    <div class="px-5 py-2 text-base font-semibold text-slate-800 tracking-tight">Notifikasi</div>
+                                    @if ($penghuni ?? 0)
+                                        <div class="px-5 py-2.5 text-sm text-slate-700">
+                                            <span class="font-bold text-blue-600">{{ $penghuniCount }}</span> penghuni menunggak
+                                        </div>
+                                        <a href="{{ url('laporan/#penghuniMenunggak') }}" class="flex items-center justify-between px-5 py-2.5 text-sm text-blue-600 rounded-lg mx-2 transition">
+                                            <span class="font-medium">Ayo lihat <i class="fa-solid fa-arrow-right text-xs ml-2"></i></span>
+                                        </a>
+                                    @else
+                                        <div class="px-5 py-2.5 text-sm text-slate-500">Tidak ada notifikasi</div>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="relative" x-data="{ open: false }">
+                                <button @click="open = !open" class="flex items-center gap-2 rounded-lg p-1.5 hover:bg-slate-100" aria-label="Menu pengguna">
+                                    @if (auth()->check() && auth()->user()->avatar)
+                                        <img src="{{ Storage::url(auth()->user()->avatar) }}" alt="Avatar" class="h-9 w-9 rounded-full object-cover ring-1 ring-blue-200">
+                                    @else
+                                        <div class="h-9 w-9 rounded-full bg-blue-100 flex items-center justify-center ring-1 ring-blue-200">
+                                            <i class="fa-solid fa-user text-blue-600"></i>
+                                        </div>
+                                    @endif
+                                    <i class="fa-solid fa-chevron-down text-xs text-slate-500"></i>
+                                </button>
+
+                                <div x-show="open" @click.outside="open = false" x-cloak class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl border border-slate-200/80 py-2 z-30">
+                                    <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 rounded-lg mx-2 transition">
+                                        <i class="fa-solid fa-gear text-slate-500"></i>
+                                        <span>Edit Profil</span>
+                                    </a>
+                                    <form method="POST" action="{{ route('logout') }}" class="mx-2">
+                                        @csrf
+                                        <button type="submit" class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-lg transition">
+                                            <i class="fa-solid fa-right-from-bracket"></i>
+                                            <span>Keluar</span>
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>

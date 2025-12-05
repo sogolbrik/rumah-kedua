@@ -111,7 +111,7 @@
                     <span class="font-medium">Pengaturan</span>
                 </a>
             </li>
-            <li>
+            {{-- <li>
                 <form action="{{ route('logout') }}" method="POST" class="block">
                     @csrf
                     <button type="submit" class="flex items-center gap-3.5 px-4 py-2.5 rounded-xl text-slate-700 hover:bg-rose-100 hover:text-rose-700 transition-all group w-full">
@@ -119,7 +119,7 @@
                         <span class="font-medium">Keluar</span>
                     </button>
                 </form>
-            </li>
+            </li> --}}
         </ul>
     </nav>
 </aside>

@@ -241,7 +241,7 @@
     </div>
 
     <!-- Tabel Penghuni Telat Bayar -->
-    <div class="grid grid-cols-1 gap-5">
+    <div id="penghuniMenunggak" class="grid grid-cols-1 gap-5">
         <div class="rounded-2xl border border-slate-200/50 bg-white p-5 shadow-sm">
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-2">
