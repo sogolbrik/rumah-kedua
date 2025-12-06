@@ -22,11 +22,18 @@
             </div>
 
             <!-- CTA Button Desktop -->
-            <a href="{{ Route('booking') }}" class="cursor-default">
-                <button class="hidden md:inline-block bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
-                    Booking Sekarang
-                </button>
-            </a>
+            <div class="hidden md:flex items-center gap-3">
+                <a href="{{ route('login') }}" class="cursor-default">
+                    <button class="bg-white hover:bg-gray-100 text-blue-500 border border-blue-500 px-5 py-2 rounded-lg font-medium transition-colors">
+                        Login
+                    </button>
+                </a>
+                <a href="{{ Route('booking') }}" class="cursor-default">
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+                        Booking Sekarang
+                    </button>
+                </a>
+            </div>
 
             <!-- Mobile Menu Button -->
             <button @click="mobileOpen = !mobileOpen" class="md:hidden text-gray-900">
@@ -35,17 +42,24 @@
         </div>
 
         <!-- Mobile Menu -->
-        <div x-show="mobileOpen" class="md:hidden pb-4 space-y-2 border-t border-gray-100">
+        <div x-show="mobileOpen" class="md:hidden pb-4 space-y-2 bg-white">
             <a href="{{ url('/#fasilitas') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded transition-colors">Fasilitas</a>
             <a href="{{ url('/#kamar') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded transition-colors">Kamar</a>
             <a href="{{ url('/#lokasi') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded transition-colors">Lokasi</a>
             <a href="{{ Route('galeri-kamar') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded transition-colors">Galeri</a>
             <a href="{{ url('/#kontak') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded transition-colors">Kontak</a>
-            <a href="{{ Route('booking') }}" class="cursor-default">
-                <button class="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors mt-2">
-                    Booking Sekarang
-                </button>
-            </a>
+            <div class="flex gap-2 px-4">
+                <a href="{{ route('login') }}" class="cursor-default flex-1">
+                    <button class="w-full bg-white hover:bg-gray-100 text-blue-500 border border-blue-500 px-4 py-2 rounded-lg font-medium transition-colors">
+                        Login
+                    </button>
+                </a>
+                <a href="{{ Route('booking') }}" class="cursor-default flex-1">
+                    <button class="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                        Booking Sekarang
+                    </button>
+                </a>
+            </div>
         </div>
     </div>
 </nav>
