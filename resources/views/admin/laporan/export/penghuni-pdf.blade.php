@@ -6,43 +6,97 @@
     <title>Laporan Penghuni</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: Arial, Helvetica, sans-serif;
             font-size: 12px;
+            color: #333;
+            line-height: 1.5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #27ae60;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #27ae60;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .meta {
+            font-size: 11px;
+            color: #555;
+            margin-top: 6px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 12px;
-        }
-
-        th,
-        td {
-            border: 1px solid #000;
-            padding: 6px 8px;
-            text-align: left;
-            vertical-align: top;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
         th {
-            background-color: #f2f2f2;
-            font-weight: bold;
+            background-color: #2ecc71;
+            color: white;
+            font-weight: 600;
+            text-align: left;
+            padding: 10px 12px;
+            font-size: 12px;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e0e0e0;
+            vertical-align: top;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
         }
 
         .text-center {
             text-align: center;
         }
 
-        .text-right {
-            text-align: right;
+        .status-aktif {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .status-menunggak {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 10px;
+            color: #7f8c8d;
         }
     </style>
 </head>
 
 <body>
-    <h2 style="margin:0 0 6px 0;">Laporan Penghuni</h2>
-    <div style="font-size:11px; color:#555; margin-bottom:8px;">
-        Di-generate: {{ \Carbon\Carbon::now()->translatedFormat('d F Y H:i') }}
+    <div class="header">
+        <h1>Laporan Penghuni</h1>
+        <div class="meta">Di-generate: {{ \Carbon\Carbon::now()->translatedFormat('d F Y H:i') }}</div>
     </div>
 
     <table>
@@ -53,14 +107,14 @@
                 <th>No. Telepon</th>
                 <th>Email</th>
                 <th>Tanggal Masuk</th>
-                <th>Hari Tunggakan</th>
-                <th>Status</th>
+                <th class="text-center">Hari Tunggakan</th>
+                <th class="text-center">Status</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($penghuni as $item)
                 @php
-                    $last = $item->transaksi->first(); // transaksi terakhir (jika ada)
+                    $last = $item->transaksi->first();
                     $hariTunggakan = null;
                     $isMenunggak = false;
 
@@ -94,15 +148,19 @@
                     </td>
                     <td class="text-center">
                         @if ($isMenunggak)
-                            Menunggak
+                            <span class="badge status-menunggak">Menunggak</span>
                         @else
-                            Aktif
+                            <span class="badge status-aktif">Aktif</span>
                         @endif
                     </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
+
+    <div class="footer">
+        Dicetak pada: {{ now()->translatedFormat('d F Y, H:i') }} | RumahKedua Admin Panel
+    </div>
 </body>
 
 </html>
