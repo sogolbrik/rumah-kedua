@@ -30,14 +30,14 @@
             <!-- Kanan: Tombol Export -->
             <div class="flex flex-wrap gap-3">
                 <!-- Download PDF -->
-                <a href="{{ route('laporan.penghuni.pdf') }}"
+                <a href="{{ route('laporan.penghuni.export.pdf') }}"
                     class="inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition">
                     <i class="fas fa-file-pdf"></i>
                     Download PDF
                 </a>
 
                 <!-- Download Excel -->
-                <a href="{{ route('laporan.penghuni.excel') }}"
+                <a href="{{ route('laporan.penghuni.export.excel') }}"
                     class="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition">
                     <i class="fas fa-file-excel"></i>
                     Download Excel

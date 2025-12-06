@@ -25,14 +25,14 @@
         currentPage: {{ $kamar->currentPage() }},
     
         exportPdf() {
-            const url = new URL('{{ route('laporan.kamar.pdf') }}', window.location.origin);
+            const url = new URL('{{ route('laporan.kamar.export.pdf') }}', window.location.origin);
             if (this.tipe) url.searchParams.set('tipe', this.tipe);
             if (this.status) url.searchParams.set('status', this.status);
             window.open(url.toString(), '_blank');
         },
     
         exportExcel() {
-            const url = new URL('{{ route('laporan.kamar.excel') }}', window.location.origin);
+            const url = new URL('{{ route('laporan.kamar.export.excel') }}', window.location.origin);
             if (this.tipe) url.searchParams.set('tipe', this.tipe);
             if (this.status) url.searchParams.set('status', this.status);
             window.open(url.toString(), '_blank');

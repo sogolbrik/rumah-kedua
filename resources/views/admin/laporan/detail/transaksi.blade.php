@@ -31,14 +31,14 @@
         },
     
         exportPdf() {
-            const url = new URL('{{ route('laporan.transaksi.pdf') }}', window.location.origin);
+            const url = new URL('{{ route('laporan.transaksi.export.pdf') }}', window.location.origin);
             url.searchParams.set('tanggal_mulai', this.tanggalMulai);
             url.searchParams.set('tanggal_selesai', this.tanggalSelesai);
             window.open(url.toString(), '_blank');
         },
     
         exportExcel() {
-            const url = new URL('{{ route('laporan.transaksi.excel') }}', window.location.origin);
+            const url = new URL('{{ route('laporan.transaksi.export.excel') }}', window.location.origin);
             url.searchParams.set('tanggal_mulai', this.tanggalMulai);
             url.searchParams.set('tanggal_selesai', this.tanggalSelesai);
             window.open(url.toString(), '_blank');

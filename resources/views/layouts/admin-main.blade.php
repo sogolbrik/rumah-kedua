@@ -94,7 +94,7 @@
                                         </p>
                                     </div>
                                     <div class="border-t border-slate-200 my-2"></div>
-                                    <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 rounded-lg mx-2 transition">
+                                    <a href="{{ route('profil-admin.index') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 rounded-lg mx-2 transition">
                                         <i class="fa-solid fa-user text-slate-500"></i>
                                         <span>Profil</span>
                                     </a>

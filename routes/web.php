@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\GaleriController;
 use App\Http\Controllers\Admin\KamarController;
 use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Admin\PengumumanController;
+use App\Http\Controllers\Admin\ProfilController;
 use App\Http\Controllers\Admin\TransaksiController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
@@ -24,22 +25,37 @@ Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 /* MiddlewareAdmin */
 //AdminPanel
 Route::get('dashboard-admin', [DashboardController::class, 'index'])->name('dashboard-admin');
-//Master
+//MasterData
 Route::resource('kamar', KamarController::class);
 Route::resource('user', UserController::class);
 Route::resource('galeri', GaleriController::class);
 //Laporan
-Route::get('laporan', [LaporanController::class, 'index'])->name('laporan.index');
-Route::get('laporan/transaksi', [LaporanController::class, 'laporanTransaksi'])->name('laporan.transaksi');
-Route::get('laporan/kamar', [LaporanController::class, 'laporanKamar'])->name('laporan.kamar');
-Route::get('laporan/penghuni', [LaporanController::class, 'laporanPenghuni'])->name('laporan.penghuni');
-//Export Laporan
-Route::get('/laporan/transaksi/export/pdf', [LaporanController::class, 'exportTransaksiPdf'])->name('laporan.transaksi.pdf');
-Route::get('/laporan/transaksi/export/excel', [LaporanController::class, 'exportTransaksiExcel'])->name('laporan.transaksi.excel');
-Route::get('/laporan/kamar/export/pdf', [LaporanController::class, 'exportKamarPdf'])->name('laporan.kamar.pdf');
-Route::get('/laporan/kamar/export/excel', [LaporanController::class, 'exportKamarExcel'])->name('laporan.kamar.excel');
-Route::get('/laporan/penghuni/export/pdf', [LaporanController::class, 'exportPenghuniPdf'])->name('laporan.penghuni.pdf');
-Route::get('/laporan/penghuni/export/excel', [LaporanController::class, 'exportPenghuniExcel'])->name('laporan.penghuni.excel');
+Route::prefix('laporan')->name('laporan.')->group(function () {
+    Route::get('/', [LaporanController::class, 'index'])->name('index');
+    Route::get('transaksi', [LaporanController::class, 'laporanTransaksi'])->name('transaksi');
+    Route::get('kamar', [LaporanController::class, 'laporanKamar'])->name('kamar');
+    Route::get('penghuni', [LaporanController::class, 'laporanPenghuni'])->name('penghuni');
+    //Export Laporan
+    Route::prefix('transaksi/export')->name('transaksi.export.')->group(function () {
+        Route::get('pdf', [LaporanController::class, 'exportTransaksiPdf'])->name('pdf');
+        Route::get('excel', [LaporanController::class, 'exportTransaksiExcel'])->name('excel');
+    });
+    Route::prefix('kamar/export')->name('kamar.export.')->group(function () {
+        Route::get('pdf', [LaporanController::class, 'exportKamarPdf'])->name('pdf');
+        Route::get('excel', [LaporanController::class, 'exportKamarExcel'])->name('excel');
+    });
+    Route::prefix('penghuni/export')->name('penghuni.export.')->group(function () {
+        Route::get('pdf', [LaporanController::class, 'exportPenghuniPdf'])->name('pdf');
+        Route::get('excel', [LaporanController::class, 'exportPenghuniExcel'])->name('excel');
+    });
+});
+//Profil
+Route::prefix('profil-admin')->name('profil-admin.')->group(function () {
+    Route::get('/', [ProfilController::class, 'index'])->name('index');
+    Route::put('/', [ProfilController::class, 'update'])->name('update');
+    Route::put('/password', [ProfilController::class, 'updatePassword'])->name('update-password');
+    Route::put('/avatar', [ProfilController::class, 'updateAvatar'])->name('update-avatar');
+});
 //Nonaktif User
 Route::put('user/{id}/nonaktifkan', [UserController::class, 'nonaktifkan'])->name('user.nonaktifkan');
 //Transaksi
