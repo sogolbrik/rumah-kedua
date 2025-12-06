@@ -20,66 +20,100 @@
 
     <!-- Form Pengaturan -->
     <div x-data="settingsForm()" class="bg-white rounded-xl shadow-sm border border-slate-200/60 overflow-hidden">
-        <form action="{{ route('pengaturan-admin.update') }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            @method('PUT')
-            <!-- Header Form -->
-            <div class="px-6 py-4 border-b border-slate-200/60 bg-gradient-to-r from-slate-50 to-slate-100/50">
-                <h2 class="text-lg font-semibold text-slate-800">Informasi Kos</h2>
-                <p class="text-sm text-slate-600 mt-1">Edit detail profil dan branding kos Anda</p>
-            </div>
+        <!-- Header Form -->
+        <div class="px-6 py-4 border-b border-slate-200/60 bg-gradient-to-r from-slate-50 to-slate-100/50">
+            <h2 class="text-lg font-semibold text-slate-800">Informasi Kos</h2>
+            <p class="text-sm text-slate-600 mt-1">Edit detail profil dan branding kos Anda</p>
+        </div>
 
-            <!-- Konten Utama -->
-            <div class="p-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Bagian Kiri: Preview Logo & Informasi -->
-                <div class="space-y-6">
-                    <!-- Preview Logo -->
-                    <div class="bg-gradient-to-br from-indigo-50 to-cyan-50 p-6 rounded-xl border border-indigo-100/50 shadow-sm">
-                        <h3 class="text-sm font-medium text-slate-700 mb-3">Logo Saat Ini</h3>
-                        <div class="flex flex-col items-center">
-                            <div class="relative group">
-                                @if ($pengaturan->logo)
-                                    <img src="{{ Storage::url($pengaturan->logo) }}" alt="Logo Kos"
-                                        class="w-32 h-32 object-contain rounded-lg border-2 border-slate-200/50 shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:scale-[1.02]">
-                                    <div class="absolute inset-0 bg-black/30 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <i class="fa-solid fa-eye text-white text-xl"></i>
-                                    </div>
-                                @else
-                                    <div
-                                        class="w-32 h-32 rounded-lg border-2 border-slate-200/50 shadow-sm bg-slate-100 flex flex-col items-center justify-center transition-all duration-300 group-hover:shadow-md group-hover:scale-[1.02]">
-                                        <i class="fa-regular fa-image text-slate-400 text-5xl"></i>
-                                        <span class="mt-2 text-xs text-slate-500">Belum ada logo</span>
-                                    </div>
-                                @endif
-                            </div>
-                            <p class="text-xs text-slate-500 mt-3">Klik logo untuk melihat ukuran penuh</p>
+        <!-- Konten Utama -->
+        <div class="p-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Bagian Kiri: Preview Logo & Informasi -->
+            <div class="space-y-6">
+                <!-- Preview Logo -->
+                <div class="bg-gradient-to-br from-indigo-50 to-cyan-50 p-6 rounded-xl border border-indigo-100/50 shadow-sm">
+                    <h3 class="text-sm font-medium text-slate-700 mb-3">Logo Saat Ini</h3>
+                    <div class="flex flex-col items-center">
+                        <div class="relative group">
+                            @if ($pengaturan->logo)
+                                <img src="{{ Storage::url($pengaturan->logo) }}" alt="Logo Kos"
+                                    class="w-32 h-32 object-contain rounded-lg border-2 border-slate-200/50 shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:scale-[1.02]">
+                                <form action="{{ route('pengaturan-admin.hapus-logo') }}" method="POST" class="absolute inset-0">
+                                    @csrf
+                                    @method('PUT')
+                                    <button type="button" onclick="konfirmasiHapusLogo()"
+                                        class="absolute inset-0 bg-black/30 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <i class="fa-solid fa-trash text-white/50 text-xl"></i>
+                                    </button>
+                                </form>
+                                <script>
+                                    function konfirmasiHapusLogo() {
+                                        Swal.fire({
+                                            title: 'Hapus Logo?',
+                                            html: `
+                                                <div class="text-center">
+                                                    <p class="text-slate-700 mb-2">Anda akan menghapus logo kos.</p>
+                                                    <p class="text-sm text-slate-500">Tindakan ini tidak dapat dibatalkan</p>
+                                                </div>
+                                            `,
+                                            icon: 'warning',
+                                            showCancelButton: true,
+                                            confirmButtonColor: '#dc2626',
+                                            cancelButtonColor: '#6b7280',
+                                            confirmButtonText: '<i class="fa-solid fa-trash mr-2"></i>Ya, Hapus',
+                                            cancelButtonText: '<i class="fa-solid fa-times mr-2"></i>Batal',
+                                            reverseButtons: true,
+                                            buttonsStyling: false,
+                                            customClass: {
+                                                confirmButton: 'inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:bg-red-700 active:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150 ml-2',
+                                                cancelButton: 'inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150'
+                                            }
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                document.querySelector('form[action="{{ route('pengaturan-admin.hapus-logo') }}"]').submit();
+                                            }
+                                        });
+                                    }
+                                </script>
+                            @else
+                                <div
+                                    class="w-32 h-32 rounded-lg border-2 border-slate-200/50 shadow-sm bg-slate-100 flex flex-col items-center justify-center transition-all duration-300 group-hover:shadow-md group-hover:scale-[1.02]">
+                                    <i class="fa-regular fa-image text-slate-400 text-5xl"></i>
+                                    <span class="mt-2 text-xs text-slate-500">Belum ada logo</span>
+                                </div>
+                            @endif
                         </div>
-                    </div>
-
-                    <!-- Preview Info Kos -->
-                    <div class="bg-gradient-to-br from-emerald-50 to-teal-50 p-6 rounded-xl border border-emerald-100/50 shadow-sm">
-                        <h3 class="text-sm font-medium text-slate-700 mb-3">Pratinjau Publik</h3>
-                        <div class="space-y-2">
-                            <h4 class="font-bold text-slate-800 text-lg">{{ $pengaturan->nama_kos ?? 'Nama Kos' }}</h4>
-                            <p class="text-slate-600 text-sm flex items-center gap-1.5">
-                                <i class="fa-solid fa-phone text-emerald-500"></i>
-                                <span>{{ $pengaturan->no_telepon ?? '6285870327957' }}</span>
-                            </p>
-                            <p class="text-slate-600 text-sm flex items-start gap-1.5">
-                                <i class="fa-solid fa-envelope text-emerald-500 mt-0.5"></i>
-                                <span>{{ $pengaturan->email ?? 'rumahkedua@gmail.com' }}</span>
-                            </p>
-                            <p class="text-slate-600 text-sm flex items-start gap-1.5">
-                                <i class="fa-solid fa-location-dot text-emerald-500 mt-0.5"></i>
-                                <span>{{ $pengaturan->alamat_kos ?? 'Jl. Raya Kutorejo No. 45, Kutorejo, Mojokerto, Jawa Timur 61383' }}</span>
-                            </p>
-                            <p class="text-slate-600 text-sm mt-3">{{ $pengaturan->deskripsi ?? 'Temukan kenyamanan seperti di rumah sendiri dengan layanan terbaik dan fasilitas lengkap.' }}</p>
-                        </div>
+                        <p class="text-xs text-slate-500 mt-3">Klik logo untuk menghapus</p>
                     </div>
                 </div>
 
-                <!-- Bagian Kanan: Form Edit -->
-                <div class="space-y-6">
+                <!-- Preview Info Kos -->
+                <div class="bg-gradient-to-br from-emerald-50 to-teal-50 p-6 rounded-xl border border-emerald-100/50 shadow-sm">
+                    <h3 class="text-sm font-medium text-slate-700 mb-3">Pratinjau Publik</h3>
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-slate-800 text-lg">{{ $pengaturan->nama_kos ?? 'Nama Kos' }}</h4>
+                        <p class="text-slate-600 text-sm flex items-center gap-1.5">
+                            <i class="fa-solid fa-phone text-emerald-500"></i>
+                            <span>{{ $pengaturan->no_telepon ?? '6285870327957' }}</span>
+                        </p>
+                        <p class="text-slate-600 text-sm flex items-start gap-1.5">
+                            <i class="fa-solid fa-envelope text-emerald-500 mt-0.5"></i>
+                            <span>{{ $pengaturan->email ?? 'rumahkedua@gmail.com' }}</span>
+                        </p>
+                        <p class="text-slate-600 text-sm flex items-start gap-1.5">
+                            <i class="fa-solid fa-location-dot text-emerald-500 mt-0.5"></i>
+                            <span>{{ $pengaturan->alamat_kos ?? 'Jl. Raya Kutorejo No. 45, Kutorejo, Mojokerto, Jawa Timur 61383' }}</span>
+                        </p>
+                        <p class="text-slate-600 text-sm mt-3">{{ $pengaturan->deskripsi ?? 'Temukan kenyamanan seperti di rumah sendiri dengan layanan terbaik dan fasilitas lengkap.' }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bagian Kanan: Form Edit -->
+            <div class="space-y-6">
+                <form action="{{ route('pengaturan-admin.update') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
                     <!-- Upload Logo -->
                     <div class="border border-dashed border-slate-300/50 rounded-xl p-5 bg-slate-50/30 transition-all hover:bg-slate-50">
                         <h3 class="text-sm font-medium text-slate-700 mb-3">Ganti Logo Kos</h3>
@@ -125,13 +159,14 @@
 
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Nomor Telepon</label>
-                            <input type="tel" name="telepon" value="{{ old('telepon', $pengaturan->no_telepon) }}"
+                            <input type="tel" name="no_telepon" value="{{ old('telepon', $pengaturan->no_telepon) }}"
                                 class="w-full rounded-lg border border-slate-300/50 px-4 py-2.5 text-slate-700 focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 transition-colors">
+                            <small class="text-slate-400">Otomatis terformat sistem</small>
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Alamat Kos</label>
-                            <textarea name="alamat" rows="3"
+                            <textarea name="alamat_kos" rows="3"
                                 class="w-full rounded-lg border border-slate-300/50 px-4 py-2.5 text-slate-700 focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 transition-colors resize-y">{{ old('alamat', $pengaturan->alamat_kos) }}</textarea>
                         </div>
 
@@ -141,17 +176,20 @@
                                 class="w-full rounded-lg border border-slate-300/50 px-4 py-2.5 text-slate-700 focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 transition-colors resize-y">{{ old('deskripsi', $pengaturan->deskripsi) }}</textarea>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Footer Form -->
-            <div class="px-6 py-4 border-t border-slate-200/60 bg-slate-50/30 flex justify-end">
-                <button type="submit" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg font-medium transition-colors">
-                    <i class="fa-solid fa-save"></i>
-                    <span>Simpan Perubahan</span>
-                </button>
+                    <button id="submit-btn" type="submit" class="hidden"></button>
+                </form>
             </div>
-        </form>
+        </div>
+
+        <!-- Footer Form -->
+        <div class="px-6 py-4 border-t border-slate-200/60 bg-slate-50/30 flex justify-end">
+            <button onclick="document.getElementById('submit-btn').click()"
+                class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg font-medium transition-colors">
+                <i class="fa-solid fa-save"></i>
+                <span>Simpan Perubahan</span>
+            </button>
+        </div>
     </div>
 
     <script>

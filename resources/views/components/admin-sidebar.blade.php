@@ -3,11 +3,15 @@
     :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'" aria-label="Sidebar Navigasi">
     <!-- Header Logo -->
     <div class="h-16 flex items-center gap-3 px-5 border-b border-slate-200/60 sticky top-0 bg-white/80 backdrop-blur-lg z-10">
-        <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-sm">
-            <i class="fa-solid fa-house text-sm"></i>
-        </div>
+        @if ($pengaturan->logo)
+            <img src="{{ Storage::url($pengaturan->logo) }}" alt="Logo Kos" class="h-10 w-10 rounded-xl object-cover">
+        @else
+            <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-sm">
+                <i class="fa-solid fa-house text-sm"></i>
+            </div>
+        @endif
         <div class="flex flex-col">
-            <span class="font-bold text-slate-900 tracking-tight">RumahKedua</span>
+            <span class="font-bold text-slate-900 tracking-tight">{{ $pengaturan->nama_kos ?? 'RumahKedua' }}</span>
             <span class="text-[10px] text-slate-500 uppercase tracking-wider font-medium">Admin Panel</span>
         </div>
         <button class="ml-auto lg:hidden p-2 rounded-lg hover:bg-slate-200/50 text-slate-600 transition-colors" @click="sidebarOpen = false" aria-label="Tutup navigasi">
@@ -105,7 +109,8 @@
             <div class="mt-6 px-2 pb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">LAINNYA</div>
             <ul class="space-y-1.5">
                 <li>
-                    <a href="{{ route('pengaturan-admin.index') }}" class="flex items-center gap-3.5 px-4 py-2.5 rounded-xl text-slate-700 hover:bg-slate-200/60 hover:text-slate-900 transition-all group">
+                    <a href="{{ route('pengaturan-admin.index') }}"
+                        class="flex items-center gap-3.5 px-4 py-2.5 rounded-xl text-slate-700 hover:bg-slate-200/60 hover:text-slate-900 transition-all group">
                         <i class="fa-solid fa-gear text-sm group-hover:rotate-12 transition-transform"></i>
                         <span class="font-medium">Pengaturan</span>
                     </a>
@@ -116,7 +121,7 @@
         <!-- Profile Section -->
         <div class="px-4 py-3 relative" x-data="{ openProfile: false }">
             <div class="border-t border-slate-200 my-2"></div>
-            <button  @click="openProfile = !openProfile"
+            <button @click="openProfile = !openProfile"
                 class="flex items-center gap-3 w-full p-2 rounded-xl hover:bg-slate-200/60 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50">
                 <!-- Avatar -->
                 <div class="relative">

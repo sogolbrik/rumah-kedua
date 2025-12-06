@@ -74,7 +74,8 @@ Route::get('pengumuman-admin', [PengumumanController::class, 'index'])->name('pe
 Route::post('pengumuman-admin', [PengumumanController::class, 'store'])->name('pengumuman-admin.store');
 //Pengaturan
 Route::get('pengaturan-admin', [PengaturanController::class, 'index'])->name('pengaturan-admin.index');
-Route::post('pengaturan-admin', [PengaturanController::class, 'update'])->name('pengaturan-admin.update');
+Route::put('pengaturan-admin', [PengaturanController::class, 'update'])->name('pengaturan-admin.update');
+Route::put('pengaturan-admin/hapus-logo', [PengaturanController::class, 'hapusLogo'])->name('pengaturan-admin.hapus-logo');
 
 /* EndMiddlewareAdmin */
 

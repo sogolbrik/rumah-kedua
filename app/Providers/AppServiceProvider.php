@@ -48,7 +48,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // Share data pengaturan sistem ke semua view
-        View::composer('layouts.frontend-main', function ($view) {
+        View::composer(['layouts.frontend-main', 'layouts.admin-main'], function ($view) {
             $pengaturan = PengaturanSistem::first();
             $view->with('pengaturan', $pengaturan);
         });
