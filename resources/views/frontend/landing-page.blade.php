@@ -433,7 +433,7 @@
                             </div>
                             <div>
                                 <h4 class="font-semibold text-gray-900 mb-1">Alamat</h4>
-                                <p class="text-gray-600">Jl. Raya Kutorejo No. 45, Kutorejo, Mojokerto, Jawa Timur 61383</p>
+                                <p class="text-gray-600">{{ $pengaturan->alamat_kos ?? 'Jl. Raya Kutorejo No. 45, Kutorejo, Mojokerto, Jawa Timur 61383' }}</p>
                             </div>
                         </div>
 
@@ -443,7 +443,7 @@
                             </div>
                             <div>
                                 <h4 class="font-semibold text-gray-900 mb-1">Telepon</h4>
-                                <p class="text-gray-600">+62 812 3456 7890</p>
+                                <p class="text-gray-600">+{{ $pengaturan->no_telepon ?? '6281234567890' }}</p>
                             </div>
                         </div>
 
@@ -484,10 +484,10 @@
                 Jangan lewatkan kesempatan untuk menginap di tempat yang nyaman dan terpercaya. Hubungi kami sekarang untuk informasi lebih lanjut atau booking langsung.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="https://wa.me/+6287870327957" target="_blank" class="bg-white hover:bg-gray-100 text-blue-500 px-8 py-4 rounded-lg font-semibold transition-all transform hover:scale-100 hover:shadow-2xl">
+                <a href="https://wa.me/{{ $pengaturan->no_telepon ?? '6287870327957' }}" target="_blank" class="bg-white hover:bg-gray-100 text-blue-500 px-8 py-4 rounded-lg font-semibold transition-all transform hover:scale-100 hover:shadow-2xl">
                     <i class="fab fa-whatsapp mr-2"></i>WhatsApp
                 </a>
-                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=rumahkedua@gmail.com" target="_blank" class="border-2 border-white hover:bg-white/10 text-white px-8 py-4 rounded-lg font-semibold transition-all transform hover:scale-100">
+                <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ $pengaturan->email_kos ?? 'rumahkedua@gmail.com' }}" target="_blank" class="border-2 border-white hover:bg-white/10 text-white px-8 py-4 rounded-lg font-semibold transition-all transform hover:scale-100">
                     <i class="fas fa-envelope mr-2"></i>Hubungi Email
                 </a>
             </div>

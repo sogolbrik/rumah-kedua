@@ -105,7 +105,7 @@
             <div class="mt-6 px-2 pb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">LAINNYA</div>
             <ul class="space-y-1.5">
                 <li>
-                    <a href="#" class="flex items-center gap-3.5 px-4 py-2.5 rounded-xl text-slate-700 hover:bg-slate-200/60 hover:text-slate-900 transition-all group">
+                    <a href="{{ route('pengaturan-admin.index') }}" class="flex items-center gap-3.5 px-4 py-2.5 rounded-xl text-slate-700 hover:bg-slate-200/60 hover:text-slate-900 transition-all group">
                         <i class="fa-solid fa-gear text-sm group-hover:rotate-12 transition-transform"></i>
                         <span class="font-medium">Pengaturan</span>
                     </a>

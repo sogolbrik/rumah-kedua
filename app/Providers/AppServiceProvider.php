@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\PengaturanSistem;
 use App\Models\User;
 use Illuminate\Support\Facades\View;
 use Carbon\Carbon;
@@ -44,6 +45,12 @@ class AppServiceProvider extends ServiceProvider
 
             $view->with('penghuni', $penghuni);
             $view->with('penghuniCount', $penghuni->count());
+        });
+
+        // Share data pengaturan sistem ke semua view
+        View::composer('layouts.frontend-main', function ($view) {
+            $pengaturan = PengaturanSistem::first();
+            $view->with('pengaturan', $pengaturan);
         });
     }
 }

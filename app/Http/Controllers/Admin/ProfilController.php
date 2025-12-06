@@ -55,7 +55,7 @@ class ProfilController extends Controller
 
     public function updateAvatar(Request $request){
         // Validasi avatar
-        $request->validate([
+        $validation =$request->validate([
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
@@ -63,15 +63,20 @@ class ProfilController extends Controller
 
         // Hapus avatar lama jika ada
         if ($user->avatar) {
-            Storage::delete($user->avatar);
+            Storage::disk('public')->delete($user->avatar);
         }
 
         // Upload avatar baru
         if ($request->hasFile('avatar')) {
-            $avatarPath = $request->file('avatar')->store('avatars', 'public');
-            $user->update(['avatar' => $avatarPath]);
+            $extension = $request->file('avatar')->getClientOriginalExtension();
+            $gambarAvatar = 'avatar_' . time() . '_' . uniqid() . '.' . $extension;
+            $avatarPath = $request->file('avatar')->storePubliclyAs('avatar', $gambarAvatar, 'public');
+            $validation['avatar'] = $avatarPath;
         }
 
+        $user->update($validation);
+
+        //avatar_1759603417_68e16ad936e30
         return back()->with('success', 'Avatar berhasil diperbarui.');
     }
 }

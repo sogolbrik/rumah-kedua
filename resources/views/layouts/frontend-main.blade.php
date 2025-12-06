@@ -51,7 +51,7 @@
                         <span class="text-xl font-bold text-white">RumahKedua</span>
                     </div>
                     <p class="text-gray-400 leading-relaxed">
-                        Temukan kenyamanan seperti di rumah sendiri dengan layanan terbaik dan fasilitas lengkap.
+                        {{ $pengaturan->deskripsi_kos ?? 'Temukan kenyamanan seperti di rumah sendiri dengan layanan terbaik dan fasilitas lengkap.' }}
                     </p>
                 </div>
 
@@ -70,9 +70,9 @@
                 <div>
                     <h4 class="text-white font-semibold mb-4">Kontak</h4>
                     <ul class="space-y-3 text-gray-400">
-                        <li class="flex gap-2"><i class="fas fa-phone w-4"></i> +62 878 7032 7957</li>
-                        <li class="flex gap-2"><i class="fas fa-envelope w-4"></i> rumahkedua@gmail.com</li>
-                        <li class="flex gap-2"><i class="fas fa-map-marker-alt w-4"></i> Mojokerto Selatan</li>
+                        <li class="flex gap-2"><i class="fas fa-phone w-4"></i> +{{ $pengaturan->no_telepon ?? '6287870327957' }}</li>
+                        <li class="flex gap-2"><i class="fas fa-envelope w-4"></i> {{ $pengaturan->email_kos ?? 'rumahkedua@gmail.com' }}</li>
+                        <li class="flex gap-2"><i class="fas fa-map-marker-alt w-4"></i> {{ $pengaturan->alamat_kos ?? 'Mojokerto Selatan' }}</li>
                     </ul>
                 </div>
 

@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\GaleriController;
 use App\Http\Controllers\Admin\KamarController;
 use App\Http\Controllers\Admin\LaporanController;
+use App\Http\Controllers\Admin\PengaturanController;
 use App\Http\Controllers\Admin\PengumumanController;
 use App\Http\Controllers\Admin\ProfilController;
 use App\Http\Controllers\Admin\TransaksiController;
@@ -71,6 +72,10 @@ Route::prefix('transaksi')->name('transaksi.')->group(function () {
 //Pengumuman
 Route::get('pengumuman-admin', [PengumumanController::class, 'index'])->name('pengumuman-admin');
 Route::post('pengumuman-admin', [PengumumanController::class, 'store'])->name('pengumuman-admin.store');
+//Pengaturan
+Route::get('pengaturan-admin', [PengaturanController::class, 'index'])->name('pengaturan-admin.index');
+Route::post('pengaturan-admin', [PengaturanController::class, 'update'])->name('pengaturan-admin.update');
+
 /* EndMiddlewareAdmin */
 
 /* OutMiddleware */

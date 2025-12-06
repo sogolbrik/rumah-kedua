@@ -8,7 +8,7 @@
                     <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
                         <i class="fas fa-home text-white text-sm"></i>
                     </div>
-                    <span class="text-xl font-bold text-gray-900">RumahKedua</span>
+                    <span class="text-xl font-bold text-gray-900">{{ $pengaturan->nama_kos ?? 'RumahKedua' }}</span>
                 </div>
             </a>
 
