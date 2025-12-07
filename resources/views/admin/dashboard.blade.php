@@ -242,4 +242,143 @@
             </ul>
         </div>
     </div>
+
+    <!-- Chart Section -->
+    <div class="mt-6 grid grid-cols-1 xl:grid-cols-2 gap-5">
+        <!-- Line Chart: Penjualan Mingguan -->
+        <div class="rounded-2xl border border-slate-200/60 bg-white p-6 shadow-sm h-64">
+            <h3 class="text-lg font-bold text-slate-900 mb-3">Penjualan 12 Bulan Terakhir</h3>
+            <canvas id="salesChart" class="h-full w-full"></canvas>
+        </div>
+
+        <!-- Pie Chart: Distribusi Status Transaksi -->
+        <div class="rounded-2xl border border-slate-200/60 bg-white p-6 shadow-sm h-64">
+            <h3 class="text-lg font-bold text-slate-900 mb-3">Distribusi Status Transaksi</h3>
+            <canvas id="statusChart" class="h-full w-full"></canvas>
+        </div>
+    </div>
+
+    <!-- Chart.js CDN + Initialization -->
+    @push('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // === Line Chart (Crypto-like) ===
+                const ctx1 = document.getElementById('salesChart').getContext('2d');
+                new Chart(ctx1, {
+                    type: 'line',
+                    data: {
+                        labels: @json($monthlySalesLabels),
+                        datasets: [{
+                            label: 'Penjualan (Rp)',
+                            data: @json($monthlySalesData),
+                            borderColor: '#4f46e5', // indigo-600
+                            backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.4, // smooth curve like crypto
+                            fill: true,
+                            pointRadius: 0,
+                            pointHoverRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false,
+                                callbacks: {
+                                    label: function(context) {
+                                        return 'Rp ' + Number(context.parsed.y).toLocaleString('id-ID');
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    maxRotation: 0,
+                                    callback: function(value, index, ticks) {
+                                        const date = @json($monthlySalesLabels)[value];
+                                        return date.split('-').slice(1).join('/'); // MM/DD
+                                    }
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0,0,0,0.03)'
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return 'Rp ' + value.toLocaleString('id-ID');
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // === Pie Chart ===
+                const ctx2 = document.getElementById('statusChart').getContext('2d');
+                const statusLabels = @json(array_keys($statusCounts));
+                const statusData = @json(array_values($statusCounts));
+
+                // Warna berdasarkan status
+                const colorMap = {
+                    'paid': '#10b981', // emerald-500
+                    'pending': '#f59e0b', // amber-500
+                    'failed': '#ef4444', // red-500
+                    'cancelled': '#6b7280', // gray-500
+                    'expired': '#f97316', // orange-500
+                    'challenge': '#8b5cf6' // violet-500
+                };
+                const backgroundColors = statusLabels.map(label => colorMap[label] || '#d1d5db');
+
+                new Chart(ctx2, {
+                    type: 'doughnut',
+                    data: {
+                        labels: statusLabels.map(label => {
+                            const mapping = {
+                                'paid': 'Lunas',
+                                'pending': 'Menunggu',
+                                'failed': 'Gagal',
+                                'cancelled': 'Dibatalkan',
+                                'expired': 'Kadaluarsa',
+                                'challenge': 'Tantangan'
+                            };
+                            return mapping[label] || label;
+                        }),
+                        datasets: [{
+                            data: statusData,
+                            backgroundColor: backgroundColors,
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    usePointStyle: true,
+                                    pointStyle: 'circle'
+                                }
+                            }
+                        },
+                        cutout: '65%'
+                    }
+                });
+            });
+        </script>
+    @endpush
 @endsection

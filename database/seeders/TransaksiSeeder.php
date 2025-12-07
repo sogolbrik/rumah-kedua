@@ -68,7 +68,7 @@ class TransaksiSeeder extends Seeder
 
         return [
             'id_user'                 => 3,
-            'id_kamar'                => 2,
+            'id_kamar'                => 5,
             'kode'                    => $kode,
 
             // aturan khusus          : 
