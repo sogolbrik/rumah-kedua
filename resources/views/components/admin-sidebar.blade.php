@@ -110,7 +110,7 @@
             <ul class="space-y-1.5">
                 <li>
                     <a href="{{ route('pengaturan-admin.index') }}"
-                        class="flex items-center gap-3.5 px-4 py-2.5 rounded-xl text-slate-700 hover:bg-slate-200/60 hover:text-slate-900 transition-all group">
+                        class="flex items-center gap-3.5 px-4 py-2.5 rounded-xl transition-all group {{ request()->routeIs('pengaturan-admin.*') ? 'bg-gradient-to-r from-slate-500 to-slate-700 text-white shadow-md' : 'text-slate-700 hover:bg-slate-200/60 hover:text-slate-900' }}">
                         <i class="fa-solid fa-gear text-sm group-hover:rotate-12 transition-transform"></i>
                         <span class="font-medium">Pengaturan</span>
                     </a>

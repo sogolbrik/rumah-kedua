@@ -13,6 +13,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\frontend\BookingPageController;
 use App\Http\Controllers\frontend\LandingPageController;
 use App\Http\Controllers\frontend\PembayaranPageController;
+use App\Http\Controllers\frontend\user\PembayaranController;
 use App\Http\Controllers\frontend\user\PenghuniController;
 use Illuminate\Support\Facades\Route;
 
@@ -79,17 +80,14 @@ Route::put('pengaturan-admin/hapus-logo', [PengaturanController::class, 'hapusLo
 
 /* EndMiddlewareAdmin */
 
-/* OutMiddleware */
-// Check
-Route::get('/payment/check', [TransaksiController::class, 'checkStatus']);
-/* EndOutMiddleware */
-
 //Frontend
+/* OutMiddleware */
 //Landingpage
 Route::get('/', [LandingPageController::class, 'landingPage'])->name('landing-page');
 Route::get('galeri-kamar', [LandingPageController::class, 'galeri'])->name('galeri-kamar');
 Route::get('booking', [BookingPageController::class, 'booking'])->name('booking');
 Route::get('booking-detail/{id}', [BookingPageController::class, 'bookingDetail'])->name('booking-detail');
+/* EndOutMiddleware */
 Route::middleware('auth')->group(function () {
     Route::get('booking-pembayaran/{id}', [PembayaranPageController::class, 'pembayaran'])->name('pembayaran');
     //pembayaran
@@ -99,10 +97,27 @@ Route::middleware('auth')->group(function () {
 
 //penghuni
 Route::middleware('auth')->group(function () {
+    //Dashbiard
     Route::get('dashboard-penghuni', [PenghuniController::class, 'index'])->name('dashboard-penghuni');
+    //Profil
+    Route::prefix('profil-penghuni')->name('profil-penghuni.')->group(function () {
+        Route::get('/', [PenghuniController::class, 'profil'])->name('index');
+        Route::put('/', [PenghuniController::class, 'update'])->name('update');
+        Route::put('/password', [PenghuniController::class, 'updatePassword'])->name('update-password');
+        Route::put('/avatar', [PenghuniController::class, 'updateAvatar'])->name('update-avatar');
+    });
+    //Transaksi Jatuh Tempo
+    // Di dalam grup middleware auth & role penghuni
+    Route::prefix('user')->name('user.')->group(function () {
+        Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pembayaran');
+        Route::get('/pembayaran/data', [PembayaranController::class, 'getTagihanData'])->name('pembayaran.data');
+        Route::post('/pembayaran/bayar', [PembayaranController::class, 'bayarTagihan'])->name('pembayaran.bayar');
+    });
 });
 
-// })->name('coba');
 /* OutMiddleware */
+//Admin
+Route::get('/payment/check', [TransaksiController::class, 'checkStatus']);
+//Penghuni
 Route::get('pembayaran/check', [PembayaranPageController::class, 'checkStatus'])->name('pembayaran.check');
 /* EndOutMiddleware */

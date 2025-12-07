@@ -5,7 +5,7 @@
     <div x-data="{
         openContact: false,
         detailModal: false,
-        detailData: { kode: '', total: '', metode: '', status: '', midtrans: {}, expired_at: '', created_at: '' }
+        detailData: { kode: '', total: '', metode: '', status: '', created_at: '' }
     }" class="min-h-screen bg-gradient-to-br from-indigo-50 to-teal-50 pt-18 pb-16">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
@@ -45,21 +45,26 @@
 
                 <!-- Bagian Kanan: Tombol Aksi -->
                 <div class="flex flex-wrap gap-3 items-center">
-                    <a href="#"
-                        class="group inline-flex items-center px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-xl hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 font-medium">
-                        <i class="fa-solid fa-user-gear mr-2 text-slate-600 group-hover:text-slate-800"></i> Edit Profil
-                    </a>
-
-                    @if ($menunggak)
-                        <a href="#"
-                            class="group inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white rounded-xl shadow-lg hover:shadow-indigo-500/30 transition-all duration-300 transform hover:-translate-y-0.5 font-medium">
-                            <i class="fa-solid fa-wallet mr-2"></i> Bayar Sekarang
-                        </a>
-                    @else
-                        <button disabled class="group inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-indigo-300 to-indigo-400 text-white rounded-xl shadow font-medium cursor-not-allowed">
-                            <i class="fa-solid fa-wallet mr-2"></i> Bayar Sekarang
+                    <div x-data="{ openProfile: false }" class="relative">
+                        <button @click="openProfile = !openProfile"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-xl hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 font-medium">
+                            <i class="fa-solid fa-user-gear text-slate-600"></i>
+                            <span>Pengaturan</span>
+                            <i class="fa-solid fa-chevron-down text-xs opacity-70"></i>
                         </button>
-                    @endif
+
+                        <div x-show="openProfile" @click.outside="openProfile = false" class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-200 py-1 z-10">
+                            <a href="{{ route('profil-penghuni.index') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">
+                                <i class="fa-solid fa-user-edit mr-2 text-slate-500"></i> Edit Profil
+                            </a>
+                            <form method="POST" action="{{ route('logout') }}" x-data>
+                                @csrf
+                                <button type="submit" class="w-full text-left px-4 py-2 text-sm text-rose-600 hover:bg-rose-50 flex items-center">
+                                    <i class="fa-solid fa-arrow-right-from-bracket mr-2"></i> Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
 
                     <button @click="openContact = true"
                         class="group px-5 py-2.5 border-2 border-indigo-200 text-indigo-700 rounded-xl hover:bg-indigo-50 hover:border-indigo-300 transition-all duration-200 font-medium">
@@ -178,7 +183,7 @@
             </div>
 
             <!-- Alert Menunggak -->
-            @if ($menunggak)
+            @if (!$menunggak)
                 <div class="mb-8 p-5 bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center gap-4 animate-fadeIn">
                     <div class="flex-shrink-0 w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center">
                         <i class="fa-solid fa-triangle-exclamation text-amber-600 text-xl"></i>
@@ -187,7 +192,7 @@
                         <div class="font-bold text-amber-800">Tagihan Anda Tertunggak!</div>
                         <div class="text-amber-700">Segera lakukan pembayaran untuk menghindari pemutusan layanan.</div>
                     </div>
-                    <a href="#"
+                    <a href="{{ route('user.pembayaran') }}"
                         class="px-5 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-xl shadow transition-all duration-300 font-medium whitespace-nowrap">
                         Bayar Sekarang
                     </a>
@@ -251,9 +256,7 @@
                                                 detailData.total = 'Rp {{ number_format($trx->total_bayar, 0, ',', '.') }}';
                                                 detailData.metode = '{{ ucfirst($trx->metode_pembayaran ?? '–') }}';
                                                 detailData.status = '{{ ucfirst($trx->status_pembayaran) }}';
-                                                detailData.expired_at = '{{ $trx->expired_at?->format('d M Y H:i') ?? '–' }}';
-                                                detailData.created_at = '{{ $trx->created_at->format('d M Y H:i') }}';
-                                                detailData.midtrans = @js(json_encode($trx->midtrans_response ?? []));"
+                                                detailData.created_at = '{{ $trx->created_at->format('d M Y H:i') }}';"
                                             class="px-3.5 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-100 rounded-lg hover:bg-indigo-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-300">
                                             Detail
                                         </button>
@@ -289,19 +292,21 @@
                             <div class="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center mr-3">
                                 <i class="fa-solid fa-phone text-indigo-600"></i>
                             </div>
-                            <span>+62 812-3456-7890</span>
+                            <span>+62 858-7032-7957</span>
                         </li>
                         <li class="flex items-center">
                             <div class="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center mr-3">
                                 <i class="fa-solid fa-envelope text-amber-600"></i>
                             </div>
-                            <span>admin@rumahkedua.id</span>
+                            <span>rumahkedua@gmail.com</span>
                         </li>
                         <li class="flex items-center">
-                            <div class="w-9 h-9 rounded-full bg-teal-100 flex items-center justify-center mr-3">
-                                <i class="fa-brands fa-whatsapp text-teal-600"></i>
-                            </div>
-                            <span>WhatsApp Resmi</span>
+                            <a href="https://wa.me/6285870327957" target="_blank" rel="noopener noreferrer" class="flex items-center">
+                                <div class="w-9 h-9 rounded-full bg-teal-100 flex items-center justify-center mr-3">
+                                    <i class="fa-brands fa-whatsapp text-teal-600"></i>
+                                </div>
+                                <span>WhatsApp Resmi</span>
+                            </a>
                         </li>
                     </ul>
                     <div class="mt-6 flex justify-end">
@@ -347,11 +352,6 @@
                         </div>
                     </div>
 
-                    <div class="mt-6 pt-5 border-t border-slate-200">
-                        <h4 class="font-medium text-slate-800 mb-2">Response Midtrans</h4>
-                        <pre class="bg-slate-50 p-3 rounded-xl text-xs overflow-x-auto max-h-32"><code x-text="JSON.stringify(detailData.midtrans, null, 2)"></code></pre>
-                    </div>
-
                     <div class="mt-6 flex justify-end">
                         <button @click="detailModal = false" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl font-medium transition-colors duration-200">
                             Tutup
@@ -390,7 +390,6 @@
                             metode: '',
                             status: '',
                             created_at: '',
-                            midtrans: {}
                         }
                     }))
                 })
