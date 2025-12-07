@@ -20,24 +20,47 @@
 
             <!-- Header -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
-                <div>
-                    <h1 class="text-3xl font-extrabold bg-gradient-to-r from-indigo-700 to-teal-600 bg-clip-text text-transparent">
-                        Halo, {{ $user->name }}!
-                    </h1>
-                    <p class="text-indigo-500 mt-1">Kelola kamar dan pembayaran Anda dengan mudah.</p>
+                <!-- Bagian Kiri: Salam + Info User -->
+                <div class="flex items-center gap-4">
+                    <!-- Avatar User -->
+                    <div class="relative">
+                        @if ($user->avatar)
+                            <img src="{{ Storage::url($user->avatar) }}" alt="{{ $user->name }}" class="w-12 h-12 rounded-full ring-2 ring-indigo-200 object-cover">
+                        @else
+                            <!-- Fallback: Inisial -->
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-r from-indigo-500 to-teal-500 flex items-center justify-center text-white font-bold text-sm ring-2 ring-indigo-200">
+                                {{ substr($user->name, 0, 2) }}
+                            </div>
+                        @endif
+                    </div>
+
+                    <!-- Nama & Role -->
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-800">Halo, {{ $user->name }}!</h1>
+                        <p class="text-xs font-medium px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded-full w-fit">
+                            {{ $user->role ?? 'Penghuni' }}
+                        </p>
+                    </div>
                 </div>
-                <div class="flex flex-wrap gap-3">
+
+                <!-- Bagian Kanan: Tombol Aksi -->
+                <div class="flex flex-wrap gap-3 items-center">
+                    <a href="#"
+                        class="group inline-flex items-center px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-xl hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 font-medium">
+                        <i class="fa-solid fa-user-gear mr-2 text-slate-600 group-hover:text-slate-800"></i> Edit Profil
+                    </a>
+
                     @if ($menunggak)
                         <a href="#"
                             class="group inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white rounded-xl shadow-lg hover:shadow-indigo-500/30 transition-all duration-300 transform hover:-translate-y-0.5 font-medium">
                             <i class="fa-solid fa-wallet mr-2"></i> Bayar Sekarang
                         </a>
                     @else
-                        <button disabled
-                            class="group inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-indigo-300 to-indigo-400 text-white rounded-xl shadow font-medium cursor-not-allowed">
+                        <button disabled class="group inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-indigo-300 to-indigo-400 text-white rounded-xl shadow font-medium cursor-not-allowed">
                             <i class="fa-solid fa-wallet mr-2"></i> Bayar Sekarang
                         </button>
                     @endif
+
                     <button @click="openContact = true"
                         class="group px-5 py-2.5 border-2 border-indigo-200 text-indigo-700 rounded-xl hover:bg-indigo-50 hover:border-indigo-300 transition-all duration-200 font-medium">
                         <i class="fa-solid fa-headset mr-2 group-hover:animate-pulse"></i> Hubungi Admin

@@ -54,8 +54,17 @@
                                     @if ($user->avatar)
                                         <img src="{{ Storage::url($user->avatar) }}" alt="{{ $user->name }}" class="w-8 h-8 rounded-full object-cover">
                                     @else
-                                        <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center">
-                                            <i class="fa-solid fa-user text-slate-500 text-sm"></i>
+                                        <div @php
+                                        $initial = strtoupper(substr($user->name, 0, 1));
+                                            if (in_array($initial, ['A','B','C','D','E'])) {
+                                                $gradient = 'from-indigo-500 to-teal-500 ring-indigo-200';
+                                            } elseif (in_array($initial, ['F','G','H','I','J','K','L','M'])) {
+                                                $gradient = 'from-rose-500 to-orange-500 ring-rose-200';
+                                            } else {
+                                                $gradient = 'from-violet-500 to-pink-500 ring-violet-200';
+                                            } @endphp
+                                            class="w-12 h-12 rounded-full bg-gradient-to-r {{ $gradient }} flex items-center justify-center text-white font-bold text-sm ring-2">
+                                            {{ substr($user->name, 0, 2) }}
                                         </div>
                                     @endif
                                     <span class="font-medium text-slate-900">{{ $user->name }}</span>

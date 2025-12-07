@@ -43,7 +43,7 @@ class UserSeeder extends Seeder
             'email' => 'penghuni@kos.com',
             'password' => bcrypt('penghuni123'),
             'role' => 'penghuni',
-            'telepon' => 6281528284601,
+            'telepon' => 6287870327957,
             'tanggal_masuk' => date('Y-m-d'),
         ]);
         
