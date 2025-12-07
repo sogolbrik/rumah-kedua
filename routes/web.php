@@ -96,8 +96,11 @@ Route::middleware('auth')->group(function () {
     Route::post('pembayaran/store', [PembayaranPageController::class, 'store'])->name('pembayaran.store');
     Route::get('pembayaran/{id}', [PembayaranPageController::class, 'invoicePembayaran'])->name('pembayaran.invoice');
     //penghuni
-    Route::get('user/penghuni', [PenghuniController::class, 'index'])->name('user.penghuni');
+    Route::get('dashboard-penghuni', [PenghuniController::class, 'index'])->name('dashboard-penghuni');
 });
+// Route::get('coba', function () {
+//     return view('frontend.user.penghuni');
+// })->name('coba');
 /* OutMiddleware */
 Route::get('pembayaran/check', [PembayaranPageController::class, 'checkStatus'])->name('pembayaran.check');
 /* EndOutMiddleware */

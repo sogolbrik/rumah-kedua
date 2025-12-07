@@ -31,6 +31,10 @@
                             <i class="fa-solid fa-envelope mr-2 text-xs"></i>
                             Email
                         </th>
+                        <th class="text-left px-6 py-4">
+                            <i class="fa-solid fa-circle-info mr-2 text-xs"></i>
+                            Status
+                        </th>
                         <th class="text-left px-6 py-4 w-36">
                             <i class="fa-solid fa-user-tag mr-2 text-xs"></i>
                             Role
@@ -62,6 +66,19 @@
                                     <i class="fa-solid fa-envelope text-slate-400 text-sm"></i>
                                     <span class="text-slate-900">{{ $user->email }}</span>
                                 </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                @if (!$penghuniMenunggak->contains($user->id))
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-white text-green-600 font-semibold shadow-sm border border-green-200">
+                                        <i class="fa-solid fa-check text-green-500"></i>
+                                        Aktif
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-white text-amber-600 font-semibold shadow-sm border border-amber-200">
+                                        <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
+                                        Menunggak
+                                @endif
+                                </span>
                             </td>
                             <td class="px-6 py-4">
                                 @if ($user->role == 'admin')

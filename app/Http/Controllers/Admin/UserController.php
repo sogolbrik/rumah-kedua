@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Kamar;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -15,9 +16,31 @@ class UserController extends Controller
      */
     public function index()
     {
+        $penghuni = User::with([
+            'transaksi' => function ($q) {
+                $q->orderBy('id', 'desc')->limit(1); // transaksi terakhir
+            },
+            'kamar'
+        ])
+            ->where('role', 'penghuni')
+            ->get();
+        $penghuniMenunggak = $penghuni->filter(function ($user) {
+            $trx = $user->transaksi->first();
+
+            if (!$trx)
+                return false; // tidak punya transaksi → bukan menunggak
+            if (!$trx->tanggal_jatuhtempo)
+                return false;
+
+            // jatuh tempo < hari ini → menunggak
+            return Carbon::parse($trx->tanggal_jatuhtempo)
+                ->lt(Carbon::today());
+        });
+
         return view('admin.user.data', [
             'users' => User::with('kamar')->latest()->paginate(10),
-            'kamar' => Kamar::select('id', 'kode_kamar', 'tipe', 'status')->get()
+            'kamar' => Kamar::select('id', 'kode_kamar', 'tipe', 'status')->get(),
+            'penghuniMenunggak' => $penghuniMenunggak
         ]);
     }
 

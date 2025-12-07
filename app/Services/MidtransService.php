@@ -64,7 +64,7 @@ class MidtransService
 
     public function generateOrderId($kode)
     {
-        return 'TRX-' . $kode . '-' . time();
+        return 'MID-' . $kode . '-' . time();
     }
 
     public function checkTransactionStatus($orderId)

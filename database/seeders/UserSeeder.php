@@ -37,15 +37,6 @@ class UserSeeder extends Seeder
             'tanggal_masuk' => date('Y-m-d'),
         ]);
 
-        for ($i = 1; $i < 11; $i++) {
-            User::create([
-                'name' => 'User' . $i,
-                'email' => 'user' . $i . '@kos.com',
-                'password' => bcrypt('user123'),
-                'role' => 'user',
-            ]);
-        }
-
         User::create([
             'id_kamar' => 1,
             'name' => 'Penghuni',
@@ -55,5 +46,14 @@ class UserSeeder extends Seeder
             'telepon' => 6281528284601,
             'tanggal_masuk' => date('Y-m-d'),
         ]);
+        
+        for ($i = 1; $i < 11; $i++) {
+            User::create([
+                'name' => 'User' . $i,
+                'email' => 'user' . $i . '@kos.com',
+                'password' => bcrypt('user123'),
+                'role' => 'user',
+            ]);
+        }
     }
 }
