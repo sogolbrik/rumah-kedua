@@ -29,6 +29,10 @@
         .transition-bg {
             transition: background-color 0.3s ease;
         }
+
+        [x-cloak] {
+            display: none !important;
+        }
     </style>
 </head>
 

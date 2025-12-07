@@ -5,6 +5,8 @@ namespace App\Http\Controllers\frontend\user;
 use App\Http\Controllers\Controller;
 use App\Models\Kamar;
 use App\Models\Transaksi;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,33 +14,41 @@ class PenghuniController extends Controller
 {
     public function index()
     {
-        $user = Auth::user();
+        $user = User::with('kamar', 'transaksi')->find(Auth::id());
 
-        // Pastikan pengguna adalah penghuni dan punya kamar
-        if ($user->role !== 'penghuni') {
-            return redirect()->route('landing-page')->with('error', 'Hanya penghuni yang dapat mengakses halaman ini.');
-        }
+        $transaksis = Transaksi::where('id_user', $user->id)
+            ->orderBy('tanggal_pembayaran', 'desc')
+            ->paginate(10);
 
-        if (!$user->id_kamar) {
-            return redirect()->route('landing-page')->with('error', 'Anda belum ditempatkan di kamar. Hubungi admin.');
-        }
+        $totalTransaksi = $transaksis->total();
 
-        $kamar = Kamar::findOrFail($user->id_kamar);
+        $totalBayar = Transaksi::where('id_user', $user->id)
+            ->where('status_pembayaran', 'paid')
+            ->sum('total_bayar');
 
-        // Ambil transaksi yang jatuh tempo dalam 7 hari ke depan & belum dibayar
-        $jatuhTempo = Transaksi::where('id_user', $user->id)
-            ->where('status_pembayaran', 'pending')
-            ->whereDate('tanggal_jatuhtempo', '<=', now()->addDays(7))
-            ->whereDate('tanggal_jatuhtempo', '>=', now())
-            ->orderBy('tanggal_jatuhtempo', 'asc')
-            ->first();
+        $terakhirBayar = Transaksi::where('id_user', $user->id)
+            ->where('status_pembayaran', 'paid')
+            ->orderBy('tanggal_pembayaran', 'desc')
+            ->value('tanggal_pembayaran'); // Carbon instance atau null
 
-        // Riwayat transaksi (semua, urut terbaru)
-        $riwayat = Transaksi::with('kamar')
-            ->where('id_user', $user->id)
-            ->orderBy('created_at', 'desc')
-            ->paginate(5);
+        $menunggak = Transaksi::where('id_user', $user->id)
+            ->where('tanggal_jatuhtempo', '<', now()->toDateString())
+            ->whereNotIn('id', function ($q) use ($user) {
+                $q->select('id')
+                  ->from('transaksis')
+                  ->where('id_user', $user->id)
+                  ->where('status_pembayaran', 'paid')
+                  ->whereColumn('tanggal_jatuhtempo', 'transaksis.tanggal_jatuhtempo');
+            })
+            ->exists();
 
-        return view('frontend.user.penghuni', compact('kamar', 'jatuhTempo', 'riwayat'));
+        return view('frontend.user.penghuni', compact(
+            'user',
+            'transaksis',
+            'totalTransaksi',
+            'totalBayar',
+            'terakhirBayar',
+            'menunggak'
+        ));
     }
 }
