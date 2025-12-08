@@ -258,9 +258,9 @@
         </div>
     </div>
 
-    <!-- Chart.js CDN + Initialization -->
+    <!-- Chart.js + Initialization -->
     @push('scripts')
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="{{ asset('assets/vendor/chart-js/chart.js') }}"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 // === Line Chart (Crypto-like) ===
@@ -284,6 +284,11 @@
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        layout: {
+                            padding: {
+                                bottom: 10
+                            }
+                        },
                         plugins: {
                             legend: {
                                 display: false
@@ -365,6 +370,11 @@
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        layout: {
+                            padding: {
+                                bottom: 30
+                            }
+                        },
                         plugins: {
                             legend: {
                                 position: 'bottom',

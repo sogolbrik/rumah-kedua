@@ -17,7 +17,7 @@ class TransaksiSeeder extends Seeder
     {
         DB::table('transaksis')->insert([
             $this->makeTransaksiKhususUser3(),
-            $this->makeTransaksi(4, 2, 'paid'),
+            $this->makeTransaksi(4, 1, 'paid'),
             $this->makeTransaksi(12, 3, 'pending'),
             $this->makeTransaksi(13, 4, 'expired'),
         ]);
@@ -68,7 +68,7 @@ class TransaksiSeeder extends Seeder
 
         return [
             'id_user'                 => 3,
-            'id_kamar'                => 5,
+            'id_kamar'                => 2,
             'kode'                    => $kode,
 
             // aturan khusus          : 

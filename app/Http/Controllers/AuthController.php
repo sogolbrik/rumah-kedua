@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendWelcomeWhatsApp;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -44,12 +45,14 @@ class AuthController extends Controller
                 $telepon = '62' . substr($telepon, 1);
             }
             $validation['telepon'] = $telepon;
-            $validation['password'] = bcrypt($validation['password']);
+
+            $plainPassword = $validation['password'];
+            $validation['password'] = bcrypt($plainPassword);
             $validation['role'] = 'user';
 
             $user = User::create($validation);
 
-            $this->sendWelcomeWhatsApp($validation['telepon'], $validation['name']);
+            SendWelcomeWhatsApp::dispatch($telepon, $validation['name'], $validation['email'], $plainPassword);
 
             Auth::login($user);
             $request->session()->regenerate();
@@ -96,31 +99,6 @@ class AuthController extends Controller
             return redirect('/')->with('success', 'Logout Berhasil');
         } else {
             return redirect()->back()->with('error', 'Logout Gagal');
-        }
-    }
-
-    private function sendWelcomeWhatsApp($number, $name)
-    {
-        try {
-            $message = "Halo *{$name}*! 👋
-
-            Terima kasih sudah mendaftar di *RumahKedua*.
-
-            Sekarang kamu bisa:
-            > • *Cari & pesan kamar kos* langsung dari Website  
-            > • *Pantau status pembayaran* dengan mudah  
-            > • *Dapat update kamar kosong* lebih cepat
-
-            Jika butuh bantuan, cukup balas pesan ini ya.  
-            - *RumahKedua*";
-
-            $response = Http::timeout(30)->get("http://localhost:5000/api/Whatsapp/openandsend", [
-                'number' => $number,
-                'message' => $message
-            ]);
-
-        } catch (\Exception $e) {
-            //
         }
     }
 }
