@@ -31,7 +31,7 @@ class PembayaranController extends Controller
             return redirect()->route('dashboard-penghuni')->with('error', 'Anda belum memiliki kamar.');
         }
 
-        return view('frontend.user.pembayaran', ['user'=> $user]);
+        return view('frontend.user.pembayaran-penghuni', ['user' => $user]);
     }
 
     /**

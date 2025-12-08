@@ -108,11 +108,15 @@ Route::middleware('auth')->group(function () {
     });
     //Transaksi Jatuh Tempo
     // Di dalam grup middleware auth & role penghuni
-    Route::prefix('user')->name('user.')->group(function () {
+    Route::prefix('penghuni')->name('penghuni.')->group(function () {
         Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pembayaran');
         Route::get('/pembayaran/data', [PembayaranController::class, 'getTagihanData'])->name('pembayaran.data');
         Route::post('/pembayaran/bayar', [PembayaranController::class, 'bayarTagihan'])->name('pembayaran.bayar');
     });
+});
+
+Route::get('tes', function (){
+    return view('frontend.user.pembayaran-penghuni');
 });
 
 /* OutMiddleware */

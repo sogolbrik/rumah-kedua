@@ -204,7 +204,7 @@
                 async init() {
                     this.submitting = true;
                     try {
-                        const response = await fetch('{{ route('pembayaran.tagihan.data') }}', {
+                        const response = await fetch('{{ route('penghuni.pembayaran.data') }}', {
                             method: 'GET',
                             headers: {
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -249,7 +249,7 @@
                 async preparePayment() {
                     this.submitting = true;
                     try {
-                        const response = await fetch('{{ route('pembayaran.bayar-tagihan') }}', {
+                        const response = await fetch('{{ route('penghuni.pembayaran.bayar') }}', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
