@@ -19,6 +19,7 @@ class PenghuniController extends Controller
 
         $transaksis = Transaksi::where('id_user', $user->id)
             ->orderBy('tanggal_pembayaran', 'desc')
+            ->latest()
             ->paginate(10);
 
         $totalTransaksi = $transaksis->total();
@@ -35,6 +36,7 @@ class PenghuniController extends Controller
         // Ambil transaksi terakhir (tanggal_jatuhtempo terbesar) milik user
         $transaksiTerakhir = Transaksi::where('id_user', $user->id)
             ->orderBy('tanggal_jatuhtempo', 'desc') // Urutkan dari terbaru
+            ->where('status_pembayaran', 'paid') // Hanya transaksi yang sudah dibayar
             ->first(); // Ambil satu record pertama (yg terakhir)
 
         // Cek apakah transaksi terakhir ada dan tanggal_jatuhtempo-nya kurang dari hari ini

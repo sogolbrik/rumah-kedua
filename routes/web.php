@@ -96,6 +96,7 @@ Route::middleware('auth')->group(function () {
 });
 
 //penghuni
+// Di dalam grup middleware auth & role penghuni
 Route::middleware('auth')->group(function () {
     //Dashbiard
     Route::get('dashboard-penghuni', [PenghuniController::class, 'index'])->name('dashboard-penghuni');
@@ -107,15 +108,14 @@ Route::middleware('auth')->group(function () {
         Route::put('/avatar', [PenghuniController::class, 'updateAvatar'])->name('update-avatar');
     });
     //Transaksi Jatuh Tempo
-    // Di dalam grup middleware auth & role penghuni
     Route::prefix('penghuni')->name('penghuni.')->group(function () {
         Route::get('/pembayaran', [PembayaranPenghuniController::class, 'index'])->name('pembayaran');
         Route::post('/pembayaran/buat-transaksi', [PembayaranPenghuniController::class, 'buatTransaksiBaru'])->name('pembayaran.buat-transaksi');
-        Route::post('/pembayaran/bayar', [PembayaranPenghuniController::class, 'bayarTagihan'])->name('pembayaran.bayar');
+        Route::post('/pembayaran/siapkan-pembayaran', [PembayaranPenghuniController::class, 'siapkanPembayaranMidtrans'])->name('pembayaran.siapkan-pembayaran');
     });
 });
 
-Route::get('tes', function (){
+Route::get('tes', function () {
     return view('frontend.user.pembayaran-penghuni');
 });
 
