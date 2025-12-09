@@ -3,7 +3,7 @@
 @section('title', 'Transaksi')
 
 @section('admin-main')
-<!-- Header Utama -->
+    <!-- Header Utama -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
         <div>
             <h1 class="text-2xl font-bold text-slate-900">Daftar Transaksi</h1>
@@ -60,7 +60,7 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
-                    @foreach ($transaksis as $transaksi)
+                    @forelse ($transaksis as $transaksi)
                         <tr class="hover:bg-slate-50/50 transition-colors">
                             <td class="px-6 py-4 font-medium text-slate-700 align-top">{{ $loop->iteration }}</td>
                             <td class="px-6 py-4 align-top">
@@ -125,7 +125,13 @@
                                 </div>
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="6" class="px-6 py-4 text-center text-slate-500">
+                                Tidak ada transaksi
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

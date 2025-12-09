@@ -32,16 +32,17 @@ class PenghuniController extends Controller
             ->orderBy('tanggal_pembayaran', 'desc')
             ->value('tanggal_pembayaran'); // Carbon instance atau null
 
-        $menunggak = Transaksi::where('id_user', $user->id)
-            ->where('tanggal_jatuhtempo', '<', now()->toDateString())
-            ->whereNotIn('id', function ($q) use ($user) {
-                $q->select('id')
-                    ->from('transaksis')
-                    ->where('id_user', $user->id)
-                    ->where('status_pembayaran', 'paid')
-                    ->whereColumn('tanggal_jatuhtempo', 'transaksis.tanggal_jatuhtempo');
-            })
-            ->exists();
+        // Ambil transaksi terakhir (tanggal_jatuhtempo terbesar) milik user
+        $transaksiTerakhir = Transaksi::where('id_user', $user->id)
+            ->orderBy('tanggal_jatuhtempo', 'desc') // Urutkan dari terbaru
+            ->first(); // Ambil satu record pertama (yg terakhir)
+
+        // Cek apakah transaksi terakhir ada dan tanggal_jatuhtempo-nya kurang dari hari ini
+        $menunggak = false; // Default ke false
+        if ($transaksiTerakhir) {
+            // Membandingkan tanggal jatuh tempo dengan tanggal hari ini (format Y-m-d)
+            $menunggak = $transaksiTerakhir->tanggal_jatuhtempo < now()->toDateString();
+        }
 
         return view('frontend.user.penghuni', compact(
             'user',

@@ -183,7 +183,7 @@
             </div>
 
             <!-- Alert Menunggak -->
-            @if (!$menunggak)
+            @if ($menunggak)
                 <div class="mb-8 p-5 bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center gap-4 animate-fadeIn">
                     <div class="flex-shrink-0 w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center">
                         <i class="fa-solid fa-triangle-exclamation text-amber-600 text-xl"></i>

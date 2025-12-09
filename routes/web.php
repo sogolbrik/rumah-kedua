@@ -13,7 +13,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\frontend\BookingPageController;
 use App\Http\Controllers\frontend\LandingPageController;
 use App\Http\Controllers\frontend\PembayaranPageController;
-use App\Http\Controllers\frontend\user\PembayaranController;
+use App\Http\Controllers\frontend\user\PembayaranPenghuniController;
 use App\Http\Controllers\frontend\user\PenghuniController;
 use Illuminate\Support\Facades\Route;
 
@@ -109,9 +109,9 @@ Route::middleware('auth')->group(function () {
     //Transaksi Jatuh Tempo
     // Di dalam grup middleware auth & role penghuni
     Route::prefix('penghuni')->name('penghuni.')->group(function () {
-        Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pembayaran');
-        Route::get('/pembayaran/data', [PembayaranController::class, 'getTagihanData'])->name('pembayaran.data');
-        Route::post('/pembayaran/bayar', [PembayaranController::class, 'bayarTagihan'])->name('pembayaran.bayar');
+        Route::get('/pembayaran', [PembayaranPenghuniController::class, 'index'])->name('pembayaran');
+        Route::post('/pembayaran/buat-transaksi', [PembayaranPenghuniController::class, 'buatTransaksiBaru'])->name('pembayaran.buat-transaksi');
+        Route::post('/pembayaran/bayar', [PembayaranPenghuniController::class, 'bayarTagihan'])->name('pembayaran.bayar');
     });
 });
 

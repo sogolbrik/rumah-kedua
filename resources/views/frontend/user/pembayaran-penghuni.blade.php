@@ -31,7 +31,7 @@
         }
     </style>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-18" x-data="paymentApp()" x-cloak>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-18" x-data="paymentApp({{ json_encode($dataTransaksi) }})" x-cloak>
         <div class="max-w-6xl mx-auto mb-2 py-0">
             <!-- Breadcrumb -->
             <nav class="flex items-center gap-2 text-sm">
@@ -46,49 +46,55 @@
                 <div class="bg-white rounded-2xl shadow-soft p-6">
                     <h2 class="text-2xl font-bold text-gray-900 mb-6">Bayar Tagihan Jatuh Tempo</h2>
 
-                    <!-- State: Menunggu Data Transaksi -->
-                    <div x-show="!transaksi && !submitting">
+                    <!-- State: Tidak Ada Tagihan Jatuh Tempo -->
+                    @if (!$dataTransaksi)
                         <div class="text-center py-8 text-gray-500">
                             <i class="fa-solid fa-file-invoice-dollar text-4xl mb-3 text-gray-400"></i>
-                            <p class="font-medium">Mengambil data tagihan Anda...</p>
-                            <p class="text-sm mt-1">Mohon tunggu sebentar.</p>
+                            <p class="font-medium">{{ $message ?? 'Tidak ada tagihan jatuh tempo.' }}</p>
                         </div>
-                    </div>
-
-                    <!-- State: Loading -->
-                    <div x-show="submitting" class="text-center py-8">
-                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600 mb-4"></div>
-                        <p class="text-gray-600">Mempersiapkan pembayaran...</p>
-                        <p class="text-sm text-gray-500 mt-1">Mohon jangan tutup halaman ini.</p>
-                    </div>
-
-                    <!-- State: Error -->
-                    <div x-show="errorMessage" class="mt-4 bg-red-100 text-red-700 p-3 rounded-lg text-sm" x-text="errorMessage"></div>
-
-                    <!-- State: Transaksi Siap Dibayar -->
-                    <div x-show="transaksi">
+                    @else
+                        <!-- State: Transaksi Siap Dibayar (Data ditampilkan langsung oleh Blade) -->
                         <div class="bg-gray-50 rounded-xl p-4 mb-6">
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-gray-600">Kode Transaksi</span>
-                                <span class="font-mono font-medium text-indigo-700" x-text="transaksi.kode"></span>
+                                <span class="font-mono font-medium text-indigo-700">{{ $dataTransaksi['kode'] }}</span>
                             </div>
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-gray-600">Kamar</span>
-                                <span class="font-semibold" x-text="transaksi.kamar_kode"></span>
+                                <span class="font-semibold">{{ $dataTransaksi['kamar_kode'] }}</span>
                             </div>
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-gray-600">Periode</span>
-                                <span class="font-semibold" x-text="transaksi.periode"></span>
+                                <span class="font-semibold">{{ $dataTransaksi['periode_mulai'] }} – {{ $dataTransaksi['periode_akhir'] }}</span>
                             </div>
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-gray-600">Jatuh Tempo</span>
-                                <span class="font-semibold text-rose-600" x-text="transaksi.tanggal_jatuhtempo"></span>
+                                <span class="font-semibold text-rose-600">{{ \Carbon\Carbon::parse($dataTransaksi['tanggal_jatuhtempo'])->format('d M Y') }}</span>
                             </div>
                             <div class="border-t border-gray-200 pt-2 mt-3">
                                 <div class="flex justify-between items-center">
                                     <span class="text-lg font-bold text-gray-900">Total Tagihan:</span>
-                                    <span class="text-2xl font-bold text-blue-600" x-text="'Rp ' + transaksi.total_bayar.toLocaleString('id-ID')"></span>
+                                    <span class="text-2xl font-bold text-blue-600" x-text="'Rp ' + new Intl.NumberFormat('id-ID').format({{ auth()->user()->kamar->harga ?? 0 }} * (durasi || 1))"></span>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Pilihan Durasi -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Durasi Pembayaran (Bulan)</label>
+                            <div class="grid grid-cols-3 gap-3">
+                                <button @click="pilihDurasi(1)" :class="{ 'bg-blue-600 text-white': durasi === 1, 'bg-gray-200 text-gray-700 hover:bg-gray-300': durasi !== 1 }"
+                                    class="py-3 rounded-xl font-medium transition-colors">
+                                    1 Bulan
+                                </button>
+                                <button @click="pilihDurasi(3)" :class="{ 'bg-blue-600 text-white': durasi === 3, 'bg-gray-200 text-gray-700 hover:bg-gray-300': durasi !== 3 }"
+                                    class="py-3 rounded-xl font-medium transition-colors">
+                                    3 Bulan
+                                </button>
+                                <button @click="pilihDurasi(6)" :class="{ 'bg-blue-600 text-white': durasi === 6, 'bg-gray-200 text-gray-700 hover:bg-gray-300': durasi !== 6 }"
+                                    class="py-3 rounded-xl font-medium transition-colors">
+                                    6 Bulan
+                                </button>
                             </div>
                         </div>
 
@@ -107,11 +113,21 @@
                             </div>
                         </div>
 
-                        <button type="button" @click="bayarSekarang()"
-                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 shadow-soft hover:shadow-lg transform hover:-translate-y-0.5">
+                        <button type="button" @click="buatTransaksiDanBayar()" :disabled="!durasi"
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 shadow-soft hover:shadow-lg transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed">
                             Bayar Sekarang
                         </button>
+                    @endif
+
+                    <!-- State: Loading -->
+                    <div x-show="submitting" class="text-center py-8">
+                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600 mb-4"></div>
+                        <p class="text-gray-600">Mempersiapkan pembayaran...</p>
+                        <p class="text-sm text-gray-500 mt-1">Mohon jangan tutup halaman ini.</p>
                     </div>
+
+                    <!-- State: Error -->
+                    <div x-show="errorMessage" class="mt-4 mb-2 bg-red-100 text-red-700 p-3 rounded-lg text-sm" x-text="errorMessage"></div>
 
                     <p class="text-center text-sm text-gray-500 mt-4">
                         Pembayaran akan diproses melalui Midtrans. Data Anda aman dan terenkripsi.
@@ -192,61 +208,57 @@
     </div>
 
     <!-- Midtrans Snap JS -->
-    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js    " data-client-key="{{ config('midtrans.client_key') }}"></script>
 
     <script>
-        function paymentApp() {
+        function paymentApp(initialTransaksiData) {
             return {
                 submitting: false,
-                transaksi: null,
+                transaksi: initialTransaksiData, // Gunakan data dari Blade
                 errorMessage: null,
+                durasi: null,
 
-                async init() {
+                pilihDurasi(d) {
+                    this.durasi = d;
+                },
+
+                async buatTransaksiDanBayar() {
+                    if (!this.transaksi || !this.durasi) return; // Validasi jika data transaksi tidak ada (walaupun seharusnya ada karena dicek di blade)
+
                     this.submitting = true;
+                    this.errorMessage = null;
+
                     try {
-                        const response = await fetch('{{ route('penghuni.pembayaran.data') }}', {
-                            method: 'GET',
+                        const response = await fetch('{{ route('penghuni.pembayaran.buat-transaksi') }}', {
+                            method: 'POST',
                             headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'Accept': 'application/json'
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
                             },
-                            credentials: 'include'
+                            body: JSON.stringify({
+                                // Tidak perlu mengirim id_transaksi lama lagi, karena datanya sudah di blade
+                                durasi: this.durasi
+                            })
                         });
 
                         const data = await response.json();
 
-                        if (data.success && data.transaksi) {
-                            this.transaksi = {
-                                ...data.transaksi,
-                                total_bayar: parseInt(data.transaksi.total_bayar),
-                                tanggal_jatuhtempo: new Date(data.transaksi.tanggal_jatuhtempo).toLocaleDateString('id-ID', {
-                                    day: 'numeric',
-                                    month: 'long',
-                                    year: 'numeric'
-                                }),
-                                periode: data.transaksi.periode_mulai + ' – ' + data.transaksi.periode_akhir
-                            };
+                        if (data.success && data.transaksi_baru) {
+                            this.transaksi_baru_id = data.transaksi_baru.id;
+                            this.transaksi_baru_kode = data.transaksi_baru.kode;
+                            await this.preparePayment(data.transaksi_baru.id);
                         } else {
-                            this.errorMessage = data.message || 'Tidak ada tagihan jatuh tempo.';
+                            this.errorMessage = data.message || 'Gagal membuat transaksi baru.';
                         }
                     } catch (error) {
-                        console.error('Fetch error:', error);
-                        this.errorMessage = 'Gagal memuat data tagihan. Coba segarkan halaman.';
+                        console.error('Create transaction error:', error);
+                        this.errorMessage = 'Terjadi kesalahan saat membuat transaksi baru.';
                     } finally {
                         this.submitting = false;
                     }
                 },
 
-                bayarSekarang() {
-                    if (!this.transaksi?.snap_token) {
-                        this.preparePayment();
-                        return;
-                    }
-
-                    this.openMidtrans();
-                },
-
-                async preparePayment() {
+                async preparePayment(transaksiId) {
                     this.submitting = true;
                     try {
                         const response = await fetch('{{ route('penghuni.pembayaran.bayar') }}', {
@@ -255,14 +267,16 @@
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
                             },
-                            credentials: 'include'
+                            body: JSON.stringify({
+                                id_transaksi: transaksiId
+                            })
                         });
 
                         const data = await response.json();
 
                         if (data.success && data.snap_token) {
-                            this.transaksi.snap_token = data.snap_token;
-                            this.openMidtrans();
+                            // Gunakan token dari response
+                            this.openMidtrans(data.snap_token);
                         } else {
                             this.errorMessage = data.message || 'Gagal menyiapkan pembayaran.';
                         }
@@ -274,11 +288,18 @@
                     }
                 },
 
-                openMidtrans() {
-                    snap.pay(this.transaksi.snap_token, {
+                openMidtrans(token) {
+                    // Gunakan token dari parameter, bukan dari this.transaksi.snap_token
+                    const transaksiId = this.transaksi_baru_id;
+                    if (!transaksiId) {
+                        this.showNotification('error', 'ID transaksi tidak ditemukan.');
+                        return;
+                    }
+
+                    snap.pay(token, {
                         onSuccess: (result) => {
                             this.showNotification('success', 'Pembayaran berhasil! Mengalihkan...');
-                            setTimeout(() => window.location.href = "{{ route('pembayaran.invoice', ['id' => ':id']) }}".replace(':id', this.transaksi.id), 3000);
+                            setTimeout(() => window.location.href = "{{ route('pembayaran.invoice', ['id' => ':id']) }}".replace(':id', transaksiId), 3000);
                         },
                         onPending: (result) => {
                             this.showNotification('info', 'Menunggu konfirmasi pembayaran...');
@@ -312,20 +333,11 @@
         document.addEventListener('alpine:init', () => {
             Alpine.data('paymentApp', paymentApp);
         });
-
-        // Jalankan init setelah komponen dimuat
-        document.addEventListener('alpine:initialized', () => {
-            // Tidak perlu karena init dipanggil otomatis di x-init jika ditambahkan
-        });
     </script>
 
-    {{-- Tambahkan x-init untuk memanggil init --}}
     <script>
-        // Modifikasi: tambahkan x-init di root element via Alpine
-        // Tapi karena kita tidak bisa edit x-data langsung di blade, kita tambahkan event listener
+        // Tambahkan x-init untuk memanggil init
         document.addEventListener('DOMContentLoaded', () => {
-            // Alpine akan otomatis menjalankan jika kita tambahkan x-init
-            // Jadi kita inject x-init ke root element
             const root = document.querySelector('[x-cloak]');
             if (root && !root.hasAttribute('x-init')) {
                 root.setAttribute('x-init', 'init()');
