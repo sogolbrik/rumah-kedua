@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\TransaksiController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\frontend\BookingPageController;
+use App\Http\Controllers\frontend\InvoiceController;
 use App\Http\Controllers\frontend\LandingPageController;
 use App\Http\Controllers\frontend\PembayaranPageController;
 use App\Http\Controllers\frontend\user\PembayaranPenghuniController;
@@ -89,10 +90,13 @@ Route::get('booking', [BookingPageController::class, 'booking'])->name('booking'
 Route::get('booking-detail/{id}', [BookingPageController::class, 'bookingDetail'])->name('booking-detail');
 /* EndOutMiddleware */
 Route::middleware('auth')->group(function () {
-    Route::get('booking-pembayaran/{id}', [PembayaranPageController::class, 'pembayaran'])->name('pembayaran');
     //pembayaran
-    Route::post('pembayaran/store', [PembayaranPageController::class, 'store'])->name('pembayaran.store');
-    Route::get('pembayaran/{id}', [PembayaranPageController::class, 'invoicePembayaran'])->name('pembayaran.invoice');
+    Route::prefix('pembayaran')->name('user.pembayaran.')->group(function () {
+        Route::get('booking/{id}', [PembayaranPageController::class, 'index'])->name('booking');
+        Route::post('buat', [PembayaranPenghuniController::class, 'buatTransaksiBaru'])->name('buat-transaksi');
+        Route::post('siapkan', [PembayaranPenghuniController::class, 'PembayaranMidtrans'])->name('siapkan-pembayaran');
+        Route::get('invoice/{id}', [InvoiceController::class, 'invoicePembayaran'])->name('invoice');
+    });
 });
 
 //penghuni
@@ -122,6 +126,4 @@ Route::get('tes', function () {
 /* OutMiddleware */
 //Admin
 Route::get('/payment/check', [TransaksiController::class, 'checkStatus']);
-//Penghuni
-Route::get('pembayaran/check', [PembayaranPageController::class, 'checkStatus'])->name('pembayaran.check');
 /* EndOutMiddleware */

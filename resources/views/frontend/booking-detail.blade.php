@@ -383,7 +383,7 @@
                         </div>
 
                         <div class="mb-8 pb-8 border-b border-neutral-200">
-                            <a href="{{ route('pembayaran', $kamar->id) }}">
+                            <a href="{{ route('user.pembayaran.booking', $kamar->id) }}">
                                 <button
                                     class="cursor-pointer w-full flex items-center justify-center gap-2 
                                     bg-blue-500 text-white font-semibold px-6 py-3 rounded-lg
