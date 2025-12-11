@@ -31,7 +31,7 @@
         }
     </style>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-18" x-data="paymentApp({{ json_encode($transaksiPending) }})" x-cloak>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-18" x-data="paymentApp({{ json_encode($transaksiPending) }}, {{ old('durasi') ? old('durasi') : 'null' }})" x-cloak>
         <div class="max-w-6xl mx-auto mb-2 py-0">
             <!-- Breadcrumb -->
             <nav class="flex items-center gap-2 text-sm">
@@ -47,37 +47,39 @@
                     <h2 class="text-2xl font-bold text-gray-900 mb-6">Bayar Tagihan Jatuh Tempo</h2>
 
                     <!-- State: Tidak Ada Tagihan Jatuh Tempo -->
-                    @if (!$dataTransaksi)
+                    @if (!$dataTransaksi && !$transaksiPending)
                         <div class="text-center py-8 text-gray-500">
                             <i class="fa-solid fa-file-invoice-dollar text-4xl mb-3 text-gray-400"></i>
                             <p class="font-medium">{{ $message ?? 'Tidak ada tagihan jatuh tempo.' }}</p>
                         </div>
                     @else
                         <!-- State: Transaksi Siap Dibayar (Data ditampilkan langsung oleh Blade) -->
-                        <div class="bg-gray-50 rounded-xl p-4 mb-6">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-gray-600">Kode Transaksi</span>
-                                <span class="font-mono font-medium text-indigo-700">{{ $dataTransaksi['kode'] }}</span>
-                            </div>
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-gray-600">Kamar</span>
-                                <span class="font-semibold">{{ $dataTransaksi['kamar_kode'] }}</span>
-                            </div>
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-gray-600">Periode</span>
-                                <span class="font-semibold">{{ $dataTransaksi['periode_mulai'] }} – {{ $dataTransaksi['periode_akhir'] }}</span>
-                            </div>
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-gray-600">Jatuh Tempo</span>
-                                <span class="font-semibold text-rose-600">{{ \Carbon\Carbon::parse($dataTransaksi['tanggal_jatuhtempo'])->format('d M Y') }}</span>
-                            </div>
-                            <div class="border-t border-gray-200 pt-2 mt-3">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-lg font-bold text-gray-900">Total Tagihan:</span>
-                                    <span class="text-2xl font-bold text-blue-600">Rp {{ number_format($dataTransaksi['total_bayar'], 0, ',', '.') }}</span>
+                        @if ($dataTransaksi)
+                            <div class="bg-gray-50 rounded-xl p-4 mb-6">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-gray-600">Kode Transaksi</span>
+                                    <span class="font-mono font-medium text-indigo-700">{{ $dataTransaksi['kode'] }}</span>
+                                </div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-gray-600">Kamar</span>
+                                    <span class="font-semibold">{{ $dataTransaksi['kamar_kode'] }}</span>
+                                </div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-gray-600">Periode</span>
+                                    <span class="font-semibold">{{ $dataTransaksi['periode_mulai'] }} – {{ $dataTransaksi['periode_akhir'] }}</span>
+                                </div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-gray-600">Jatuh Tempo</span>
+                                    <span class="font-semibold text-rose-600">{{ \Carbon\Carbon::parse($dataTransaksi['tanggal_jatuhtempo'])->format('d M Y') }}</span>
+                                </div>
+                                <div class="border-t border-gray-200 pt-2 mt-3">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-lg font-bold text-gray-900">Total Tagihan:</span>
+                                        <span class="text-2xl font-bold text-blue-600">Rp {{ number_format($dataTransaksi['total_bayar'], 0, ',', '.') }}</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        @endif
 
                         <!-- Form untuk memilih durasi dan membuat transaksi -->
                         @if (!$transaksiPending)
@@ -103,10 +105,10 @@
                                             6 Bulan
                                         </button>
                                         <!-- Input tersembunyi untuk mengirim nilai durasi -->
-                                        <input type="hidden" name="durasi" value="" />
+                                        <input type="hidden" name="durasi" value="{{ old('durasi') }}" />
                                     </div>
                                     @error('durasi')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        <div class="mt-4 mb-2 bg-red-100 text-red-700 p-3 rounded-lg text-sm">{{ $message }}</div>
                                     @enderror
                                 </div>
 
@@ -265,15 +267,17 @@
     <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
 
     <script>
-        function paymentApp(initialTransaksiPending) {
+        function paymentApp(initialTransaksiPending, initialDurasi = null) {
             return {
                 submitting: false,
                 transaksiPending: initialTransaksiPending, // Gunakan data dari Blade
                 errorMessage: null,
-                durasi: null,
+                durasi: initialDurasi,
 
                 pilihDurasi(d) {
                     this.durasi = d;
+                    const hiddenInput = document.querySelector('input[name="durasi"]');
+                    if (hiddenInput) hiddenInput.value = d;
                 },
 
                 async lanjutkanPembayaran() {
@@ -309,35 +313,21 @@
                 openMidtrans(token, transaksiId) {
                     snap.pay(token, {
                         onSuccess: (result) => {
-                            this.showNotification('success', 'Pembayaran berhasil! Mengalihkan...');
-                            setTimeout(() => window.location.href = "{{ route('pembayaran.invoice', ['id' => ':id']) }}".replace(':id', transaksiId), 3000);
+                            // Verifikasi setelah sukses
+                            window.location.href = "{{ route('penghuni.pembayaran') }}?verify_payment=1";
                         },
                         onPending: (result) => {
-                            this.showNotification('info', 'Menunggu konfirmasi pembayaran...');
-                            setTimeout(() => window.location.href = "{{ route('dashboard-penghuni') }}", 3000);
+                            // Kembali ke halaman pembayaran untuk pantau status
+                            window.location.href = "{{ route('penghuni.pembayaran') }}";
                         },
                         onError: (result) => {
-                            this.showNotification('error', 'Pembayaran gagal: ' + (result.status_message || 'Coba lagi.'));
+                            window.location.href = "{{ route('dashboard-penghuni') }}";
                         },
                         onClose: () => {
-                            this.showNotification('warning', 'Pembayaran dibatalkan. Anda kembali ke halaman pembayaran.');
-                            // Biarkan user di halaman ini jika Snap ditutup
+                            window.location.href = "{{ route('penghuni.pembayaran') }}";
                         }
                     });
                 },
-
-                showNotification(type, message) {
-                    const notification = document.createElement('div');
-                    notification.className = `fixed top-4 right-4 z-50 rounded-xl p-4 text-white shadow-lg transform transition-all duration-300 ${type === 'success' ? 'bg-emerald-500' :
-                        type === 'error' ? 'bg-rose-500' :
-                        type === 'warning' ? 'bg-amber-500' : 'bg-blue-500'}`;
-                    const icon = type === 'success' ? 'fa-check-circle' :
-                        type === 'error' ? 'fa-exclamation-circle' :
-                        type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle';
-                    notification.innerHTML = `<div class="flex items-center gap-3"><i class="fa-solid ${icon} text-lg"></i><span class="font-medium">${message}</span></div>`;
-                    document.body.appendChild(notification);
-                    setTimeout(() => notification.remove(), 5000);
-                }
             };
         }
 

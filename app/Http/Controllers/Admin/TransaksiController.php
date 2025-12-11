@@ -116,7 +116,8 @@ class TransaksiController extends Controller
                     'id' => $kamar->id,
                     'price' => $total_bayar,
                     'quantity' => 1,
-                    'name' => 'Pembayaran Kos - ' . $kamar->nama_kamar . ' - ' . $request->durasi,
+                    // 'name' => 'Pembayaran Kos - ' . $kamar->nama_kamar . ' - ' . $request->durasi,
+                    'name' => 'Pembayaran Kos - ' . $kamar->kode_kamar . ' - ' . $request->durasi,
                     'category' => 'Kost'
                 ]
             ],

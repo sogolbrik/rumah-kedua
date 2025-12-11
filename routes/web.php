@@ -98,7 +98,7 @@ Route::middleware('auth')->group(function () {
 //penghuni
 // Di dalam grup middleware auth & role penghuni
 Route::middleware('auth')->group(function () {
-    //Dashbiard
+    //Dashboard
     Route::get('dashboard-penghuni', [PenghuniController::class, 'index'])->name('dashboard-penghuni');
     //Profil
     Route::prefix('profil-penghuni')->name('profil-penghuni.')->group(function () {
@@ -111,7 +111,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('penghuni')->name('penghuni.')->group(function () {
         Route::get('/pembayaran', [PembayaranPenghuniController::class, 'index'])->name('pembayaran');
         Route::post('/pembayaran/buat-transaksi', [PembayaranPenghuniController::class, 'buatTransaksiBaru'])->name('pembayaran.buat-transaksi');
-        Route::post('/pembayaran/siapkan-pembayaran', [PembayaranPenghuniController::class, 'siapkanPembayaranMidtrans'])->name('pembayaran.siapkan-pembayaran');
+        Route::post('/pembayaran/siapkan-pembayaran', [PembayaranPenghuniController::class, 'PembayaranMidtrans'])->name('pembayaran.siapkan-pembayaran');
     });
 });
 

@@ -9,8 +9,10 @@ use App\Models\Kamar;
 use App\Services\MidtransService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Http\RedirectResponse;
 
 class PembayaranPenghuniController extends Controller
 {
@@ -24,7 +26,7 @@ class PembayaranPenghuniController extends Controller
     /**
      * Tampilkan halaman pembayaran tagihan jatuh tempo
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
 
@@ -77,12 +79,18 @@ class PembayaranPenghuniController extends Controller
             $message = !$transaksi ? 'Tidak ada transaksi ditemukan.' : (!$isOverdue ? 'Belum ada tagihan yang jatuh tempo.' : null);
         }
 
+        if ($request->has('verify_payment')) {
+            $this->verifyMidtransPayment($user);
+            // Setelah verifikasi, redirect ulang tanpa query agar tidak loop
+            return redirect()->route('dashboard-penghuni');
+        }
+
         return view('frontend.user.pembayaran-penghuni', [
             'user' => $user,
             'dataTransaksi' => $dataTransaksi,
             'isOverdue' => $isOverdue,
             'message' => $message,
-            'transaksiPending' => $transaksiPending, // Kirim transaksi pending ke view
+            'transaksiPending' => $transaksiPending,
         ]);
     }
 
@@ -132,24 +140,70 @@ class PembayaranPenghuniController extends Controller
         $midtransOrderId = $this->midtransService->generateOrderId($kode);
 
         // Buat transaksi baru
-        Transaksi::create([
+        $transaksi = Transaksi::create([
             'id_user' => $user->id,
             'id_kamar' => $kamar->id,
             'kode' => $kode,
-            'tanggal_pembayaran' => now(), // Belum dibayar
+            'tanggal_pembayaran' => now(),
             'tanggal_jatuhtempo' => $tanggalJatuhTempo,
             'masuk_kamar' => $tanggalMasuk,
             'durasi' => $durasi,
             'total_bayar' => $totalBayar,
             'metode_pembayaran' => 'midtrans',
             'status_pembayaran' => 'pending',
-            // Kosongkan field Midtrans untuk saat ini
             'midtrans_order_id' => $midtransOrderId,
             'midtrans_transaction_id' => null,
             'midtrans_payment_type' => null,
-            'midtrans_response' => null,
+            'midtrans_response' => null, // <-- Tetap null dulu
             'expired_at' => now()->addDay()->toDateTimeString(), // Expired 1 hari dari sekarang
         ]);
+
+        // --- Bagian Pembuatan Token Midtrans ---
+        $transactionDetails = [
+            'transaction_details' => [
+                'order_id' => $midtransOrderId,
+                'gross_amount' => $totalBayar,
+            ],
+            'customer_details' => [
+                'first_name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone ?? '081234567890',
+            ],
+            'item_details' => [
+                [
+                    'id' => $transaksi->id,
+                    'price' => $totalBayar,
+                    'quantity' => 1,
+                    'name' => 'Pembayaran Kos - ' . $kamar->kode_kamar . ' - ' . $request->durasi . ' Bulan',
+                    'category' => 'Kost'
+                ]
+            ],
+            'expiry' => [
+                'start_time' => now()->format('Y-m-d H:i:s O'), // Gunakan Carbon untuk konsistensi
+                'unit' => 'hour',
+                'duration' => 24
+            ]
+        ];
+
+        // Panggil service untuk membuat token
+        $midtransResponse = $this->midtransService->createTransaction($transactionDetails);
+
+        if (!$midtransResponse['success']) {
+            // Jika pembuatan token gagal, hapus transaksi yang baru dibuat
+            $transaksi->delete();
+            return back()->withErrors(['durasi' => 'Gagal membuat token pembayaran. Silakan coba lagi.']);
+        }
+
+        // Simpan response ke database
+        $transaksi->midtrans_response = json_encode([
+            'snap_token' => $midtransResponse['snap_token'],
+            'redirect_url' => $midtransResponse['redirect_url'] ?? null,
+            'expired_at' => $midtransResponse['expired_at'] ?? null,
+            'created_at' => now()->toDateTimeString()
+        ]);
+
+        // Simpan perubahan ke database
+        $transaksi->save(); // <-- Kita gunakan save() untuk memperbarui record yang sudah ada
 
         // Kembali ke halaman utama dengan pesan sukses
         return back()->with('success', 'Transaksi baru berhasil dibuat. Silakan klik tombol "Lanjutkan Pembayaran" untuk menyelesaikan pembayaran.');
@@ -158,11 +212,10 @@ class PembayaranPenghuniController extends Controller
     /**
      * Siapkan pembayaran Midtrans untuk transaksi pending user (via JSON API)
      */
-    public function siapkanPembayaranMidtrans(Request $request)
+    public function PembayaranMidtrans(Request $request)
     {
         $user = Auth::user();
 
-        // Cari transaksi pending milik user (ambil yang terbaru)
         $transaksi = Transaksi::where('id_user', $user->id)
             ->where('status_pembayaran', 'pending')
             ->latest()
@@ -175,7 +228,6 @@ class PembayaranPenghuniController extends Controller
             ], 404);
         }
 
-        // Validasi total bayar
         if ($transaksi->total_bayar <= 0) {
             return response()->json([
                 'success' => false,
@@ -183,23 +235,21 @@ class PembayaranPenghuniController extends Controller
             ], 400);
         }
 
-        // Ambil dan parse midtrans_response
-        $midtransData = [];
-        if (!empty($transaksi->midtrans_response) && is_string($transaksi->midtrans_response)) {
-            $midtransData = json_decode($transaksi->midtrans_response, true);
+        // Jika belum paid, cek apakah perlu generate token baru
+        $midtransData = $transaksi->midtrans_response;
+        $tokenExistsAndIsValid = false;
+
+        if (is_array($midtransData) && isset($midtransData['snap_token']) && isset($midtransData['expired_at'])) {
+            $tokenExpiredAt = Carbon::parse($midtransData['expired_at']);
+            $tokenExistsAndIsValid = now()->lt($tokenExpiredAt);
         }
 
-        // Cek apakah token masih valid berdasarkan expired_at di database
-        $tokenExpired = now()->gte($transaksi->expired_at);
-
-        // Jika token Midtrans di database sudah expired, buat baru
-        if ($tokenExpired) {
+        // Jika token tidak valid/expired → buat baru
+        if (!$tokenExistsAndIsValid) {
             try {
-                $orderId = $transaksi->midtrans_order_id;
-
                 $transactionDetails = [
                     'transaction_details' => [
-                        'order_id' => $orderId,
+                        'order_id' => $transaksi->midtrans_order_id,
                         'gross_amount' => (int) $transaksi->total_bayar,
                     ],
                     'customer_details' => [
@@ -218,12 +268,10 @@ class PembayaranPenghuniController extends Controller
                     ],
                     'expiry' => [
                         'start_time' => now()->format('Y-m-d H:i:s O'),
-                        'unit' => 'day', // Ganti unit ke 'day'
-                        'duration' => 1   // Durasi 1 hari
+                        'unit' => 'day',
+                        'duration' => 1
                     ]
                 ];
-
-                Log::info('Preparing Midtrans Transaction for ID: ' . $transaksi->id, $transactionDetails);
 
                 $midtransResponse = $this->midtransService->createTransaction($transactionDetails);
 
@@ -231,11 +279,11 @@ class PembayaranPenghuniController extends Controller
                     throw new \Exception($midtransResponse['message'] ?? 'Gagal membuat token Midtrans');
                 }
 
-                // Simpan snap_token & perbarui expired_at ke database
-                $transaksi->midtrans_response = json_encode([
+                $transaksi->midtrans_response = [
                     'snap_token' => $midtransResponse['snap_token'],
-                    'expired_at' => now()->addDay()->toDateTimeString(), // Perbarui expired 1 hari dari sekarang
-                ]);
+                    'expired_at' => now()->addDay()->toDateTimeString(),
+                    'created_at' => now()->toDateTimeString(),
+                ];
                 $transaksi->save();
 
                 return response()->json([
@@ -245,29 +293,56 @@ class PembayaranPenghuniController extends Controller
                 ]);
 
             } catch (\Exception $e) {
-                Log::error('Midtrans Payment Error for Transaction ID: ' . $transaksi->id, ['message' => $e->getMessage()]);
                 return response()->json([
                     'success' => false,
                     'message' => 'Gagal menyiapkan pembayaran: ' . $e->getMessage()
                 ], 500);
             }
-        } else {
-            // Jika token di database masih valid, kembalikan token yang lama
-            // Pastikan snap_token ada di dalam data
-            if (isset($midtransData['snap_token'])) {
-                return response()->json([
-                    'success' => true,
-                    'snap_token' => $midtransData['snap_token'],
-                    'transaksi_id' => $transaksi->id
-                ]);
-            } else {
-                // Jika tidak ada snap_token, buat baru
-                // (ini bisa terjadi jika expired_at di db di-set manual tapi snap_token tidak disimpan)
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Token pembayaran tidak ditemukan. Silakan coba lagi.'
-                ], 500);
-            }
         }
+
+        // Token valid dan transaksi belum paid → kembalikan token lama
+        return response()->json([
+            'success' => true,
+            'snap_token' => $midtransData['snap_token'],
+            'transaksi_id' => $transaksi->id
+        ]);
+    }
+
+    private function verifyMidtransPayment($user)
+    {
+        $transaksi = Transaksi::where('id_user', $user->id)
+            ->where('status_pembayaran', 'pending')
+            ->latest()
+            ->first();
+
+        if (!$transaksi)
+            return;
+
+        $orderId = $transaksi->midtrans_order_id;
+        $serverKey = config('midtrans.server_key');
+
+        try {
+            $response = Http::withBasicAuth($serverKey, '')
+                ->timeout(15)
+                ->get("https://api.sandbox.midtrans.com/v2/{$orderId}/status");
+
+            if ($response->successful()) {
+                $model = $response->json();
+                if (in_array($model['transaction_status'] ?? null, ['settlement', 'capture'])) {
+                    $transaksi->status_pembayaran = 'paid';
+                    $transaksi->midtrans_transaction_id = $model['transaction_id'] ?? null;
+                    $transaksi->midtrans_payment_type = $model['payment_type'] ?? null;
+                    $transaksi->save();
+
+                    session()->flash('success', 'Pembayaran berhasil! Status transaksi telah diperbarui.');
+                    return;
+                }
+            }
+        } catch (\Exception $e) {
+            // diam saja, jangan tampilkan error
+        }
+
+        // Jika gagal verifikasi, cukup beri info
+        session()->flash('info', 'Pembayaran sedang diproses. Status akan diperbarui otomatis.');
     }
 }
