@@ -93,8 +93,8 @@ Route::middleware('auth')->group(function () {
     //pembayaran
     Route::prefix('pembayaran')->name('user.pembayaran.')->group(function () {
         Route::get('booking/{id}', [PembayaranPageController::class, 'index'])->name('booking');
-        Route::post('buat', [PembayaranPenghuniController::class, 'buatTransaksiBaru'])->name('buat-transaksi');
-        Route::post('siapkan', [PembayaranPenghuniController::class, 'PembayaranMidtrans'])->name('siapkan-pembayaran');
+        Route::post('buat', [PembayaranPageController::class, 'buatTransaksiBaru'])->name('buat-transaksi');
+        Route::post('siapkan', [PembayaranPageController::class, 'PembayaranMidtrans'])->name('siapkan-pembayaran');
         Route::get('invoice/{id}', [InvoiceController::class, 'invoicePembayaran'])->name('invoice');
     });
 });

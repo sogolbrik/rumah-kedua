@@ -107,7 +107,7 @@
                             </div>
                             <h3 class="font-bold text-lg text-slate-800 mb-2">Belum Punya Kamar?</h3>
                             <p class="text-slate-600 text-sm mb-4">Temukan kamar impian Anda sekarang!</p>
-                            <a href="#"
+                            <a href="{{ route('booking') }}"
                                 class="inline-block px-5 py-2 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white rounded-xl shadow transition-all duration-300">
                                 Lihat Kamar Tersedia
                             </a>

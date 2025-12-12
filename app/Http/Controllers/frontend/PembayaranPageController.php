@@ -64,7 +64,7 @@ class PembayaranPageController extends Controller
 
         $request->validate([
             'durasi' => 'required|in:1,3,6',
-            'id_kamar' => 'required|exists:kamar,id'
+            'id_kamar' => 'required|exists:kamars,id'
         ]);
 
         $durasi = (int) $request->durasi;
@@ -146,7 +146,8 @@ class PembayaranPageController extends Controller
 
         $transaksi->midtrans_response = json_encode([
             'snap_token' => $midtransResponse['snap_token'],
-            'created_at' => now()->toDateTimeString()
+            'created_at' => now()->toDateTimeString(),
+            'expired_at' => now()->addDay()->toDateTimeString(),
         ]);
         $transaksi->save();
 
@@ -276,9 +277,9 @@ class PembayaranPageController extends Controller
                     $transaksi->save();
 
                     $user->update([
-                        'id_kamar' => $transaksi->id_kamar,
+                        'id_kamar'      => $transaksi->id_kamar,
                         'tanggal_masuk' => $transaksi->masuk_kamar,
-                        'role' => 'penghuni',
+                        'role'          => 'penghuni',
                     ]);
 
                     Kamar::where('id', $transaksi->id_kamar)->update(['status' => 'Terisi']);
