@@ -65,7 +65,6 @@ class UserController extends Controller
             'alamat' => 'nullable|string|max:255',
             'kota' => 'nullable|string|max:100',
             'provinsi' => 'nullable|string|max:100',
-            'tanggal_masuk' => 'nullable|date',
             'role' => 'nullable|in:admin,penghuni,user',
             'status_penghuni' => 'nullable|in:aktif,nonaktif,menunggak',
             'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
@@ -140,7 +139,6 @@ class UserController extends Controller
             'alamat' => 'nullable|string|max:255',
             'kota' => 'nullable|string|max:100',
             'provinsi' => 'nullable|string|max:100',
-            'tanggal_masuk' => 'nullable|date',
             'role' => 'nullable|in:admin,user',
             'status_penghuni' => 'nullable|in:aktif,nonaktif,menunggak',
             'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
@@ -246,8 +244,8 @@ class UserController extends Controller
             if ($kamarIdLama) {
                 Kamar::where('id', $kamarIdLama)->update(['status' => 'Tersedia']);
             }
-            $validation['tanggal_masuk'] = null;
-            $validation['id_kamar'] = null;
+            $user->tanggal_masuk = null;
+            $user->id_kamar = null;
         }
 
         return redirect()->route('user.index')->with('success', 'User berhasil dihapus');

@@ -144,19 +144,6 @@
                                     class="w-full rounded-xl border-2 border-slate-200 bg-white py-3 pl-11 pr-4 text-sm font-medium text-slate-900 placeholder:text-slate-400 transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-500/10" />
                             </div>
                         </div>
-
-                        <div>
-                            <label for="tanggal_masuk" class="mb-2 block text-sm font-semibold text-slate-700">
-                                Tanggal Masuk <span class="text-slate-400">(opsional)</span>
-                            </label>
-                            <div class="relative">
-                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
-                                    <i class="fa-solid fa-calendar text-sm"></i>
-                                </div>
-                                <input id="tanggal_masuk" name="tanggal_masuk" type="date" x-model="formState.tanggal_masuk"
-                                    class="w-full rounded-xl border-2 border-slate-200 bg-white py-3 pl-11 pr-4 text-sm font-medium text-slate-900 placeholder:text-slate-400 transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-500/10" />
-                            </div>
-                        </div>
                     </div>
 
                     <div>
@@ -356,7 +343,6 @@
                     alamat: '',
                     kota: '',
                     provinsi: '',
-                    tanggal_masuk: '',
                     role: '',
                     avatar: null,
                     ktp: null,
@@ -491,7 +477,6 @@
                         alamat: '',
                         kota: '',
                         provinsi: '',
-                        tanggal_masuk: '',
                         role: '',
                         avatar: null,
                         ktp: null,

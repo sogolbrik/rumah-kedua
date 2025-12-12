@@ -133,19 +133,6 @@
                                     class="w-full rounded-xl border-2 border-slate-200 bg-white py-3 pl-11 pr-4 text-sm font-medium text-slate-900 placeholder:text-slate-400 transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-500/10" />
                             </div>
                         </div>
-
-                        <div>
-                            <label for="tanggal_masuk" class="mb-2 block text-sm font-semibold text-slate-700">
-                                Tanggal Masuk <span class="text-slate-400">(opsional)</span>
-                            </label>
-                            <div class="relative">
-                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
-                                    <i class="fa-solid fa-calendar text-sm"></i>
-                                </div>
-                                <input id="tanggal_masuk" name="tanggal_masuk" type="date" x-model="formState.tanggal_masuk" @input="checkForChanges"
-                                    class="w-full rounded-xl border-2 border-slate-200 bg-white py-3 pl-11 pr-4 text-sm font-medium text-slate-900 placeholder:text-slate-400 transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-500/10" />
-                            </div>
-                        </div>
                     </div>
 
                     <div>
@@ -342,7 +329,6 @@
                     alamat: userData?.alamat || '',
                     kota: userData?.kota || '',
                     provinsi: userData?.provinsi || '',
-                    tanggal_masuk: userData?.tanggal_masuk || '',
                     role: userData?.role || '',
                     avatar: null,
                     ktp: null,
@@ -356,7 +342,6 @@
                     alamat: userData?.alamat || '',
                     kota: userData?.kota || '',
                     provinsi: userData?.provinsi || '',
-                    tanggal_masuk: userData?.tanggal_masuk || '',
                     role: userData?.role || '',
                 },
                 showPassword: false,
@@ -389,7 +374,6 @@
                         this.formState.alamat !== this.originalData.alamat ||
                         this.formState.kota !== this.originalData.kota ||
                         this.formState.provinsi !== this.originalData.provinsi ||
-                        this.formState.tanggal_masuk !== this.originalData.tanggal_masuk ||
                         this.formState.role !== this.originalData.role;
 
                     // Check password fields (only if filled)
@@ -510,7 +494,6 @@
                         alamat: this.originalData.alamat,
                         kota: this.originalData.kota,
                         provinsi: this.originalData.provinsi,
-                        tanggal_masuk: this.originalData.tanggal_masuk,
                         role: this.originalData.role,
                         avatar: null,
                         ktp: null,
