@@ -9,10 +9,10 @@ use Illuminate\Http\Request;
 class InvoiceController extends Controller
 {
     //Invoice Penghuni
-    public function invoicePenghuni($id)
+    public function invoicePembayaran($id)
     {
-        $transaksi = Transaksi::with('kamar')->findOrFail($id)->first();
-        return view('frontend.user.invoice-pembayaran', [
+        $transaksi = Transaksi::with('kamar', 'user')->findOrFail($id)->first();
+        return view('frontend.pembayaran.invoice-pembayaran', [
             'transaksi' => $transaksi
         ]);
     }

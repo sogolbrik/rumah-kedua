@@ -250,16 +250,10 @@
                                     </td>
                                     <td class="px-6 py-4 text-right font-bold text-slate-800">Rp {{ number_format($trx->total_bayar, 0, ',', '.') }}</td>
                                     <td class="px-6 py-4">
-                                        <button x:cloak
-                                            @click="detailModal = true; 
-                                                detailData.kode = '{{ $trx->kode }}';
-                                                detailData.total = 'Rp {{ number_format($trx->total_bayar, 0, ',', '.') }}';
-                                                detailData.metode = '{{ ucfirst($trx->metode_pembayaran ?? '–') }}';
-                                                detailData.status = '{{ ucfirst($trx->status_pembayaran) }}';
-                                                detailData.created_at = '{{ $trx->created_at->format('d M Y H:i') }}';"
+                                        <a href="{{ route('user.pembayaran.invoice', $trx->id) }}"
                                             class="px-3.5 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-100 rounded-lg hover:bg-indigo-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-300">
                                             Detail
-                                        </button>
+                                        </a>
                                     </td>
                                 </tr>
                                 @empty
@@ -311,49 +305,6 @@
                     </ul>
                     <div class="mt-6 flex justify-end">
                         <button @click="openContact = false" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl font-medium transition-colors duration-200">
-                            Tutup
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Modal: Detail Transaksi -->
-            <div x-show="detailModal" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
-                x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-                class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" @click.outside="detailModal = false" role="dialog" aria-modal="true">
-                <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
-                    <div class="flex justify-between items-center mb-5">
-                        <h3 class="font-bold text-xl text-slate-800">Detail Transaksi</h3>
-                        <button @click="detailModal = false" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center hover:bg-slate-200 transition-colors">
-                            <i class="fa-solid fa-xmark text-slate-600"></i>
-                        </button>
-                    </div>
-
-                    <div class="space-y-3.5 text-sm">
-                        <div class="flex justify-between">
-                            <span class="text-slate-600">Kode Transaksi</span>
-                            <span x-text="detailData.kode" class="font-mono font-semibold text-indigo-700"></span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-slate-600">Total</span>
-                            <span x-text="detailData.total" class="font-bold text-slate-800"></span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-slate-600">Metode</span>
-                            <span x-text="detailData.metode" class="capitalize"></span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-slate-600">Status</span>
-                            <span x-text="detailData.status" class="font-medium"></span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-slate-600">Dibuat</span>
-                            <span x-text="detailData.created_at" class="text-slate-800"></span>
-                        </div>
-                    </div>
-
-                    <div class="mt-6 flex justify-end">
-                        <button @click="detailModal = false" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl font-medium transition-colors duration-200">
                             Tutup
                         </button>
                     </div>
