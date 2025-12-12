@@ -249,15 +249,27 @@
                 durasi: initialDurasi,
                 submitting: false,
                 errorMessage: null,
+                isProcessing: false, // Prevent double submission
 
                 pilihDurasi(value) {
                     this.durasi = value;
-                    // Update hidden input
+                    this.errorMessage = null; // Clear error saat pilih durasi baru
+
+                    // Safely update hidden input
                     const hiddenInput = document.querySelector('input[name="durasi"]');
-                    if (hiddenInput) hiddenInput.value = value;
+                    if (hiddenInput) {
+                        hiddenInput.value = value;
+                    }
                 },
 
                 async lanjutkanPembayaran() {
+                    // Prevent double submission
+                    if (this.isProcessing) {
+                        console.warn('Payment already processing');
+                        return;
+                    }
+
+                    this.isProcessing = true;
                     this.submitting = true;
                     this.errorMessage = null;
 
@@ -266,46 +278,103 @@
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
                             }
                         });
+
+                        // Check if response is OK
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
 
                         const data = await response.json();
 
                         if (data.success && data.snap_token) {
                             this.bayarSekarang(data.snap_token);
                         } else {
-                            this.errorMessage = data.message || 'Gagal menyiapkan pembayaran.';
+                            this.errorMessage = data.message || 'Gagal menyiapkan pembayaran. Silakan coba lagi.';
+                            this.isProcessing = false; // Reset jika gagal
                         }
                     } catch (error) {
-                        console.error('Error:', error);
-                        this.errorMessage = 'Terjadi kesalahan. Silakan coba lagi.';
+                        console.error('Payment Error:', error);
+
+                        // More specific error messages
+                        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                            this.errorMessage = 'Koneksi bermasalah. Periksa internet Anda.';
+                        } else {
+                            this.errorMessage = 'Terjadi kesalahan. Silakan coba lagi atau hubungi admin.';
+                        }
+
+                        this.isProcessing = false;
                     } finally {
                         this.submitting = false;
                     }
                 },
 
                 bayarSekarang(snapToken) {
+                    // Verify snap is loaded
+                    if (typeof snap === 'undefined') {
+                        this.errorMessage = 'Payment gateway tidak tersedia. Refresh halaman.';
+                        this.isProcessing = false;
+                        return;
+                    }
+
                     snap.pay(snapToken, {
-                        onSuccess: () => {
-                            window.location.href = "{{ route('user.pembayaran.booking', ['id' => $kamar->id]) }}?verify_payment=1";
+                        onSuccess: (result) => {
+                            console.log('Payment success:', result);
+                            // Redirect dengan parameter success
+                            window.location.href = "{{ route('user.pembayaran.booking', ['id' => $kamar->id]) }}?verify_payment=1&status=success";
                         },
-                        onPending: () => {
-                            window.location.href = "{{ route('user.pembayaran.booking', ['id' => $kamar->id]) }}";
+                        onPending: (result) => {
+                            console.log('Payment pending:', result);
+                            // Redirect dengan parameter pending
+                            window.location.href = "{{ route('user.pembayaran.booking', ['id' => $kamar->id]) }}?status=pending";
                         },
                         onError: (result) => {
-                            alert('Pembayaran gagal: ' + (result.status_message || 'Coba lagi.'));
+                            console.error('Payment error:', result);
+                            this.errorMessage = 'Pembayaran gagal: ' + (result.status_message || 'Silakan coba lagi.');
+                            this.isProcessing = false;
                         },
                         onClose: () => {
-                            // Biarkan user di halaman ini
+                            console.log('Payment popup closed');
+                            // Reset processing state ketika user close popup
+                            this.isProcessing = false;
+                            this.submitting = false;
                         }
                     });
+                },
+
+                // Computed property untuk total harga
+                get totalHarga() {
+                    return this.harga * this.durasi;
+                },
+
+                // Format currency helper
+                formatRupiah(amount) {
+                    return new Intl.NumberFormat('id-ID', {
+                        style: 'currency',
+                        currency: 'IDR',
+                        minimumFractionDigits: 0
+                    }).format(amount);
                 }
             };
         }
 
+        // Initialize Alpine component
         document.addEventListener('alpine:init', () => {
             Alpine.data('paymentApp', paymentApp);
+        });
+
+        // Optional: Add Midtrans snap load check
+        document.addEventListener('DOMContentLoaded', () => {
+            const snapScript = document.querySelector('script[src*="snap.js"]');
+            if (snapScript) {
+                snapScript.addEventListener('error', () => {
+                    console.error('Failed to load Midtrans Snap');
+                    alert('Gagal memuat payment gateway. Refresh halaman.');
+                });
+            }
         });
     </script>
 @endsection

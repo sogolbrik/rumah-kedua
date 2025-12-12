@@ -47,7 +47,7 @@ class PembayaranPageController extends Controller
             $this->verifyMidtransPayment(Auth::user());
             return redirect()->route('dashboard-penghuni'); // atau ke halaman lain
         }
-        
+
         return view('frontend.pembayaran.pembayaran-user', [
             'user' => $user,
             'kamar' => $kamar,
@@ -257,8 +257,9 @@ class PembayaranPageController extends Controller
             ->latest()
             ->first();
 
-        if (!$transaksi)
+        if (!$transaksi) {
             return;
+        }
 
         $orderId = $transaksi->midtrans_order_id;
         $serverKey = config('midtrans.server_key');
@@ -270,6 +271,7 @@ class PembayaranPageController extends Controller
 
             if ($response->successful()) {
                 $model = $response->json();
+                // dd($model);
                 if (in_array($model['transaction_status'] ?? null, ['settlement', 'capture'])) {
                     $transaksi->status_pembayaran = 'paid';
                     $transaksi->midtrans_transaction_id = $model['transaction_id'] ?? null;
@@ -277,9 +279,9 @@ class PembayaranPageController extends Controller
                     $transaksi->save();
 
                     $user->update([
-                        'id_kamar'      => $transaksi->id_kamar,
+                        'id_kamar' => $transaksi->id_kamar,
                         'tanggal_masuk' => $transaksi->masuk_kamar,
-                        'role'          => 'penghuni',
+                        'role' => 'penghuni',
                     ]);
 
                     Kamar::where('id', $transaksi->id_kamar)->update(['status' => 'Terisi']);
