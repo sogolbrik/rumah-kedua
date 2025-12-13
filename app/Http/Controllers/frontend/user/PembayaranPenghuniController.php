@@ -315,8 +315,10 @@ class PembayaranPenghuniController extends Controller
             ->latest()
             ->first();
 
-        if (!$transaksi)
+        if (!$transaksi) {
+            session()->flash('error', 'Transaksi tidak ditemukan.');
             return;
+        }
 
         $orderId = $transaksi->midtrans_order_id;
         $serverKey = config('midtrans.server_key');

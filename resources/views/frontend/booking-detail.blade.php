@@ -57,7 +57,7 @@
                         @click="isZoomed = true">
 
                     <!-- Zoom Modal -->
-                    <div class="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4 cursor-zoom-out" x-show="isZoomed" x-transition.opacity @click.self="isZoomed = false">
+                    <div x-cloak class="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4 cursor-zoom-out" x-show="isZoomed" x-transition.opacity @click.self="isZoomed = false">
                         <img src="{{ Storage::url($kamar->gambar) }}" alt="{{ $kamar->tipe }}" class="max-w-4xl max-h-screen object-contain">
                         <button @click="isZoomed = false" class="absolute top-4 right-4 text-white text-4xl font-light hover:opacity-70 transition-smooth">
                             &times;
@@ -383,21 +383,66 @@
                         </div>
 
                         <div class="mb-8 pb-8 border-b border-neutral-200">
-                            <a href="{{ route('user.pembayaran.booking', $kamar->id) }}">
-                                <button
-                                    class="cursor-pointer w-full flex items-center justify-center gap-2 
+                            @auth
+                                @if (auth()->user()->id_kamar)
+                                    <div x-data="{ showWarning: false }">
+                                        <button @click="showWarning = true"
+                                            class="cursor-pointer w-full flex items-center justify-center gap-2 
+                                            bg-blue-500 text-white font-semibold px-6 py-3 rounded-lg
+                                            border-blue-600 border-b-[4px]
+                                            transition-all
+                                            hover:brightness-110 hover:-translate-y-[2px] hover:border-b-[6px]
+                                            active:border-b-[2px] active:brightness-90 active:translate-y-[2px] shadow-md mb-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd"
+                                                    d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                            Pesan Sekarang
+                                        </button>
+
+                                        <div class="flex justify-center" x-show="showWarning" x-cloak
+                                            x-transition:enter="transition ease-out duration-300"
+                                            x-transition:enter-start="opacity-0 -translate-y-4"
+                                            x-transition:enter-end="opacity-100 translate-y-0">
+                                            <small class="text-xs text-red-500">Anda sudah memiliki kamar!</small>
+                                        </div>
+                                    </div>
+                                @else
+                                    <a href="{{ route('user.pembayaran.booking', $kamar->id) }}">
+                                        <button
+                                            class="cursor-pointer w-full flex items-center justify-center gap-2 
                                     bg-blue-500 text-white font-semibold px-6 py-3 rounded-lg
                                     border-blue-600 border-b-[4px]
                                     transition-all
                                     hover:brightness-110 hover:-translate-y-[2px] hover:border-b-[6px]
                                     active:border-b-[2px] active:brightness-90 active:translate-y-[2px] shadow-md">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                    Pesan Sekarang
-                                </button>
-                            </a>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd"
+                                                    d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                            Pesan Sekarang
+                                        </button>
+                                    </a>
+                                @endif
+                            @else
+                                <a href="{{ route('user.pembayaran.booking', $kamar->id) }}">
+                                    <button
+                                        class="cursor-pointer w-full flex items-center justify-center gap-2 
+                                bg-blue-500 text-white font-semibold px-6 py-3 rounded-lg
+                                border-blue-600 border-b-[4px]
+                                transition-all
+                                hover:brightness-110 hover:-translate-y-[2px] hover:border-b-[6px]
+                                active:border-b-[2px] active:brightness-90 active:translate-y-[2px] shadow-md">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                        Pesan Sekarang
+                                    </button>
+                                </a>
+                            @endauth
                         </div>
 
                         <!-- Quick Facts -->

@@ -53,7 +53,7 @@
                             <i class="fa-solid fa-chevron-down text-xs opacity-70"></i>
                         </button>
 
-                        <div x:cloak x-show="openProfile" @click.outside="openProfile = false" class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-200 py-1 z-10">
+                        <div x-cloak x-show="openProfile" @click.outside="openProfile = false" class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-200 py-1 z-10">
                             <a href="{{ route('profil-penghuni.index') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">
                                 <i class="fa-solid fa-user-edit mr-2 text-slate-500"></i> Edit Profil
                             </a>

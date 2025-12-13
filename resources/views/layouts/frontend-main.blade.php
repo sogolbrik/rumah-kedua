@@ -38,6 +38,28 @@
 
 <body class="bg-white text-gray-900">
 
+    <div id="initial-loader" class="fixed inset-0 z-[9999] flex items-center justify-center bg-white">
+        <div class="flex space-x-2">
+            <div class="w-3 h-3 bg-blue-500 rounded-full animate-bounce"></div>
+            <div class="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+            <div class="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+        </div>
+    </div>
+
+    <script>
+        // Sembunyikan loader saat DOM + gambar selesai dimuat
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('initial-loader');
+            if (loader) {
+                loader.style.opacity = '0';
+                loader.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => {
+                    loader.remove();
+                }, 300);
+            }
+        });
+    </script>
+
     @include('components.navbar-frontend')
 
     @yield('frontend-main')

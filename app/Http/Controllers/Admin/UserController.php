@@ -244,8 +244,6 @@ class UserController extends Controller
             if ($kamarIdLama) {
                 Kamar::where('id', $kamarIdLama)->update(['status' => 'Tersedia']);
             }
-            $user->tanggal_masuk = null;
-            $user->id_kamar = null;
         }
 
         return redirect()->route('user.index')->with('success', 'User berhasil dihapus');

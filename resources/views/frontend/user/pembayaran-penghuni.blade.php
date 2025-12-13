@@ -314,7 +314,7 @@
                     snap.pay(token, {
                         onSuccess: (result) => {
                             // Verifikasi setelah sukses
-                            window.location.href = "{{ route('penghuni.pembayaran') }}?verify_payment=1";
+                            window.location.href = "{{ route('penghuni.pembayaran') }}?verify_payment=1&status=success";
                         },
                         onPending: (result) => {
                             // Kembali ke halaman pembayaran untuk pantau status

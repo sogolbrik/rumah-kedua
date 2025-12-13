@@ -11,7 +11,7 @@ class InvoiceController extends Controller
     //Invoice Penghuni
     public function invoicePembayaran($id)
     {
-        $transaksi = Transaksi::with('kamar', 'user')->findOrFail($id)->first();
+        $transaksi = Transaksi::with('kamar', 'user')->findOrFail($id);
         return view('frontend.pembayaran.invoice-pembayaran', [
             'transaksi' => $transaksi
         ]);
