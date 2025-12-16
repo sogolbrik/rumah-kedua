@@ -96,6 +96,7 @@ Route::middleware('auth')->group(function () {
         Route::post('buat', [PembayaranPageController::class, 'buatTransaksiBaru'])->name('buat-transaksi');
         Route::post('siapkan', [PembayaranPageController::class, 'PembayaranMidtrans'])->name('siapkan-pembayaran');
         Route::get('invoice/{id}', [InvoiceController::class, 'invoicePembayaran'])->name('invoice');
+        Route::get('invoice/pdf/{id}', [InvoiceController::class, 'exportInvoicePdf'])->name('invoice.pdf');
     });
 });
 

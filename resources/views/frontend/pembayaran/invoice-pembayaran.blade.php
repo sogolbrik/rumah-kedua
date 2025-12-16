@@ -105,10 +105,10 @@
 
         <!-- Tombol Aksi -->
         <div class="flex justify-center gap-3 mt-6">
-            <button
+            <a href="{{ route('user.pembayaran.invoice.pdf', $transaksi->id) }}"
                 class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-[1.02] shadow-md flex items-center gap-2">
                 <i class="fas fa-print"></i> Simpan PDF
-            </button>
+            </a>
             <a href="{{ route('dashboard-penghuni') }}" class="px-5 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center gap-2">
                 <i class="fas fa-arrow-left"></i> Kembali
             </a>
