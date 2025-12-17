@@ -28,7 +28,7 @@ class PengumumanController extends Controller
 
         $message = "*" . $request->judul . "*\n"
             . $request->isi . "\n\n"
-            . "> *-RumahKedua*";
+            . "*- RumahKedua*";
 
         $numbers = User::where('role', 'penghuni')
             ->whereNotNull('telepon')

@@ -94,7 +94,7 @@
                         <h4 class="font-bold text-slate-800 text-lg">{{ $pengaturan->nama_kos ?? 'Nama Kos' }}</h4>
                         <p class="text-slate-600 text-sm flex items-center gap-1.5">
                             <i class="fa-solid fa-phone text-emerald-500"></i>
-                            <span>{{ $pengaturan->no_telepon ?? '6285870327957' }}</span>
+                            <span>{{ Str::startsWith($pengaturan->no_telepon, '62') ? '0' . substr($pengaturan->no_telepon, 2) : $pengaturan->no_telepon ?? '085870327957' }}</span>
                         </p>
                         <p class="text-slate-600 text-sm flex items-start gap-1.5">
                             <i class="fa-solid fa-envelope text-emerald-500 mt-0.5"></i>
@@ -159,7 +159,8 @@
 
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Nomor Telepon</label>
-                            <input type="tel" name="no_telepon" value="{{ old('telepon', $pengaturan->no_telepon) }}"
+                            <input type="tel" name="no_telepon"
+                                value="{{ old('telepon', Str::startsWith($pengaturan->no_telepon, '62') ? '0' . substr($pengaturan->no_telepon, 2) : $pengaturan->no_telepon) }}"
                                 class="w-full rounded-lg border border-slate-300/50 px-4 py-2.5 text-slate-700 focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 transition-colors">
                             <small class="text-slate-400">Otomatis terformat sistem</small>
                         </div>

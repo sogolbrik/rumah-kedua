@@ -34,7 +34,8 @@ class UserSeeder extends Seeder
             'password' => bcrypt('penghuni2123'),
             'role' => 'penghuni',
             // 'telepon' => null,
-            'telepon' => 6285710786509,
+            'telepon' => 6285601398636,
+            // 'telepon' => 6285710786509,
             'tanggal_masuk' => date('Y-m-d'),
         ]);
 

@@ -51,7 +51,7 @@ class SendWelcomeWhatsApp implements ShouldQueue
                 "> *Pantau status pembayaran* dengan mudah\n" .
                 "> *Dapat update kamar kosong* lebih cepat\n\n" .
                 "Jika butuh bantuan, cukup balas pesan ini ya.\n" .
-                "- *RumahKedua*";
+                "*- RumahKedua*";
 
             // Validasi dasar nomor
             if (!preg_match('/^628[0-9]{8,13}$/', $this->number)) {
