@@ -37,9 +37,8 @@ class SendBulkWhatsAppAnnouncement implements ShouldQueue
     {
         foreach ($this->numbers as $index => $number) {
             try {
-                // Validasi minimal nomor
                 if (!is_numeric($number) || strlen($number) < 10) {
-                    Log::warning("Nomor tidak valid: {$number}");
+                    //Log::warning("Nomor tidak valid: {$number}");
                     continue;
                 }
 
@@ -50,13 +49,13 @@ class SendBulkWhatsAppAnnouncement implements ShouldQueue
 
                 // Opsional: log respons
                 if (!$response->successful()) {
-                    Log::error("Gagal kirim ke {$number}: " . $response->body());
+                    //Log::error("Gagal kirim ke {$number}: " . $response->body());
                 } else {
-                    Log::info("Berhasil kirim ke {$number}");
+                    //Log::info("Berhasil kirim ke {$number}");
                 }
 
             } catch (\Exception $e) {
-                Log::error("Exception saat kirim ke {$number}: " . $e->getMessage());
+                //Log::error("Exception saat kirim ke {$number}: " . $e->getMessage());
             }
 
             // Beri jeda 1 detik antar kirim (opsional, bisa diatur)

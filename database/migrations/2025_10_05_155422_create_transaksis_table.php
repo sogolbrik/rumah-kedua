@@ -15,19 +15,24 @@ return new class extends Migration {
             $table->foreignId('id_user');
             $table->foreignId('id_kamar');
 
+            //MasterData
             $table->string('kode')->unique(); // kode invoice internal
-
             $table->date('tanggal_pembayaran');
             $table->date('tanggal_jatuhtempo');
             $table->date('masuk_kamar')->nullable();
             $table->string('durasi', 20); // contoh: 1,3,6 "bulan"
 
+            //Notifikasi WhatsApp
+            $table->timestamp('notifikasi_jatuh_tempo_terkirim_pada')->nullable();
+            $table->timestamp('notifikasi_peringatan_blokir_terkirim_pada')->nullable(); // 3 hari sebelum blokir
+            $table->timestamp('diblokir_pada')->nullable();
+
+            //Pembayaran
             $table->decimal('total_bayar', 15, 2);
             $table->enum('metode_pembayaran', ['cash', 'midtrans'])->default('midtrans');
-
             $table->enum('status_pembayaran', ['pending', 'paid', 'failed', 'cancelled', 'expired', 'challenge'])->default('pending');
 
-            //midtrans payment details
+            //Midtrans Detail
             $table->string('midtrans_order_id')->nullable();
             $table->string('midtrans_transaction_id')->nullable();
             $table->string('midtrans_payment_type')->nullable(); // bank_transfer, gopay, qris, dll

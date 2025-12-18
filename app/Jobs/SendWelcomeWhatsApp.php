@@ -53,9 +53,8 @@ class SendWelcomeWhatsApp implements ShouldQueue
                 "Jika butuh bantuan, cukup balas pesan ini ya.\n" .
                 "*- RumahKedua*";
 
-            // Validasi dasar nomor
             if (!preg_match('/^628[0-9]{8,13}$/', $this->number)) {
-                Log::warning("Nomor WhatsApp tidak valid untuk welcome message: {$this->number}");
+                //Log::warning("Nomor WhatsApp tidak valid untuk welcome message: {$this->number}");
                 return;
             }
 
@@ -65,13 +64,13 @@ class SendWelcomeWhatsApp implements ShouldQueue
             ]);
 
             if (!$response->successful()) {
-                Log::error("Gagal kirim welcome WA ke {$this->number}: " . $response->body());
+                //Log::error("Gagal kirim welcome WA ke {$this->number}: " . $response->body());
             } else {
-                Log::info("Berhasil kirim welcome WA ke {$this->number}");
+                //Log::info("Berhasil kirim welcome WA ke {$this->number}");
             }
 
         } catch (\Exception $e) {
-            Log::error("Exception saat kirim welcome WA ke {$this->number}: " . $e->getMessage());
+            //Log::error("Exception saat kirim welcome WA ke {$this->number}: " . $e->getMessage());
             // Job akan otomatis di-retry karena implements ShouldQueue
             throw $e; // Penting: lempar ulang agar sistem tahu ini gagal
         }
