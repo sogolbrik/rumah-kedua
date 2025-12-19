@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\PengaturanSistem;
 use App\Models\User;
+use App\Observers\UserObserver;
 use Illuminate\Support\Facades\View;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
@@ -29,6 +30,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Atur locale Carbon global
         Carbon::setLocale('id');
+
+        // User Observer
+        User::observe(UserObserver::class);
 
         // Share notifikasi penghuni menunggak ke layout admin
         View::composer('layouts.admin-main', function ($view) {

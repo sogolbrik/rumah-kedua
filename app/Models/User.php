@@ -25,7 +25,6 @@ class User extends Authenticatable
         'telepon',
         'tanggal_masuk',
         'role',
-        'status_penghuni',
         'avatar',
     ];
 
@@ -63,7 +62,8 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'tanggal_masuk'     => 'date',
+            'password'          => 'hashed',
         ];
     }
 }
