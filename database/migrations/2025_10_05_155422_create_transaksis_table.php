@@ -23,6 +23,7 @@ return new class extends Migration {
             $table->string('durasi', 20); // contoh: 1,3,6 "bulan"
 
             //Notifikasi WhatsApp
+            $table->timestamp('notifikasi_hampir_jatuh_tempo_terkirim_pada')->nullable();
             $table->timestamp('notifikasi_jatuh_tempo_terkirim_pada')->nullable();
             $table->timestamp('notifikasi_peringatan_blokir_terkirim_pada')->nullable(); // 3 hari sebelum blokir
             $table->timestamp('diblokir_pada')->nullable();

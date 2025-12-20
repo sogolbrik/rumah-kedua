@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\Transaksi;
 use App\Jobs\NotifyOverdueBill;
+use App\Jobs\NotifyUpcomingDue;
 use App\Jobs\NotifyWarningBeforeBlock;
 use App\Jobs\ProcessAutoBlock;
 
@@ -59,6 +60,19 @@ class ScanOverdueBills extends Command
 
         if ($jatuhTempo->isEmpty() && $peringatan->isEmpty() && $harusDiblokir->isEmpty()) {
             $this->info('✅ Tidak ada tindakan diperlukan.');
+        }
+
+        // 4. Notifikasi tepat 7 hari sebelum jatuh tempo
+        $tujuhHariSebelumJatuhTempo = Transaksi::whereDate('tanggal_jatuhtempo', $now->copy()->addDays(7))
+            ->whereNull('notifikasi_hampir_jatuh_tempo_terkirim_pada')
+            ->whereNull('diblokir_pada')
+            ->whereHas('user', fn($q) => $q->where('role', 'penghuni'))
+            ->with('user')
+            ->get();
+
+        foreach ($tujuhHariSebelumJatuhTempo as $t) {
+            NotifyUpcomingDue::dispatch($t);
+            $this->info("📅 Notif 7 hari sebelum jatuh tempo: {$t->kode}");
         }
     }
 }

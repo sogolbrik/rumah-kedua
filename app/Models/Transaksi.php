@@ -12,6 +12,7 @@ class Transaksi extends Model
         'kode',
         'tanggal_pembayaran',
         'tanggal_jatuhtempo',
+        'notifikasi_hampir_jatuh_tempo_terkirim_pada',
         'notifikasi_jatuh_tempo_terkirim_pada',
         'notifikasi_peringatan_blokir_terkirim_pada',
         'diblokir_pada',

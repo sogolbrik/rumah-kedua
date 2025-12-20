@@ -25,7 +25,7 @@ class UserSeeder extends Seeder
             'email'    => 'sogol@kos.com',
             'password' => bcrypt('sogol123'),
             'role'     => 'user',
-            'telepon'  => 6285601398636,
+            // 'telepon'  => 6285601398636,
         ]);
 
         User::create([
@@ -34,8 +34,8 @@ class UserSeeder extends Seeder
             'email' => 'penghuni2@kos.com',
             'password' => bcrypt('penghuni2123'),
             'role' => 'penghuni',
-            'telepon' => null,
-            // 'telepon' => 6287870327957,
+            // 'telepon' => null,
+            'telepon' => 6287870327957,
             // 'telepon' => 6285601398636,
             // 'telepon' => 6285710786509,
             'tanggal_masuk' => date('Y-m-d'),
