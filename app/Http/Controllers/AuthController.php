@@ -6,6 +6,7 @@ use App\Jobs\SendWelcomeWhatsApp;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str; // ✅ Import ini
 
@@ -63,21 +64,36 @@ class AuthController extends Controller
         }
     }
 
+
     public function authentication(Request $request)
     {
         $validation = $request->validate([
             'email' => 'required|email',
             'password' => 'required|min:8',
-        ], [
-            'email.required' => 'Email harus diisi.',
-            'email.email' => 'Format email tidak valid.',
-            'password.required' => 'Password harus diisi.',
-            'password.min' => 'Password minimal 8 karakter.',
         ]);
 
-        if (Auth::attempt($validation)) {
+        $remember = $request->boolean('remember');
+
+        if (Auth::attempt($validation, $remember)) {
             $request->session()->regenerate();
 
+            if ($remember) {
+                $user = User::findOrFail(Auth::id());
+
+                $token = $user->remember_token;
+                if (empty($token)) {
+                    $token = Str::random(60);
+                    $user->remember_token = $token;
+                    $user->save();
+                }
+
+                $cookieName = Auth::getRecallerName();
+                $cookieValue = $user->id . '|' . $token . '|' . $user->password;
+
+                Cookie::queue(Cookie::make($cookieName, $cookieValue, 7 * 24 * 60));
+            }
+
+            // Redirect...
             if (Auth::user()->role === 'admin') {
                 return redirect('dashboard-admin')->with('success', 'Login Berhasil');
             } elseif (Auth::user()->role === 'penghuni') {
