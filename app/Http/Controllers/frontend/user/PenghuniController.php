@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Kamar;
 use App\Models\Transaksi;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -43,8 +44,18 @@ class PenghuniController extends Controller
         // Cek apakah transaksi terakhir ada dan tanggal_jatuhtempo-nya kurang dari hari ini
         $menunggak = false; // Default ke false
         if ($transaksiTerakhir) {
-            // Membandingkan tanggal jatuh tempo dengan tanggal hari ini (format Y-m-d)
-            $menunggak = $transaksiTerakhir->tanggal_jatuhtempo < now()->toDateString();
+            // Hitung selisih hari antara hari ini dan tanggal jatuh tempo
+            $hariSampaiJatuhTempo = now()->diffInDays(Carbon::parse($transaksiTerakhir->tanggal_jatuhtempo), false);
+
+            // Jika tanggal jatuh tempo sudah lewat → $hariSampaiJatuhTempo negatif
+            // Jika masih di masa depan → positif
+
+            // Kita ingin tampilkan alert jika:
+            // - Jatuh tempo sudah lewat (hariSampaiJatuhTempo < 0), ATAU
+            // - Jatuh tempo dalam 7 hari ke depan (0 ≤ hariSampaiJatuhTempo < 7)
+            if ($hariSampaiJatuhTempo < 7) {
+                $menunggak = true;
+            }
         }
 
         // Jika role = penghuni tapi belum punya kamar → coba verifikasi

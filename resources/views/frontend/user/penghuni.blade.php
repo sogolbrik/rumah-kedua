@@ -160,7 +160,7 @@
                             <li class="flex justify-between border-b pb-2 border-slate-100">
                                 <span class="text-slate-500">Tanggal Masuk</span>
                                 <span class="font-medium text-slate-800">
-                                    {{ $trx?->masuk_kamar?->format('d M Y') ?? '–' }}
+                                    {{ $trx?->masuk_kamar?->translatedFormat('d M Y') ?? '–' }}
                                 </span>
                             </li>
                             <li class="flex justify-between border-b pb-2 border-slate-100">
