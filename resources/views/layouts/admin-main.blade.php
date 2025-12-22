@@ -22,6 +22,42 @@
 </head>
 
 <body class="min-h-screen bg-slate-50 text-slate-900">
+    <!-- Spinner -->
+    <div id="initial-loader" class="fixed inset-0 z-[9999] flex items-center justify-center bg-white">
+        <style>
+            @keyframes loading-wave-animation {
+
+                0%,
+                100% {
+                    height: 10px;
+                }
+
+                50% {
+                    height: 50px;
+                }
+            }
+        </style>
+        <div class="flex justify-center items-end w-[120px] h-[60px] gap-[6px]">
+            <div class="w-5 h-2.5 bg-blue-500 rounded-[5px]" style="animation: loading-wave-animation 1s ease-in-out 0s infinite;"></div>
+            <div class="w-5 h-2.5 bg-blue-500 rounded-[5px]" style="animation: loading-wave-animation 1s ease-in-out 0.1s infinite;"></div>
+            <div class="w-5 h-2.5 bg-blue-500 rounded-[5px]" style="animation: loading-wave-animation 1s ease-in-out 0.2s infinite;"></div>
+            <div class="w-5 h-2.5 bg-blue-500 rounded-[5px]" style="animation: loading-wave-animation 1s ease-in-out 0.3s infinite;"></div>
+        </div>
+    </div>
+    <script>
+        // Sembunyikan loader saat seluruh halaman (termasuk gambar) selesai dimuat
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('initial-loader');
+            if (loader) {
+                loader.style.opacity = '0';
+                loader.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => {
+                    loader.remove();
+                }, 300);
+            }
+        });
+    </script>
+
     {{-- Mobile overlay --}}
     <div x-cloak x-show="sidebarOpen" x-transition.opacity class="fixed inset-0 z-30 bg-slate-900/50 lg:hidden" @click="sidebarOpen = false" aria-hidden="true"></div>
 

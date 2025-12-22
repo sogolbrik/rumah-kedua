@@ -38,16 +38,30 @@
 
 <body class="bg-white text-gray-900">
 
+    <!-- Spinner -->
     <div id="initial-loader" class="fixed inset-0 z-[9999] flex items-center justify-center bg-white">
-        <div class="flex space-x-2">
-            <div class="w-3 h-3 bg-blue-500 rounded-full animate-bounce"></div>
-            <div class="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-            <div class="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+        <style>
+            @keyframes loading-wave-animation {
+
+                0%,
+                100% {
+                    height: 10px;
+                }
+
+                50% {
+                    height: 50px;
+                }
+            }
+        </style>
+        <div class="flex justify-center items-end w-[120px] h-[60px] gap-[6px]">
+            <div class="w-5 h-2.5 bg-blue-500 rounded-[5px]" style="animation: loading-wave-animation 1s ease-in-out 0s infinite;"></div>
+            <div class="w-5 h-2.5 bg-blue-500 rounded-[5px]" style="animation: loading-wave-animation 1s ease-in-out 0.1s infinite;"></div>
+            <div class="w-5 h-2.5 bg-blue-500 rounded-[5px]" style="animation: loading-wave-animation 1s ease-in-out 0.2s infinite;"></div>
+            <div class="w-5 h-2.5 bg-blue-500 rounded-[5px]" style="animation: loading-wave-animation 1s ease-in-out 0.3s infinite;"></div>
         </div>
     </div>
-
     <script>
-        // Sembunyikan loader saat DOM + gambar selesai dimuat
+        // Sembunyikan loader saat seluruh halaman (termasuk gambar) selesai dimuat
         window.addEventListener('load', function() {
             const loader = document.getElementById('initial-loader');
             if (loader) {
