@@ -174,8 +174,30 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <!-- Gambar Kamar -->
                     <div class="space-y-4">
-                        <div class="aspect-w-16 aspect-h-12 bg-slate-100 rounded-xl overflow-hidden border border-slate-200 shadow-sm">
-                            <img id="modalGambar" src="" alt="Gambar Kamar" class="w-full h-64 object-cover transition-transform duration-300 hover:scale-105">
+                        <!-- Carousel Galeri -->
+                        <div class="relative group">
+                            <div class="aspect-w-16 aspect-h-12 bg-slate-100 rounded-xl overflow-hidden border border-slate-200 shadow-sm">
+                                <img id="modalGambarUtama" src="" alt="Gambar Kamar" class="w-full h-64 object-cover transition-transform duration-300 hover:scale-105">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            </div>
+
+                            <!-- Indikator Galeri -->
+                            <div id="galeriIndikator" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2"></div>
+
+                            <!-- Navigasi Carousel -->
+                            <button id="prevBtn" type="button"
+                                class="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white/80 shadow-md backdrop-blur-sm text-slate-700 hover:bg-white transition-all opacity-0 group-hover:opacity-100">
+                                <i class="fa-solid fa-chevron-left text-xs"></i>
+                            </button>
+                            <button id="nextBtn" type="button"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white/80 shadow-md backdrop-blur-sm text-slate-700 hover:bg-white transition-all opacity-0 group-hover:opacity-100">
+                                <i class="fa-solid fa-chevron-right text-xs"></i>
+                            </button>
+                        </div>
+
+                        <!-- Miniatur Galeri -->
+                        <div id="miniGaleri" class="flex space-x-2 overflow-x-auto pb-2 hide-scrollbar">
+                            <!-- Miniatur akan diisi oleh JavaScript -->
                         </div>
 
                         <!-- Informasi Utama -->
@@ -268,13 +290,25 @@
 
             // Isi data ke modal
             document.getElementById('modalKodeKamar').textContent = `Kamar ${kamar.kode_kamar}`;
-            document.getElementById('modalGambar').src = kamar.gambar ? `/storage/${kamar.gambar}` : '/images/default-room.jpg';
-            document.getElementById('modalGambar').alt = `Kamar ${kamar.kode_kamar}`;
+            document.getElementById('modalGambarUtama').src = kamar.gambar ? `/storage/${kamar.gambar}` : '/images/default-room.jpg';
+            document.getElementById('modalGambarUtama').alt = `Kamar ${kamar.kode_kamar}`;
             document.getElementById('modalHarga').textContent = `Rp ${formatRupiah(kamar.harga)}`;
             document.getElementById('modalTipe').textContent = kamar.tipe;
             document.getElementById('modalLebar').textContent = `${kamar.lebar} m²`;
             document.getElementById('modalDeskripsi').textContent = kamar.deskripsi || 'Tidak ada deskripsi';
             document.getElementById('modalEditLink').href = `/kamar/${kamar.id}/edit`;
+
+            const galeri = [
+                kamar.gambar ? `/storage/${kamar.gambar}` : null,
+                ...(kamar.galeri || []).map(g => `/storage/${g.foto}`)
+            ].filter(img => img !== null);
+
+            if (galeri.length === 0) {
+                galeri.push('/images/default-room.jpg');
+            }
+
+            // Inisialisasi carousel
+            initGaleriCarousel(galeri);
 
             // Set status
             const statusElement = document.getElementById('modalStatus');
@@ -332,6 +366,107 @@
 
             document.body.classList.add('overflow-hidden');
         }
+
+        // Fungsi Carousel Galeri
+        let currentSlide = 0;
+        let galeriItems = [];
+
+        function initGaleriCarousel(images) {
+            galeriItems = images;
+            currentSlide = 0;
+
+            // Update gambar utama
+            document.getElementById('modalGambarUtama').src = galeriItems[0];
+            document.getElementById('modalGambarUtama').alt = `Foto 1 dari ${galeriItems.length}`;
+
+            // Buat indikator
+            const indikatorContainer = document.getElementById('galeriIndikator');
+            indikatorContainer.innerHTML = '';
+            if (galeriItems.length > 1) {
+                galeriItems.forEach((_, i) => {
+                    const dot = document.createElement('button');
+                    dot.className = `w-2 h-2 rounded-full ${i === 0 ? 'bg-white' : 'bg-white/50'} transition-colors`;
+                    dot.setAttribute('aria-label', `Lihat foto ${i + 1}`);
+                    dot.addEventListener('click', () => goToSlide(i));
+                    indikatorContainer.appendChild(dot);
+                });
+            }
+
+            // Buat miniatur
+            const miniContainer = document.getElementById('miniGaleri');
+            miniContainer.innerHTML = '';
+            galeriItems.forEach((img, i) => {
+                const mini = document.createElement('div');
+                mini.className = `mini-galeri-item ${i === 0 ? 'active' : ''}`;
+                mini.innerHTML = `<img src="${img}" alt="Mini ${i + 1}" loading="lazy">`;
+                mini.addEventListener('click', () => goToSlide(i));
+                miniContainer.appendChild(mini);
+            });
+
+            // Atur event navigasi
+            document.getElementById('prevBtn').onclick = () => goToSlide(currentSlide - 1);
+            document.getElementById('nextBtn').onclick = () => goToSlide(currentSlide + 1);
+
+            // Sembunyikan navigasi jika hanya 1 gambar
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            if (galeriItems.length <= 1) {
+                prevBtn.classList.add('hidden');
+                nextBtn.classList.add('hidden');
+            } else {
+                prevBtn.classList.remove('hidden');
+                nextBtn.classList.remove('hidden');
+            }
+        }
+
+        function goToSlide(index) {
+            // Handle loop carousel
+            if (index >= galeriItems.length) index = 0;
+            if (index < 0) index = galeriItems.length - 1;
+
+            currentSlide = index;
+
+            // Update gambar utama
+            document.getElementById('modalGambarUtama').src = galeriItems[currentSlide];
+            document.getElementById('modalGambarUtama').alt = `Foto ${currentSlide + 1} dari ${galeriItems.length}`;
+
+            // Update indikator
+            const dots = document.querySelectorAll('#galeriIndikator button');
+            dots.forEach((dot, i) => {
+                dot.className = `w-2 h-2 rounded-full ${i === currentSlide ? 'bg-white' : 'bg-white/50'} transition-colors`;
+            });
+
+            // Update miniatur aktif
+            const miniItems = document.querySelectorAll('.mini-galeri-item');
+            miniItems.forEach((item, i) => {
+                if (i === currentSlide) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+
+            // Scroll miniatur ke tengah
+            const activeMini = document.querySelector('.mini-galeri-item.active');
+            if (activeMini) {
+                activeMini.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest',
+                    inline: 'center'
+                });
+            }
+        }
+
+        // Tambahkan navigasi keyboard
+        document.addEventListener('keydown', function(event) {
+            if (document.getElementById('detailModal').classList.contains('pointer-events-auto')) {
+                if (event.key === 'ArrowLeft') {
+                    goToSlide(currentSlide - 1);
+                } else if (event.key === 'ArrowRight') {
+                    goToSlide(currentSlide + 1);
+                }
+            }
+        });
 
         // Fungsi untuk menyembunyikan modal dengan animasi
         function hideDetailModal() {
@@ -441,6 +576,29 @@
 
         #detailModal ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
+        }
+
+        /* Sembunyikan scrollbar horizontal */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Styling miniatur galeri */
+        .mini-galeri-item {
+            @apply flex-shrink-0 w-16 h-16 rounded-lg border-2 border-slate-200 overflow-hidden transition-all duration-200 cursor-pointer;
+        }
+
+        .mini-galeri-item.active {
+            @apply border-cyan-500 ring-2 ring-cyan-200;
+        }
+
+        .mini-galeri-item img {
+            @apply w-full h-full object-cover;
         }
     </style>
 @endsection

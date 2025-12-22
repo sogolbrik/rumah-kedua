@@ -72,17 +72,129 @@
                     </div>
                 </div>
 
-                <!-- Thumbnail Gallery -->
+                <!-- Carousel Galeri Horizontal -->
                 @if ($kamar->galeri && count($kamar->galeri) > 0)
-                    <div class="grid grid-cols-4 sm:grid-cols-6 gap-2">
-                        @foreach ($kamar->galeri as $index => $gambar)
-                            <button @click="activeTab = {{ $index }}" class="relative rounded-lg overflow-hidden border-2 transition-smooth group"
-                                :class="activeTab === {{ $index }} ? 'border-primary' :
-                                    'border-neutral-200 hover:border-primary'">
-                                <img src="{{ $gambar }}" alt="Gallery" class="w-full h-20 object-cover group-hover:scale-110 transition-smooth">
-                            </button>
-                        @endforeach
+                    <div class="space-y-4">
+                        <!-- Header Carousel -->
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-images text-cyan-600"></i>
+                                Galeri Kamar
+                            </h3>
+                            <div class="flex items-center gap-2">
+                                <button type="button" id="prevBtn"
+                                    class="w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm disabled:opacity-30 disabled:cursor-not-allowed"
+                                    onclick="scrollGaleri(-1)" aria-label="Geser ke kiri">
+                                    <i class="fa-solid fa-chevron-left text-xs"></i>
+                                </button>
+                                <button type="button" id="nextBtn"
+                                    class="w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm disabled:opacity-30 disabled:cursor-not-allowed"
+                                    onclick="scrollGaleri(1)" aria-label="Geser ke kanan">
+                                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Container Galeri -->
+                        <div class="relative">
+                            <div id="galeriContainer" class="flex overflow-x-hidden snap-x snap-mandatory scrollbar-hide">
+                                @foreach ($kamar->galeri as $gambar)
+                                    <div class="flex-shrink-0 w-48 snap-start px-2">
+                                        <div class="group aspect-square bg-slate-100 rounded-xl overflow-hidden border border-slate-200 shadow-sm transition-all hover:shadow-md">
+                                            <img src="{{ asset('storage/' . $gambar->foto) }}" alt="Foto {{ $loop->index + 1 }}"
+                                                class="w-full h-full object-cover cursor-zoom-in transition-transform duration-300 group-hover:scale-105"
+                                                onclick="openZoomModal('{{ asset('storage/' . $gambar->foto) }}')">
+                                            <div class="absolute bottom-2 left-2 bg-black/60 text-white text-xs px-2 py-1 rounded">
+                                                {{ $loop->index + 1 }}/{{ count($kamar->galeri) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Modal Zoom -->
+                    <div id="zoomModal" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-sm items-center justify-center p-4 pt-20">
+                        <div class="relative max-w-3xl w-full flex items-center justify-center"></div>
+                        <img id="zoomImage" src="" alt="Zoom Image" class="w-full max-h-[80vh] object-contain rounded-lg">
+                        <button type="button" onclick="closeZoomModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 text-white hover:bg-white/30 transition-colors">
+                            <i class="fa-solid fa-times text-xl"></i>
+                        </button>
+                    </div>
+
+                    <script>
+                        // Inisialisasi scroll galeri
+                        document.addEventListener('DOMContentLoaded', () => {
+                            updateNavButtons();
+                        });
+
+                        // Scroll galeri
+                        function scrollGaleri(direction) {
+                            const container = document.getElementById('galeriContainer');
+                            const cardWidth = 192; // w-48 = 192px
+                            const scrollAmount = cardWidth * direction;
+                            container.scrollBy({
+                                left: scrollAmount,
+                                behavior: 'smooth'
+                            });
+
+                            // Update status tombol setelah scroll
+                            setTimeout(updateNavButtons, 300);
+                        }
+
+                        // Update status tombol navigasi
+                        function updateNavButtons() {
+                            const container = document.getElementById('galeriContainer');
+                            const prevBtn = document.getElementById('prevBtn');
+                            const nextBtn = document.getElementById('nextBtn');
+
+                            // Hitung maksimal scroll
+                            const maxScroll = container.scrollWidth - container.clientWidth;
+
+                            // Nonaktifkan tombol jika di awal/akhir
+                            prevBtn.disabled = container.scrollLeft <= 0;
+                            nextBtn.disabled = container.scrollLeft >= maxScroll - 10; // Toleransi 10px
+                        }
+
+                        // Event scroll untuk update tombol
+                        document.getElementById('galeriContainer').addEventListener('scroll', updateNavButtons);
+
+                        // Zoom modal
+                        function openZoomModal(imageUrl) {
+                            // Validasi URL
+                            if (!imageUrl) {
+                                console.error('URL gambar tidak valid');
+                                return;
+                            }
+
+                            document.getElementById('zoomImage').src = imageUrl;
+                            document.getElementById('zoomModal').classList.remove('hidden');
+                            document.body.classList.add('overflow-hidden');
+                        }
+
+                        function closeZoomModal() {
+                            document.getElementById('zoomModal').classList.add('hidden');
+                            document.body.classList.remove('overflow-hidden');
+                        }
+
+                        // Tutup modal dengan ESC
+                        document.addEventListener('keydown', (e) => {
+                            if (e.key === 'Escape') closeZoomModal();
+                        });
+                    </script>
+
+                    <style>
+                        /* Sembunyikan scrollbar */
+                        .scrollbar-hide::-webkit-scrollbar {
+                            display: none;
+                        }
+
+                        .scrollbar-hide {
+                            -ms-overflow-style: none;
+                            scrollbar-width: none;
+                        }
+                    </style>
                 @endif
             </div>
 
@@ -401,11 +513,31 @@
                                             Pesan Sekarang
                                         </button>
 
-                                        <div class="flex justify-center" x-show="showWarning" x-cloak
-                                            x-transition:enter="transition ease-out duration-300"
-                                            x-transition:enter-start="opacity-0 -translate-y-4"
-                                            x-transition:enter-end="opacity-100 translate-y-0">
+                                        <div class="flex justify-center" x-show="showWarning" x-cloak x-transition:enter="transition ease-out duration-300"
+                                            x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
                                             <small class="text-xs text-red-500">Anda sudah memiliki kamar!</small>
+                                        </div>
+                                    </div>
+                                @elseif(auth()->user()->role == 'admin')
+                                    <div x-data="{ showWarning: false }">
+                                        <button @click="showWarning = true"
+                                            class="cursor-pointer w-full flex items-center justify-center gap-2 
+                                            bg-blue-500 text-white font-semibold px-6 py-3 rounded-lg
+                                            border-blue-600 border-b-[4px]
+                                            transition-all
+                                            hover:brightness-110 hover:-translate-y-[2px] hover:border-b-[6px]
+                                            active:border-b-[2px] active:brightness-90 active:translate-y-[2px] shadow-md mb-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd"
+                                                    d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                            Pesan Sekarang
+                                        </button>
+
+                                        <div class="flex justify-center" x-show="showWarning" x-cloak x-transition:enter="transition ease-out duration-300"
+                                            x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                                            <small class="text-xs text-red-500">Anda adalah admin!</small>
                                         </div>
                                     </div>
                                 @else

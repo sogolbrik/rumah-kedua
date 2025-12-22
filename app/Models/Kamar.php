@@ -16,11 +16,18 @@ class Kamar extends Model
         'status'
     ];
 
-    public function detailKamar() {
+    public function detailKamar()
+    {
         return $this->hasMany(DetailKamar::class, 'id_kamar');
     }
 
-    public function users() {
+    public function galeri()
+    {
+        return $this->hasMany(GaleriKamar::class, 'id_kamar');
+    }
+
+    public function users()
+    {
         return $this->hasMany(User::class, 'id_kamar');
     }
 

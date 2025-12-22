@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\DetailKamar;
+use App\Models\GaleriKamar;
 use App\Models\Kamar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -16,7 +17,7 @@ class KamarController extends Controller
     public function index()
     {
         return view('admin.kamar.data', [
-            'kamar' => Kamar::with('detailKamar')->latest()->paginate(10)
+            'kamar' => Kamar::with('detailKamar', 'galeri')->latest()->paginate(10)
         ]);
     }
 
@@ -35,13 +36,15 @@ class KamarController extends Controller
     {
         try {
             $validation = $request->validate([
-                "kode_kamar"  => 'required|max:10|unique:kamars',
-                "harga"       => 'required',
-                "tipe"        => 'required',
-                "lebar"       => 'required',
-                "deskripsi"   => 'nullable',
-                "gambar"      => 'required|image|mimes:jpg,png,jpeg,webp|max:2048',
-                "fasilitas"   => 'required|array',
+                "kode_kamar" => 'required|max:10|unique:kamars',
+                "harga" => 'required',
+                "tipe" => 'required',
+                "lebar" => 'required',
+                "deskripsi" => 'nullable',
+                "gambar" => 'nullable|image|mimes:jpg,png,jpeg,webp|max:2048',
+                "galeri" => 'nullable|array|max:10',
+                "galeri.*" => 'image|mimes:jpg,png,jpeg,webp|max:2048',
+                "fasilitas" => 'required|array',
                 "fasilitas.*" => 'string',
             ]);
 
@@ -49,7 +52,7 @@ class KamarController extends Controller
             $validation['harga'] = (int) $harga;
 
             $extension = $request->file('gambar')->getClientOriginalExtension();
-            $gambarKamar  = 'kamar_' . time() . '_' . uniqid() . '.' . $extension;
+            $gambarKamar = 'kamar_' . time() . '_' . uniqid() . '.' . $extension;
             $gambarPath = $request->file('gambar')->storePubliclyAs('kamar', $gambarKamar, 'public');
 
             $validation['gambar'] = $gambarPath;
@@ -68,6 +71,20 @@ class KamarController extends Controller
             ])->toArray();
 
             DetailKamar::insert($fasilitasData);
+
+            // Simpan galeri
+            if ($request->file('galeri')) {
+                foreach ($request->file('galeri') as $file) {
+                    $extension = $file->getClientOriginalExtension();
+                    $filename = 'kamar_' . time() . '_' . uniqid() . '.' . $extension;
+                    $path = $file->storePubliclyAs('kamar/galeri', $filename, 'public');
+
+                    GaleriKamar::create([
+                        'id_kamar' => $kamar->id,
+                        'foto' => $path,
+                    ]);
+                }
+            }
 
             return redirect()->route('kamar.index')->with('success', 'Kamar berhasil ditambahkan');
         } catch (\Exception $e) {
@@ -89,7 +106,7 @@ class KamarController extends Controller
     public function edit(string $id)
     {
         return view('admin.kamar.form-edit', [
-            'kamar' => Kamar::with('detailKamar')->findOrFail($id)
+            'kamar' => Kamar::with('detailKamar', 'galeri')->findOrFail($id)
         ]);
     }
 
@@ -99,16 +116,18 @@ class KamarController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-            $kamar = Kamar::findOrFail($id);
+            $kamar = Kamar::with('galeri')->findOrFail($id);
 
             $validation = $request->validate([
-                "kode_kamar"  => 'required|max:10|unique:kamars,kode_kamar,' . $id,
-                "harga"       => 'required',
-                "tipe"        => 'required',
-                "lebar"       => 'required',
-                "deskripsi"   => 'nullable',
-                "gambar"      => 'sometimes|image|mimes:jpg,png,jpeg,webp|max:2048',
-                "fasilitas"   => 'required|array',
+                "kode_kamar" => 'required|max:10|unique:kamars,kode_kamar,' . $id,
+                "harga" => 'required',
+                "tipe" => 'required',
+                "lebar" => 'required',
+                "deskripsi" => 'nullable',
+                "galeri" => 'nullable|array|max:10',
+                "galeri.*" => 'image|mimes:jpg,png,jpeg,webp|max:2048',
+                "gambar" => 'sometimes|image|mimes:jpg,png,jpeg,webp|max:2048',
+                "fasilitas" => 'required|array',
                 "fasilitas.*" => 'string',
             ]);
 
@@ -125,7 +144,7 @@ class KamarController extends Controller
 
                 // Upload gambar baru
                 $extension = $request->file('gambar')->getClientOriginalExtension();
-                $photoBed  = 'kamar_' . time() . '_' . uniqid() . '.' . $extension;
+                $photoBed = 'kamar_' . time() . '_' . uniqid() . '.' . $extension;
                 $photoPath = $request->file('gambar')->storePubliclyAs('kamar', $photoBed, 'public');
                 $validation['gambar'] = $photoPath;
             } else {
@@ -163,6 +182,34 @@ class KamarController extends Controller
 
             DetailKamar::insert($fasilitasData);
 
+            // Handle galeri
+            // 1. Hapus foto yang ditandai untuk dihapus (dari markedForDeletion)
+            if ($request->has('hapus_galeri')) {
+                foreach ($request->hapus_galeri as $fotoId) {
+                    $foto = GaleriKamar::find($fotoId);
+                    if ($foto) {
+                        if (Storage::disk('public')->exists($foto->foto)) {
+                            Storage::disk('public')->delete($foto->foto);
+                        }
+                        $foto->delete();
+                    }
+                }
+            }
+
+            // 2. Tambah foto baru (jika ada)
+            if ($request->hasFile('galeri')) {
+                foreach ($request->file('galeri') as $file) {
+                    $extension = $file->getClientOriginalExtension();
+                    $filename = 'kamar_' . time() . '_' . uniqid() . '.' . $extension;
+                    $path = $file->storePubliclyAs('kamar/galeri', $filename, 'public');
+
+                    GaleriKamar::create([
+                        'id_kamar' => $kamar->id,
+                        'foto' => $path,
+                    ]);
+                }
+            }
+
             return redirect()->route('kamar.index')->with('success', 'Kamar berhasil diperbarui');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
@@ -176,14 +223,21 @@ class KamarController extends Controller
     {
         try {
             // Cari kamar berdasarkan ID
-            $kamar = Kamar::findOrFail($id);
+            $kamar = Kamar::with('galeri')->findOrFail($id);
 
             // Hapus gambar dari storage jika ada
             if ($kamar->gambar && Storage::disk('public')->exists($kamar->gambar)) {
                 Storage::disk('public')->delete($kamar->gambar);
             }
 
-            // Hapus fasilitas terkait
+            // Hapus semua foto galeri
+            foreach ($kamar->galeri as $foto) {
+                if (Storage::disk('public')->exists($foto->foto)) {
+                    Storage::disk('public')->delete($foto->foto);
+                }
+            }
+
+            GaleriKamar::where('id_kamar', $kamar->id)->delete();
             DetailKamar::where('id_kamar', $kamar->id)->delete();
 
             // Hapus kamar

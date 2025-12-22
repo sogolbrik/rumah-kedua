@@ -183,6 +183,49 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Galeri Tambahan -->
+                    <div>
+                        <label class="mb-2 block text-sm font-semibold text-slate-700">
+                            Galeri Tambahan <span class="text-slate-400">(opsional, maks 10 foto)</span>
+                        </label>
+                        <div id="galeri-drop-zone" @dragover.prevent="isGaleriDragging = true" @dragleave.prevent="isGaleriDragging = false" @drop.prevent="handleGaleriDrop"
+                            :class="isGaleriDragging ? 'border-cyan-500 bg-cyan-100/50' : ''"
+                            class="group relative overflow-hidden rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/50 transition-all hover:border-cyan-400 hover:bg-cyan-50/50 min-h-[120px]">
+                            <input type="file" name="galeri[]" accept="image/*" multiple id="galeri-input" class="hidden" @change="handleGaleriSelect">
+
+                            <div x-show="galeriFiles.length === 0" class="flex flex-col items-center justify-center px-6 py-8 text-center">
+                                <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow-lg shadow-violet-500/30">
+                                    <i class="fa-solid fa-images text-xl"></i>
+                                </div>
+                                <button type="button" @click="document.getElementById('galeri-input').click()"
+                                    class="mb-2 inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200 transition-all hover:bg-slate-50 hover:shadow">
+                                    <i class="fa-solid fa-images"></i>
+                                    Tambah Foto
+                                </button>
+                                <p class="text-xs text-slate-600">Seret foto ke sini atau klik tombol di atas</p>
+                                <p class="mt-1 text-xs text-slate-500">Maks 10 foto • JPG/PNG/WEBP • Maks 2MB per file</p>
+                            </div>
+
+                            <!-- Preview Galeri -->
+                            <div x-cloak x-show="galeriFiles.length > 0" class="p-3">
+                                <div class="grid grid-cols-3 gap-3 sm:grid-cols-5">
+                                    <template x-for="(file, index) in galeriFiles" :key="index">
+                                        <div class="group relative aspect-square overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
+                                            <img :src="file.preview" alt="Preview" class="h-full w-full object-cover" />
+                                            <div class="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+                                                <button type="button" @click="removeGaleri(index)"
+                                                    class="flex h-8 w-8 items-center justify-center rounded-full bg-white text-rose-600 shadow-lg hover:bg-rose-50">
+                                                    <i class="fa-solid fa-trash-can text-sm"></i>
+                                                </button>
+                                            </div>
+                                            <div class="absolute bottom-1 left-1 rounded bg-black/60 px-1 text-[10px] font-medium text-white" x-text="file.info.size"></div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="border-y border-slate-200 bg-gradient-to-r from-violet-50 to-purple-50 px-8 py-6">
@@ -262,12 +305,18 @@
                         fasilitas: false,
                     }
                 },
+                // Existing properties
                 isDragging: false,
                 previewUrl: '',
                 fileInfo: {
                     name: '',
                     size: ''
                 },
+
+                // Galeri properties
+                galeriFiles: [],
+                isGaleriDragging: false,
+
                 fasilitasList: [
                     'Kasur & Bantal',
                     'Lemari',
@@ -336,41 +385,36 @@
                         this.formState.hargaRaw.trim() !== '' &&
                         this.formState.tipe.trim() !== '' &&
                         this.formState.lebar.trim() !== '' &&
-                        // this.formState.deskripsi.trim() !== '' &&
                         this.formState.gambar !== null &&
                         this.formState.fasilitas.length > 0;
                 },
 
+                // Existing methods (harga, fasilitas, gambar utama)
                 handleHargaInput(e) {
                     const rawValue = e.target.value.replace(/\D/g, '');
                     this.formState.hargaRaw = rawValue;
                     this.formState.harga = this.formatCurrency(rawValue);
                 },
-
                 formatCurrency(value) {
                     const number = value.replace(/\D/g, '');
                     return number.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
                 },
-
                 clearHarga() {
                     this.formState.harga = '';
                     this.formState.hargaRaw = '';
                 },
-
                 updateFasilitasByTipe() {
                     const tipe = this.formState.tipe;
                     if (tipe && this.fasilitasByTipe[tipe]) {
                         this.formState.fasilitas = [...this.fasilitasByTipe[tipe]];
                     }
                 },
-
                 handleFileSelect(e) {
                     const file = e.target.files[0];
                     if (file) {
                         this.processFile(file);
                     }
                 },
-
                 handleDrop(e) {
                     this.isDragging = false;
                     const file = e.dataTransfer.files[0];
@@ -382,25 +426,21 @@
                         this.processFile(file);
                     }
                 },
-
                 processFile(file) {
                     this.formState.gambar = file;
                     this.fileInfo.name = file.name;
                     this.fileInfo.size = this.formatFileSize(file.size);
-
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         this.previewUrl = e.target.result;
                     };
                     reader.readAsDataURL(file);
                 },
-
                 formatFileSize(bytes) {
                     if (bytes < 1024) return bytes + ' B';
                     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
                     return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
                 },
-
                 removeImage() {
                     this.formState.gambar = null;
                     this.previewUrl = '';
@@ -410,7 +450,6 @@
                     };
                     document.getElementById('gambar-input').value = '';
                 },
-
                 resetForm() {
                     this.formState = {
                         kode_kamar: '',
@@ -423,10 +462,69 @@
                         fasilitas: [],
                         touched: {
                             kode_kamar: false,
-                            harga: false
+                            harga: false,
+                            tipe: false,
+                            lebar: false,
+                            deskripsi: false,
+                            gambar: false,
+                            fasilitas: false,
                         }
                     };
                     this.removeImage();
+                    this.galeriFiles = [];
+                    document.getElementById('galeri-input').value = '';
+                },
+
+                // Galeri Methods
+                handleGaleriSelect(e) {
+                    const files = Array.from(e.target.files);
+                    this.processGaleriFiles(files);
+                },
+                handleGaleriDrop(e) {
+                    this.isGaleriDragging = false;
+                    const files = Array.from(e.dataTransfer.files).filter(file =>
+                        file.type.startsWith('image/')
+                    );
+                    if (files.length > 0) {
+                        const input = document.getElementById('galeri-input');
+                        const dataTransfer = new DataTransfer();
+                        files.forEach(file => dataTransfer.items.add(file));
+                        input.files = dataTransfer.files;
+                        this.processGaleriFiles(files);
+                    }
+                },
+                processGaleriFiles(newFiles) {
+                    // Batasi maksimal 5 file
+                    const combinedFiles = [...this.galeriFiles.map(f => f.file), ...newFiles];
+                    const validFiles = combinedFiles.slice(0, 10);
+
+                    this.galeriFiles = validFiles.map(file => {
+                        const preview = URL.createObjectURL(file);
+                        return {
+                            file: file,
+                            preview: preview,
+                            info: {
+                                name: file.name,
+                                size: this.formatFileSize(file.size)
+                            }
+                        };
+                    });
+                },
+                removeGaleri(index) {
+                    // Batalkan object URL
+                    URL.revokeObjectURL(this.galeriFiles[index].preview);
+                    // Hapus dari array
+                    this.galeriFiles.splice(index, 1);
+                    // Update input file
+                    this.updateGaleriInput();
+                },
+                updateGaleriInput() {
+                    const input = document.getElementById('galeri-input');
+                    const dataTransfer = new DataTransfer();
+                    this.galeriFiles.forEach(item => {
+                        dataTransfer.items.add(item.file);
+                    });
+                    input.files = dataTransfer.files;
                 }
             }
         }
