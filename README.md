@@ -150,7 +150,7 @@ Notifikasi otomatis dikirim saat:
 
 ## 🤝 Kontribusi
 
-Dikembangkan oleh **sogolbrik**.  
+Dikembangkan oleh **GlgDev as sogolbrik**.  
 Ingin berkontribusi?
 1. Fork repositori  
 2. Buat branch baru: `git checkout -b fitur/xyz`  
