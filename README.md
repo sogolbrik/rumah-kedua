@@ -1,61 +1,170 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🏠 RumahKedua
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistem manajemen kos modern berbasis web untuk pemilik properti dan penghuni — dirancang dengan **presisi data**, **kejelasan antarmuka**, dan **pengalaman pengguna yang elegan**.
 
-## About Laravel
+> Built for real-world boarding house owners who need reliability, not just features.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🌟 Fitur Utama
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- ✅ Manajemen kamar & penghuni  
+- ✅ Pelacakan pembayaran bulanan dengan `tanggal_jatuhtempo` dinamis  
+- ✅ **Data transaksi immutable**: `status_pembayaran` tidak pernah diubah setelah disimpan  
+- ✅ Notifikasi WhatsApp otomatis saat user resmi jadi penghuni (`role = 'penghuni'`)  
+- ✅ Notifikasi keterlambatan — **hanya 1x per bulan** (tidak spam)  
+- ✅ Sistem role: `admin` dan `penghuni` dengan middleware terpisah  
+- ✅ Login dengan **"Remember Me"** (bertahan 7 hari)  
+- ✅ Export laporan ke **Excel** (`.xlsx`, `.csv`) dan **PDF**  
+- ✅ Import data penghuni dari file Excel  
+- ✅ Dashboard admin dengan visualisasi **Chart.js**  
+- ✅ UI interaktif dengan **SweetAlert2** dan **Alpine.js**
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 🛠 Tech Stack
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+| Kategori        | Teknologi |
+|-----------------|-----------|
+| Framework       | Laravel 12 |
+| PHP             | ≥ 8.2 |
+| Frontend        | Blade, **Tailwind CSS v4**, **Alpine.js** |
+| Styling         | Tailwind + custom CSS |
+| Ikon            | **Font Awesome 6** |
+| Visualisasi     | **Chart.js** |
+| Notifikasi UI   | **SweetAlert2** |
+| Export/Import   | `maatwebsite/excel`, `barryvdh/laravel-dompdf` |
+| Autentikasi     | Autentikasi Manual |
+| JavaScript      | Vanilla JS + Alpine.js |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## 📦 Dependencies Utama
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Composer (PHP)
+```txt
+maatwebsite/excel
+barryvdh/laravel-dompdf
+guzzlehttp/guzzle
+laravel/breeze
+```
 
-### Premium Partners
+### NPM (Frontend)
+```txt
+tailwindcss@latest
+alpinejs
+chart.js
+sweetalert2
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+> 💡 **Catatan**: Proyek ini **tidak menggunakan Livewire, Inertia, atau framework SPA**. Fokus pada **Blade + Alpine.js** untuk interaktivitas ringan.
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 🚀 Instalasi
 
-## Code of Conduct
+### Prasyarat
+- PHP ≥ 8.2
+- Composer
+- Node.js ≥ 18
+- MySQL / MariaDB
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Langkah-langkah
 
-## Security Vulnerabilities
+1. **Clone repositori**
+   ```bash
+   git clone https://github.com/username/rumahkedua.git
+   cd rumahkedua
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+2. **Install dependensi**
+   ```bash
+   composer install
+   npm install
+   npm run build
+   ```
 
-## License
+3. **Konfigurasi environment**
+   ```bash
+   cp .env.example .env
+   ```
+   Edit file `.env`:
+   - Atur koneksi database (`DB_DATABASE`, `DB_USERNAME`, dll)
+   - Sesuaikan `APP_URL` (misal: `http://localhost:8000`)
+   - (Opsional) Tambahkan kredensial API WhatsApp
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+4. **Generate key & migrasi**
+   ```bash
+   php artisan key:generate
+   php artisan migrate --seed
+   ```
+
+5. **Jalankan aplikasi**
+   ```bash
+   php artisan serve
+   ```
+   Akses di: [http://127.0.0.1:8000](http://127.0.0.1:8000)
+
+---
+
+## 🎨 Desain & UX
+
+- **Dua layout terpisah**:
+  - `frontend-main.blade.php` → untuk calon penghuni & publik
+  - `admin-main.blade.php` → untuk dashboard admin
+- **UI modern & profesional**:
+  - Animasi transisi halus
+  - Soft shadows, proportional radius, konsistensi spacing
+  - Palet warna bisnis (hijau sukses, merah error, biru info)
+- **Interaksi pengguna**:
+  - Konfirmasi aksi via **SweetAlert2**
+  - Grafik pembayaran & hunian via **Chart.js**
+  - Ikon intuitif dari **Font Awesome**
+  - Komponen dinamis dengan **Alpine.js** (tanpa JS framework berat)
+
+---
+
+## 🔐 Prinsip Teknis
+
+- **Tidak ada perubahan struktur tabel** — logika diatur via aplikasi.
+- **Middleware berbasis role**:
+  - `role:penghuni` → hanya akses route penghuni
+  - `role:admin` → akses penuh ke dashboard
+- **Webhook development**: Untuk local testing tanpa domain, gunakan `ngrok` atau `expose`.
+- **Session flash** digunakan untuk pesan sukses/error — aman dan sekali pakai.
+
+---
+
+## 📬 Integrasi WhatsApp (Opsional)
+
+Notifikasi otomatis dikirim saat:
+- `users.role = 'penghuni'`
+- `users.id_kamar` dan `users.tanggal_masuk` terisi
+
+> Butuh endpoint publik? Gunakan **ngrok** selama development:
+> ```bash
+> ngrok http 8000
+> ```
+
+---
+
+## 🤝 Kontribusi
+
+Dikembangkan oleh **GlgDev as sogolbrik**.  
+Ingin berkontribusi?
+1. Fork repositori  
+2. Buat branch baru: `git checkout -b fitur/xyz`  
+3. Commit & push  
+4. Kirim Pull Request  
+
+Pastikan kode mengikuti gaya proyek: **bersih, fungsional, dan UX-first**.
+
+---
+
+## 📄 Lisensi
+
+MIT License — gunakan, pelajari, dan sesuaikan sesukamu.
+
+---
+
+> **RumahKedua**: Lebih dari sekadar aplikasi kos — ini adalah sistem yang menjaga kepercayaan antara pemilik dan penghuni, satu transaksi yang tidak bisa diubah.
