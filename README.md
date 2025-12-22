@@ -170,4 +170,3 @@ MIT License — gunakan, pelajari, dan sesuaikan sesukamu.
 > **RumahKedua**: Lebih dari sekadar aplikasi kos — ini adalah sistem yang menjaga kepercayaan antara pemilik dan penghuni, satu transaksi yang tidak bisa diubah.
 ```
 
----
