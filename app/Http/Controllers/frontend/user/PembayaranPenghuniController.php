@@ -308,43 +308,63 @@ class PembayaranPenghuniController extends Controller
         ]);
     }
 
-    private function verifyMidtransPayment($user)
+    private function verifyMidtransPayment($user, $maxRetries = 3)
     {
         $transaksi = Transaksi::where('id_user', $user->id)
             ->where('status_pembayaran', 'pending')
             ->latest()
             ->first();
 
-        if (!$transaksi) {
-            session()->flash('error', 'Transaksi tidak ditemukan.');
-            return;
-        }
+        if (!$transaksi)
+            return false;
 
         $orderId = $transaksi->midtrans_order_id;
         $serverKey = config('midtrans.server_key');
 
-        try {
-            $response = Http::withBasicAuth($serverKey, '')
-                ->timeout(15)
-                ->get("https://api.sandbox.midtrans.com/v2/{$orderId}/status");
+        for ($i = 0; $i < $maxRetries; $i++) {
+            try {
+                $response = Http::withBasicAuth($serverKey, '')
+                    ->timeout(15)
+                    ->get("https://api.sandbox.midtrans.com/v2/{$orderId}/status");
 
-            if ($response->successful()) {
-                $model = $response->json();
-                if (in_array($model['transaction_status'] ?? null, ['settlement', 'capture'])) {
-                    $transaksi->status_pembayaran = 'paid';
-                    $transaksi->midtrans_transaction_id = $model['transaction_id'] ?? null;
-                    $transaksi->midtrans_payment_type = $model['payment_type'] ?? null;
-                    $transaksi->save();
+                if ($response->successful()) {
+                    $model = $response->json();
+                    if (in_array($model['transaction_status'] ?? null, ['settlement', 'capture'])) {
+                        // Update transaksi
+                        $transaksi->update([
+                            'status_pembayaran' => 'paid',
+                            'midtrans_transaction_id' => $model['transaction_id'] ?? null,
+                            'midtrans_payment_type' => $model['payment_type'] ?? null,
+                        ]);
 
-                    session()->flash('success', 'Pembayaran berhasil! Status transaksi telah diperbarui.');
-                    return;
+                        // Jika user belum jadi penghuni → upgrade role
+                        if (!$user->kamar) {
+                            $user->update([
+                                'id_kamar' => $transaksi->id_kamar,
+                                'tanggal_masuk' => $transaksi->masuk_kamar,
+                                'role' => 'penghuni',
+                            ]);
+                            Kamar::where('id', $transaksi->id_kamar)->update(['status' => 'Terisi']);
+                        }
+
+                        return true;
+                    }
+                }
+
+                // Jika belum settlement, tunggu sebentar lalu coba lagi
+                if ($i < $maxRetries - 1) {
+                    sleep(2); // tunggu 2 detik sebelum retry
+                }
+
+            } catch (\Exception $e) {
+                // Log error di development
+                // Log::warning("Midtrans verify attempt {$i} failed: " . $e->getMessage());
+                if ($i < $maxRetries - 1) {
+                    sleep(2);
                 }
             }
-        } catch (\Exception $e) {
-            // diam saja, jangan tampilkan error
         }
 
-        // Jika gagal verifikasi, cukup beri info
-        session()->flash('info', 'Pembayaran sedang diproses. Status akan diperbarui otomatis.');
+        return false;
     }
 }

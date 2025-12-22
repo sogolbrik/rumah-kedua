@@ -321,10 +321,13 @@
                     }
 
                     snap.pay(snapToken, {
+                        // onSuccess: (result) => {
+                        //     console.log('Payment success:', result);
+                        //     // Redirect dengan parameter success
+                        //     window.location.href = "{{ route('user.pembayaran.booking', ['id' => $kamar->id]) }}?verify_payment=1&status=success";
+                        // },
                         onSuccess: (result) => {
-                            console.log('Payment success:', result);
-                            // Redirect dengan parameter success
-                            window.location.href = "{{ route('user.pembayaran.booking', ['id' => $kamar->id]) }}?verify_payment=1&status=success";
+                            window.location.href = "{{ route('user.pembayaran.verifikasi-data') }}";
                         },
                         onPending: (result) => {
                             console.log('Payment pending:', result);

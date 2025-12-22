@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\frontend\user;
 
 use App\Http\Controllers\Controller;
+use App\Models\Kamar;
 use App\Models\Transaksi;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -44,6 +45,27 @@ class PenghuniController extends Controller
         if ($transaksiTerakhir) {
             // Membandingkan tanggal jatuh tempo dengan tanggal hari ini (format Y-m-d)
             $menunggak = $transaksiTerakhir->tanggal_jatuhtempo < now()->toDateString();
+        }
+
+        // Jika role = penghuni tapi belum punya kamar → coba verifikasi
+        if ($user->role === 'penghuni' && !$user->kamar) {
+            // Cek apakah ada transaksi paid yang belum di-update
+            $transaksiPaid = Transaksi::where('id_user', $user->id)
+                ->where('status_pembayaran', 'paid')
+                ->first();
+
+            if ($transaksiPaid) {
+                // Update manual (fallback)
+                $user->update([
+                    'id_kamar' => $transaksiPaid->id_kamar,
+                    'tanggal_masuk' => $transaksiPaid->masuk_kamar,
+                ]);
+                Kamar::where('id', $transaksiPaid->id_kamar)->update(['status' => 'Terisi']);
+            } else {
+                // Belum benar-benar jadi penghuni
+                return redirect()->route('landing-page')
+                    ->with('error', 'Akun Anda belum aktif. Silakan selesaikan pembayaran.');
+            }
         }
 
         return view('frontend.user.penghuni', compact(

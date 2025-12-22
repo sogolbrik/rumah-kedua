@@ -312,9 +312,12 @@
 
                 openMidtrans(token, transaksiId) {
                     snap.pay(token, {
+                        // onSuccess: (result) => {
+                        //     // Verifikasi setelah sukses
+                        //     window.location.href = "{{ route('penghuni.pembayaran') }}?verify_payment=1&status=success";
+                        // },
                         onSuccess: (result) => {
-                            // Verifikasi setelah sukses
-                            window.location.href = "{{ route('penghuni.pembayaran') }}?verify_payment=1&status=success";
+                            window.location.href = "{{ route('user.pembayaran.verifikasi-data') }}";
                         },
                         onPending: (result) => {
                             // Kembali ke halaman pembayaran untuk pantau status

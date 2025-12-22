@@ -96,6 +96,7 @@ Route::middleware('auth')->group(function () {
         Route::get('booking/{id}', [PembayaranPageController::class, 'index'])->name('booking');
         Route::post('buat', [PembayaranPageController::class, 'buatTransaksiBaru'])->name('buat-transaksi');
         Route::post('siapkan', [PembayaranPageController::class, 'PembayaranMidtrans'])->name('siapkan-pembayaran');
+        Route::get('tunggu-verifikasi', [PembayaranPageController::class, 'tungguVerifikasi'])->name('verifikasi-data');
         Route::get('invoice/{id}', [InvoiceController::class, 'invoicePembayaran'])->name('invoice');
         Route::get('invoice/pdf/{id}', [InvoiceController::class, 'exportInvoicePdf'])->name('invoice.pdf');
     });
