@@ -7,6 +7,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Register - RumahKedua</title>
 
+    {{-- Favicon --}}
+    <link rel="icon" href="{{ asset('assets/image/favicon/logo.svg') }}" type="image/svg+xml">
+
     <link rel="stylesheet" href="{{ asset('assets/vendor/fontawesome/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vendor/sweetalert/sweetalert.min.css') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])

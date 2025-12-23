@@ -177,7 +177,7 @@
                         <!-- Carousel Galeri -->
                         <div class="relative group">
                             <div class="aspect-w-16 aspect-h-12 bg-slate-100 rounded-xl overflow-hidden border border-slate-200 shadow-sm">
-                                <img id="modalGambarUtama" src="" alt="Gambar Kamar" class="w-full h-64 object-cover transition-transform duration-300 hover:scale-105">
+                                <img id="galeriUtama" src="" alt="Galeri Kamar" class="w-full h-64 object-cover transition-transform duration-300 hover:scale-105">
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                             </div>
 
@@ -196,9 +196,7 @@
                         </div>
 
                         <!-- Miniatur Galeri -->
-                        <div id="miniGaleri" class="flex space-x-2 overflow-x-auto pb-2 hide-scrollbar">
-                            <!-- Miniatur akan diisi oleh JavaScript -->
-                        </div>
+                        <div id="miniGaleri" class="flex space-x-2 overflow-x-auto pb-2 hide-scrollbar"></div>
 
                         <!-- Informasi Utama -->
                         <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 shadow-sm">
@@ -290,24 +288,38 @@
 
             // Isi data ke modal
             document.getElementById('modalKodeKamar').textContent = `Kamar ${kamar.kode_kamar}`;
-            document.getElementById('modalGambarUtama').src = kamar.gambar ? `/storage/${kamar.gambar}` : '/images/default-room.jpg';
-            document.getElementById('modalGambarUtama').alt = `Kamar ${kamar.kode_kamar}`;
             document.getElementById('modalHarga').textContent = `Rp ${formatRupiah(kamar.harga)}`;
             document.getElementById('modalTipe').textContent = kamar.tipe;
             document.getElementById('modalLebar').textContent = `${kamar.lebar} m²`;
             document.getElementById('modalDeskripsi').textContent = kamar.deskripsi || 'Tidak ada deskripsi';
             document.getElementById('modalEditLink').href = `/kamar/${kamar.id}/edit`;
 
-            const galeri = [
-                kamar.gambar ? `/storage/${kamar.gambar}` : null,
-                ...(kamar.galeri || []).map(g => `/storage/${g.foto}`)
-            ].filter(img => img !== null);
+            const galeri = [];
 
+            // Jika ada gambar utama, tambahkan sebagai gambar pertama
+            if (kamar.gambar) {
+                galeri.push(`/storage/${kamar.gambar}`);
+            }
+
+            // Jika ada galeri relasi dan berupa array
+            if (Array.isArray(kamar.galeri) && kamar.galeri.length > 0) {
+                kamar.galeri.forEach(g => {
+                    // Pastikan g adalah objek dan punya properti 'foto'
+                    if (g && typeof g === 'object' && g.foto) {
+                        const fullPath = `/storage/${g.foto}`;
+                        // Hindari duplikasi (termasuk path lengkap)
+                        if (!galeri.includes(fullPath)) {
+                            galeri.push(fullPath);
+                        }
+                    }
+                });
+            }
+
+            // Fallback jika tidak ada gambar sama sekali
             if (galeri.length === 0) {
                 galeri.push('/images/default-room.jpg');
             }
 
-            // Inisialisasi carousel
             initGaleriCarousel(galeri);
 
             // Set status
@@ -376,8 +388,8 @@
             currentSlide = 0;
 
             // Update gambar utama
-            document.getElementById('modalGambarUtama').src = galeriItems[0];
-            document.getElementById('modalGambarUtama').alt = `Foto 1 dari ${galeriItems.length}`;
+            document.getElementById('galeriUtama').src = galeriItems[0];
+            document.getElementById('galeriUtama').alt = `Foto 1 dari ${galeriItems.length}`;
 
             // Buat indikator
             const indikatorContainer = document.getElementById('galeriIndikator');
@@ -427,8 +439,8 @@
             currentSlide = index;
 
             // Update gambar utama
-            document.getElementById('modalGambarUtama').src = galeriItems[currentSlide];
-            document.getElementById('modalGambarUtama').alt = `Foto ${currentSlide + 1} dari ${galeriItems.length}`;
+            document.getElementById('galeriUtama').src = galeriItems[currentSlide];
+            document.getElementById('galeriUtama').alt = `Foto ${currentSlide + 1} dari ${galeriItems.length}`;
 
             // Update indikator
             const dots = document.querySelectorAll('#galeriIndikator button');
