@@ -278,10 +278,38 @@
     </div>
 
     <script>
-        // Data kamar dari server (bisa juga di-fetch via AJAX)
+        // Tambahkan class hidden jika belum ada
+        if (!document.querySelector('style').textContent.includes('.hidden')) {
+            const style = document.createElement('style');
+            style.textContent = `.hidden { display: none !important; }`;
+            document.head.appendChild(style);
+        }
+
+        // Data kamar dari server
+        let currentSlide = 0;
+        let galeriItems = [];
         const kamarData = @json($kamar->keyBy('id')->toArray());
 
-        // Fungsi untuk menampilkan modal detail dengan animasi
+        // Pasang event listener navigasi SEKALI SAJA
+        document.addEventListener('DOMContentLoaded', () => {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            prevBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (galeriItems.length > 1) {
+                    goToSlide(currentSlide - 1);
+                }
+            });
+
+            nextBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (galeriItems.length > 1) {
+                    goToSlide(currentSlide + 1);
+                }
+            });
+        });
+
         function showDetailModal(kamarId) {
             const kamar = kamarData[kamarId];
             if (!kamar) return;
@@ -294,28 +322,23 @@
             document.getElementById('modalDeskripsi').textContent = kamar.deskripsi || 'Tidak ada deskripsi';
             document.getElementById('modalEditLink').href = `/kamar/${kamar.id}/edit`;
 
-            const galeri = [];
-
-            // Jika ada gambar utama, tambahkan sebagai gambar pertama
+            // Kumpulkan gambar unik
+            const galeriSet = new Set();
             if (kamar.gambar) {
-                galeri.push(`/storage/${kamar.gambar}`);
+                galeriSet.add(`/storage/${kamar.gambar.trim()}`);
             }
-
-            // Jika ada galeri relasi dan berupa array
-            if (Array.isArray(kamar.galeri) && kamar.galeri.length > 0) {
-                kamar.galeri.forEach(g => {
-                    // Pastikan g adalah objek dan punya properti 'foto'
-                    if (g && typeof g === 'object' && g.foto) {
-                        const fullPath = `/storage/${g.foto}`;
-                        // Hindari duplikasi (termasuk path lengkap)
-                        if (!galeri.includes(fullPath)) {
-                            galeri.push(fullPath);
+            if (Array.isArray(kamar.galeri)) {
+                kamar.galeri.forEach(item => {
+                    if (item && typeof item === 'object' && item.foto) {
+                        const fotoPath = item.foto.trim();
+                        if (fotoPath) {
+                            galeriSet.add(`/storage/${fotoPath}`);
                         }
                     }
                 });
             }
 
-            // Fallback jika tidak ada gambar sama sekali
+            let galeri = Array.from(galeriSet);
             if (galeri.length === 0) {
                 galeri.push('/images/default-room.jpg');
             }
@@ -323,50 +346,46 @@
             initGaleriCarousel(galeri);
 
             // Set status
-            const statusElement = document.getElementById('modalStatus');
+            const statusEl = document.getElementById('modalStatus');
             if (kamar.status === 'Tersedia') {
-                statusElement.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Tersedia';
-                statusElement.className = 'px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200';
+                statusEl.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Tersedia';
+                statusEl.className = 'px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200';
             } else {
-                statusElement.innerHTML = '<i class="fa-solid fa-bed mr-1"></i> Terisi';
-                statusElement.className = 'px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200';
+                statusEl.innerHTML = '<i class="fa-solid fa-bed mr-1"></i> Terisi';
+                statusEl.className = 'px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200';
             }
 
             // Isi fasilitas
             const fasilitasContainer = document.getElementById('modalFasilitas');
             fasilitasContainer.innerHTML = '';
-
-            if (kamar.detail_kamar && kamar.detail_kamar.length > 0) {
+            if (kamar.detail_kamar?.length > 0) {
                 kamar.detail_kamar.forEach(fasilitas => {
-                    const fasilitasItem = document.createElement('div');
-                    fasilitasItem.className = 'flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-lg transition-all duration-200 hover:bg-slate-50 hover:border-slate-300';
-                    fasilitasItem.innerHTML = `
-                        <i class="fa-solid fa-check text-emerald-500 text-xs"></i>
-                        <span class="text-sm text-slate-700">${fasilitas.fasilitas}</span>
-                    `;
-                    fasilitasContainer.appendChild(fasilitasItem);
+                    const el = document.createElement('div');
+                    el.className = 'flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-lg transition-all duration-200 hover:bg-slate-50 hover:border-slate-300';
+                    el.innerHTML = `<i class="fa-solid fa-check text-emerald-500 text-xs"></i><span class="text-sm text-slate-700">${fasilitas.fasilitas}</span>`;
+                    fasilitasContainer.appendChild(el);
                 });
             } else {
                 fasilitasContainer.innerHTML = `
-                    <div class="col-span-2 text-center py-4 text-slate-500">
-                        <i class="fa-solid fa-info-circle mb-2 text-lg"></i>
-                        <p>Tidak ada fasilitas tersedia</p>
-                    </div>
-                `;
+                <div class="col-span-2 text-center py-4 text-slate-500">
+                    <i class="fa-solid fa-info-circle mb-2 text-lg"></i>
+                    <p>Tidak ada fasilitas tersedia</p>
+                </div>
+            `;
             }
 
-            // Tampilkan modal dengan animasi
+            // Tampilkan modal
             const modal = document.getElementById('detailModal');
             const backdrop = document.getElementById('modalBackdrop');
             const content = document.getElementById('modalContent');
 
             modal.classList.remove('pointer-events-none');
             modal.classList.add('pointer-events-auto');
+            document.body.classList.add('overflow-hidden');
 
-            // Trigger reflow untuk memastikan animasi berjalan
+            // Trigger reflow
             void modal.offsetWidth;
 
-            // Animasikan backdrop dan content
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
                 modal.classList.add('opacity-100');
@@ -375,13 +394,7 @@
                 content.classList.remove('scale-95', 'translate-y-4');
                 content.classList.add('scale-100', 'translate-y-0');
             }, 10);
-
-            document.body.classList.add('overflow-hidden');
         }
-
-        // Fungsi Carousel Galeri
-        let currentSlide = 0;
-        let galeriItems = [];
 
         function initGaleriCarousel(images) {
             galeriItems = images;
@@ -391,10 +404,14 @@
             document.getElementById('galeriUtama').src = galeriItems[0];
             document.getElementById('galeriUtama').alt = `Foto 1 dari ${galeriItems.length}`;
 
-            // Buat indikator
             const indikatorContainer = document.getElementById('galeriIndikator');
+            const miniContainer = document.getElementById('miniGaleri');
+
             indikatorContainer.innerHTML = '';
+            miniContainer.innerHTML = '';
+
             if (galeriItems.length > 1) {
+                // Buat indikator
                 galeriItems.forEach((_, i) => {
                     const dot = document.createElement('button');
                     dot.className = `w-2 h-2 rounded-full ${i === 0 ? 'bg-white' : 'bg-white/50'} transition-colors`;
@@ -402,37 +419,33 @@
                     dot.addEventListener('click', () => goToSlide(i));
                     indikatorContainer.appendChild(dot);
                 });
-            }
 
-            // Buat miniatur
-            const miniContainer = document.getElementById('miniGaleri');
-            miniContainer.innerHTML = '';
-            galeriItems.forEach((img, i) => {
-                const mini = document.createElement('div');
-                mini.className = `mini-galeri-item ${i === 0 ? 'active' : ''}`;
-                mini.innerHTML = `<img src="${img}" alt="Mini ${i + 1}" loading="lazy">`;
-                mini.addEventListener('click', () => goToSlide(i));
-                miniContainer.appendChild(mini);
-            });
+                // Buat miniatur
+                galeriItems.forEach((img, i) => {
+                    const mini = document.createElement('div');
+                    mini.className = `mini-galeri-item ${i === 0 ? 'active' : ''}`;
+                    mini.innerHTML = `<img src="${img}" alt="Mini ${i + 1}" loading="lazy">`;
+                    mini.addEventListener('click', () => goToSlide(i));
+                    miniContainer.appendChild(mini);
+                });
 
-            // Atur event navigasi
-            document.getElementById('prevBtn').onclick = () => goToSlide(currentSlide - 1);
-            document.getElementById('nextBtn').onclick = () => goToSlide(currentSlide + 1);
-
-            // Sembunyikan navigasi jika hanya 1 gambar
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            if (galeriItems.length <= 1) {
-                prevBtn.classList.add('hidden');
-                nextBtn.classList.add('hidden');
+                // Tampilkan elemen
+                miniContainer.classList.remove('hidden');
+                indikatorContainer.classList.remove('hidden');
+                document.getElementById('prevBtn').classList.remove('hidden');
+                document.getElementById('nextBtn').classList.remove('hidden');
             } else {
-                prevBtn.classList.remove('hidden');
-                nextBtn.classList.remove('hidden');
+                // Sembunyikan semua
+                miniContainer.classList.add('hidden');
+                indikatorContainer.classList.add('hidden');
+                document.getElementById('prevBtn').classList.add('hidden');
+                document.getElementById('nextBtn').classList.add('hidden');
             }
         }
 
         function goToSlide(index) {
-            // Handle loop carousel
+            if (galeriItems.length <= 1) return;
+
             if (index >= galeriItems.length) index = 0;
             if (index < 0) index = galeriItems.length - 1;
 
@@ -443,14 +456,12 @@
             document.getElementById('galeriUtama').alt = `Foto ${currentSlide + 1} dari ${galeriItems.length}`;
 
             // Update indikator
-            const dots = document.querySelectorAll('#galeriIndikator button');
-            dots.forEach((dot, i) => {
+            document.querySelectorAll('#galeriIndikator button').forEach((dot, i) => {
                 dot.className = `w-2 h-2 rounded-full ${i === currentSlide ? 'bg-white' : 'bg-white/50'} transition-colors`;
             });
 
             // Update miniatur aktif
-            const miniItems = document.querySelectorAll('.mini-galeri-item');
-            miniItems.forEach((item, i) => {
+            document.querySelectorAll('.mini-galeri-item').forEach((item, i) => {
                 if (i === currentSlide) {
                     item.classList.add('active');
                 } else {
@@ -458,7 +469,7 @@
                 }
             });
 
-            // Scroll miniatur ke tengah
+            // Scroll ke miniatur aktif
             const activeMini = document.querySelector('.mini-galeri-item.active');
             if (activeMini) {
                 activeMini.scrollIntoView({
@@ -469,24 +480,24 @@
             }
         }
 
-        // Tambahkan navigasi keyboard
+        // Navigasi keyboard
         document.addEventListener('keydown', function(event) {
             if (document.getElementById('detailModal').classList.contains('pointer-events-auto')) {
-                if (event.key === 'ArrowLeft') {
+                if (event.key === 'ArrowLeft' && galeriItems.length > 1) {
                     goToSlide(currentSlide - 1);
-                } else if (event.key === 'ArrowRight') {
+                } else if (event.key === 'ArrowRight' && galeriItems.length > 1) {
                     goToSlide(currentSlide + 1);
+                } else if (event.key === 'Escape') {
+                    hideDetailModal();
                 }
             }
         });
 
-        // Fungsi untuk menyembunyikan modal dengan animasi
         function hideDetailModal() {
             const modal = document.getElementById('detailModal');
             const backdrop = document.getElementById('modalBackdrop');
             const content = document.getElementById('modalContent');
 
-            // Animasikan keluar
             modal.classList.remove('opacity-100');
             modal.classList.add('opacity-0');
             backdrop.classList.remove('bg-gray-900/70');
@@ -494,7 +505,6 @@
             content.classList.remove('scale-100', 'translate-y-0');
             content.classList.add('scale-95', 'translate-y-4');
 
-            // Tunggu animasi selesai sebelum menyembunyikan
             setTimeout(() => {
                 modal.classList.remove('pointer-events-auto');
                 modal.classList.add('pointer-events-none');
@@ -502,28 +512,20 @@
             }, 300);
         }
 
-        // Fungsi format Rupiah
         function formatRupiah(angka) {
             return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
-
-        // Tutup modal dengan ESC key
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                hideDetailModal();
-            }
-        });
 
         function konfirmasiHapusKamar(id, kodeKamar) {
             Swal.fire({
                 title: 'Hapus Kamar?',
                 html: `
-                    <div class="text-center">
-                        <p class="text-slate-700 mb-2">Anda akan menghapus kamar:</p>
-                        <p class="text-lg font-bold text-red-600 mb-3">${kodeKamar}</p>
-                        <p class="text-sm text-slate-500">Tindakan ini tidak dapat dibatalkan</p>
-                    </div>
-                `,
+                <div class="text-center">
+                    <p class="text-slate-700 mb-2">Anda akan menghapus kamar:</p>
+                    <p class="text-lg font-bold text-red-600 mb-3">${kodeKamar}</p>
+                    <p class="text-sm text-slate-500">Tindakan ini tidak dapat dibatalkan</p>
+                </div>
+            `,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#dc2626',
