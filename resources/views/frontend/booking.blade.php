@@ -122,7 +122,7 @@
         }
     </style>
 
-    <div class="min-h-screen bg-gradient-to-b from-neutral-50 to-white">
+    <div class="min-h-screen mt-10">
         <!-- Hero Section -->
         <section class="relative pt-20 pb-16 px-4 md:px-6 lg:px-8 overflow-hidden">
             <div class="max-w-7xl mx-auto">

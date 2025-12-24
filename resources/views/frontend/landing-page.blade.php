@@ -3,40 +3,44 @@
 @section('title', 'Temukan Kenyamanan Seperti di Rumah Sendiri')
 @section('frontend-main')
     <!-- 2. HERO SECTION -->
-    <header class="pt-32 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-white">
-        <div class="max-w-7xl mx-auto">
+    <header class="pt-32 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-cyan-50 to-white relative overflow-hidden">
+        <!-- Decorative blobs -->
+        <div class="absolute -top-40 -right-40 w-80 h-80 bg-cyan-300/20 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-300/20 rounded-full blur-3xl"></div>
+
+        <div class="max-w-7xl mx-auto relative z-10">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                 <!-- Hero Content -->
                 <div class="space-y-6 animate-fade-in-up">
-                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
-                        Temukan Kenyamanan Seperti di Rumah Sendiri
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight tracking-tight">
+                        Temukan Kenyamanan <br class="hidden md:block"> Seperti di Rumah Sendiri
                     </h1>
-                    <p class="text-lg text-gray-600 leading-relaxed">
-                        RumahKedua menawarkan akomodasi modern dengan fasilitas lengkap, lokasi strategis, dan layanan
-                        terbaik untuk kenyamanan menginap Anda.
+                    <p class="text-lg text-gray-700 leading-relaxed max-w-lg">
+                        RumahKedua menawarkan akomodasi modern dengan fasilitas lengkap, lokasi strategis, dan layanan terbaik untuk kenyamanan menginap Anda.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4 pt-4">
-                        <a href="{{ Route('booking') }}">
-                            <button class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold transition-all transform hover:scale-105 hover:shadow-lg">
-                                Booking
+                        <a href="{{ route('booking') }}">
+                            <button
+                                class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white px-8 py-3.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all transform">
+                                <i class="fas fa-calendar-check mr-2"></i> Booking Sekarang
                             </button>
                         </a>
-                        <a href="{{ Route('galeri-kamar') }}">
-                            <button class="border-2 border-blue-500 text-blue-500 hover:bg-blue-50 px-8 py-3 rounded-lg font-semibold transition-all transform hover:scale-105">
-                                Lihat Galeri
+                        <a href="{{ route('galeri-kamar') }}">
+                            <button class="border-2 border-cyan-500 text-cyan-600 hover:bg-cyan-50 px-8 py-3.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all transform">
+                                <i class="fas fa-images mr-2"></i> Lihat Galeri
                             </button>
                         </a>
                     </div>
                 </div>
                 <!-- Hero Image -->
-                <div class="relative h-80 md:h-96 rounded-2xl overflow-hidden animate-fade-in-right transform transition-transform duration-300 translate-x-6">
-                    <img src="{{ asset('assets/image/landing-page/hero.svg') }}" alt="Kamar RumahKedua" class="w-full h-full object-cover">
+                <div class="relative h-80 md:h-96 rounded-2xl overflow-hidden animate-fade-in-right transform transition-transform duration-500">
+                    <img src="{{ asset('assets/image/landing-page/hero.svg') }}" alt="Kamar RumahKedua" class="w-full h-full object-cover shadow-xl">
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- 3. ABOUT / WHY CHOOSE US -->
+    <!-- 3. WHY CHOOSE US -->
     <section class="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16 animate-fade-in">
@@ -48,48 +52,23 @@
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Feature 1 -->
-                <div class="text-center animate-slide-up transform transition-all duration-300 p-4 rounded-xl" style="animation-delay: 0.1s">
-                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 transform hover:rotate-12 transition-transform">
-                        <i class="fas fa-shield-alt text-blue-500 text-2xl"></i>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                @foreach ([['icon' => 'fa-shield-alt', 'title' => 'Aman & Terpercaya', 'desc' => 'CCTV 24 jam dan keamanan berlapis untuk kenyamanan Anda'], ['icon' => 'fa-map-marker-alt', 'title' => 'Lokasi Strategis', 'desc' => 'Dekat dengan kampus, mall, dan pusat bisnis'], ['icon' => 'fa-broom', 'title' => 'Bersih & Terawat', 'desc' => 'Perawatan rutin dan kebersihan terjamin setiap hari'], ['icon' => 'fa-wifi', 'title' => 'Internet Cepat', 'desc' => 'WiFi 100 Mbps tersedia di seluruh area kos']] as $index => $feature)
+                    <div class="bg-gradient-to-b from-white to-slate-50 p-6 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border border-slate-100 animate-slide-up"
+                        style="animation-delay: {{ 0.1 + $index * 0.1 }}s">
+                        <div class="w-14 h-14 bg-cyan-100 rounded-xl flex items-center justify-center mx-auto mb-4 text-cyan-600">
+                            <i class="fas {{ $feature['icon'] }} text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2 text-center">{{ $feature['title'] }}</h3>
+                        <p class="text-gray-600 text-center">{{ $feature['desc'] }}</p>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Aman & Terpercaya</h3>
-                    <p class="text-gray-600">CCTV 24 jam dan keamanan berlapis untuk kenyamanan Anda</p>
-                </div>
-
-                <!-- Feature 2 -->
-                <div class="text-center animate-slide-up transform transition-all duration-300 p-4 rounded-xl" style="animation-delay: 0.2s">
-                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 transform hover:rotate-12 transition-transform">
-                        <i class="fas fa-map-marker-alt text-blue-500 text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Lokasi Strategis</h3>
-                    <p class="text-gray-600">Dekat dengan kampus, mall, dan pusat bisnis</p>
-                </div>
-
-                <!-- Feature 3 -->
-                <div class="text-center animate-slide-up transform transition-all duration-300 p-4 rounded-xl" style="animation-delay: 0.3s">
-                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 transform hover:rotate-12 transition-transform">
-                        <i class="fas fa-broom text-blue-500 text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Bersih & Terawat</h3>
-                    <p class="text-gray-600">Perawatan rutin dan kebersihan terjamin setiap hari</p>
-                </div>
-
-                <!-- Feature 4 -->
-                <div class="text-center animate-slide-up transform transition-all duration-300 p-4 rounded-xl" style="animation-delay: 0.4s">
-                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 transform hover:rotate-12 transition-transform">
-                        <i class="fas fa-wifi text-blue-500 text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Internet Cepat</h3>
-                    <p class="text-gray-600">WiFi 100 Mbps tersedia di seluruh area kos</p>
-                </div>
+                @endforeach
             </div>
         </div>
     </section>
 
     <!-- 4. FASILITAS SECTION -->
-    <section id="fasilitas" class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+    <section id="fasilitas" class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 to-cyan-50/20">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16 animate-fade-in">
                 <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
@@ -100,47 +79,20 @@
                 </p>
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-                <!-- Fasilitas Item 1 -->
-                <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-lg transition-all transform hover:scale-100 hover:-translate-y-2 text-center animate-slide-up" style="animation-delay: 0.1s">
-                    <i class="fas fa-bath text-blue-500 text-3xl mb-3 transform hover:rotate-180 transition-transform duration-500"></i>
-                    <p class="font-semibold text-gray-900 text-sm">K. Mandi Dalam</p>
-                </div>
-
-                <!-- Fasilitas Item 2 -->
-                <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-lg transition-all transform hover:scale-100 hover:-translate-y-2 text-center animate-slide-up" style="animation-delay: 0.2s">
-                    <i class="fas fa-wifi text-blue-500 text-3xl mb-3"></i>
-                    <p class="font-semibold text-gray-900 text-sm">WiFi 100 Mbps</p>
-                </div>
-
-                <!-- Fasilitas Item 3 -->
-                <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-lg transition-all transform hover:scale-100 hover:-translate-y-2 text-center animate-slide-up" style="animation-delay: 0.3s">
-                    <i class="fas fa-utensils text-blue-500 text-3xl mb-3"></i>
-                    <p class="font-semibold text-gray-900 text-sm">Dapur Bersama</p>
-                </div>
-
-                <!-- Fasilitas Item 4 -->
-                <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-lg transition-all transform hover:scale-100 hover:-translate-y-2 text-center animate-slide-up" style="animation-delay: 0.4s">
-                    <i class="fas fa-car text-blue-500 text-3xl mb-3"></i>
-                    <p class="font-semibold text-gray-900 text-sm">Parkir</p>
-                </div>
-
-                <!-- Fasilitas Item 5 -->
-                <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-lg transition-all transform hover:scale-100 hover:-translate-y-2 text-center animate-slide-up" style="animation-delay: 0.5s">
-                    <i class="fas fa-camera text-blue-500 text-3xl mb-3"></i>
-                    <p class="font-semibold text-gray-900 text-sm">CCTV 24 Jam</p>
-                </div>
-
-                <!-- Fasilitas Item 6 -->
-                <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-lg transition-all transform hover:scale-100 hover:-translate-y-2 text-center animate-slide-up" style="animation-delay: 0.6s">
-                    <i class="fas fa-tshirt text-blue-500 text-3xl mb-3"></i>
-                    <p class="font-semibold text-gray-900 text-sm">Laundry</p>
-                </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                @foreach ([['icon' => 'fa-bath', 'label' => 'K. Mandi Dalam'], ['icon' => 'fa-wifi', 'label' => 'WiFi 100 Mbps'], ['icon' => 'fa-utensils', 'label' => 'Dapur Bersama'], ['icon' => 'fa-car', 'label' => 'Parkir'], ['icon' => 'fa-camera', 'label' => 'CCTV 24 Jam'], ['icon' => 'fa-tshirt', 'label' => 'Laundry']] as $index => $fas)
+                    <div class="bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 text-center animate-slide-up" style="animation-delay: {{ 0.1 + $index * 0.1 }}s">
+                        <div class="w-12 h-12 bg-cyan-50 rounded-full flex items-center justify-center mx-auto mb-3 text-cyan-600">
+                            <i class="fas {{ $fas['icon'] }} text-2xl"></i>
+                        </div>
+                        <p class="font-semibold text-gray-900 text-sm">{{ $fas['label'] }}</p>
+                    </div>
+                @endforeach
             </div>
         </div>
     </section>
 
-    <!-- 5. KAMAR SECTION (ROOM SHOWCASE) -->
+    <!-- 5. KAMAR SECTION -->
     <section id="kamar" class="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16 animate-fade-in">
@@ -155,34 +107,28 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Standard -->
                 @if ($standard)
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all transform hover:scale-100 hover:-translate-y-2 animate-slide-up"
-                        style="animation-delay: 0.1s">
-                        <div class="h-48 bg-gray-300 overflow-hidden group">
-                            <img src="{{ Storage::url($standard->gambar) }}" alt="Kamar {{ $standard->tipe }}"
-                                class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" onerror="this.src='/placeholder.svg?height=300&width=400'">
+                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-slide-up" style="animation-delay: 0.1s">
+                        <div class="h-48 overflow-hidden">
+                            <img src="{{ Storage::url($standard->gambar) }}" alt="Kamar {{ $standard->tipe }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                                onerror="this.src='/placeholder.svg?height=300&width=400'">
                         </div>
                         <div class="p-6">
-                            <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ $standard->tipe }}</h3>
-                            <p class="text-gray-600 text-sm mb-4">{{ $standard->deskripsi }}</p>
-                            <div class="space-y-2 mb-6 text-sm text-gray-700">
-                                @foreach ($standard->detailKamar->take(4) as $detail)
-                                    <p class="transform transition-transform">
-                                        <i class="fas fa-check text-blue-500 mr-2"></i>
-                                        {{ $detail->fasilitas }}
-                                    </p>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">{{ $standard->tipe }}</h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ $standard->deskripsi }}</p>
+                            <div class="space-y-1.5 mb-5 text-sm">
+                                @foreach ($standard->detailKamar->take(3) as $detail)
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-check-circle text-emerald-500 text-xs"></i>
+                                        <span class="text-gray-700">{{ $detail->fasilitas }}</span>
+                                    </div>
                                 @endforeach
                             </div>
                             <div class="flex items-center justify-between">
-                                <span class="text-2xl font-bold text-blue-500">
-                                    Rp {{ number_format($standard->harga, 0, ',', '.') }}/bln
-                                </span>
+                                <span class="text-xl font-bold text-cyan-600">Rp {{ number_format($standard->harga, 0, ',', '.') }}/bln</span>
                                 @if ($standard->status == 'Tersedia')
-                                    <a href="{{ route('booking-detail', $standard->id) }}"
-                                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all transform hover:scale-110 text-sm">
-                                        Detail
-                                    </a>
+                                    <a href="{{ route('booking-detail', $standard->id) }}" class="bg-slate-100 hover:bg-slate-200 text-slate-800 px-4 py-2 rounded-lg text-sm transition-colors">Detail</a>
                                 @else
-                                    <button disabled class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-all transform text-sm">Terisi Penuh</button>
+                                    <span class="bg-gray-100 text-gray-500 px-4 py-2 rounded-lg text-sm">Terisi</span>
                                 @endif
                             </div>
                         </div>
@@ -191,37 +137,33 @@
 
                 <!-- Medium (PALING POPULER) -->
                 @if ($medium)
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all transform hover:scale-100 hover:-translate-y-2 border-2 border-blue-500 animate-slide-up"
+                    <div class="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-slide-up relative border-2 border-cyan-400"
                         style="animation-delay: 0.2s">
-                        <div class="bg-blue-500 text-white text-center py-2 text-sm font-semibold animate-pulse">
+                        <div class="absolute top-0 left-0 right-0 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white text-center py-1.5 text-xs font-bold z-10">
                             PALING POPULER
                         </div>
-                        <div class="h-48 bg-gray-300 overflow-hidden group">
-                            <img src="{{ Storage::url($medium->gambar) }}" alt="Kamar {{ $medium->tipe }}"
-                                class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" onerror="this.src='/placeholder.svg?height=300&width=400'">
+                        <div class="h-48 overflow-hidden mt-6">
+                            <img src="{{ Storage::url($medium->gambar) }}" alt="Kamar {{ $medium->tipe }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                                onerror="this.src='/placeholder.svg?height=300&width=400'">
                         </div>
                         <div class="p-6">
-                            <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ $medium->tipe }}</h3>
-                            <p class="text-gray-600 text-sm mb-4">{{ $medium->deskripsi }}</p>
-                            <div class="space-y-2 mb-6 text-sm text-gray-700">
-                                @foreach ($medium->detailKamar->take(4) as $detail)
-                                    <p class="transform transition-transform">
-                                        <i class="fas fa-check text-blue-500 mr-2"></i>
-                                        {{ $detail->fasilitas }}
-                                    </p>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">{{ $medium->tipe }}</h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ $medium->deskripsi }}</p>
+                            <div class="space-y-1.5 mb-5 text-sm">
+                                @foreach ($medium->detailKamar->take(3) as $detail)
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-check-circle text-emerald-500 text-xs"></i>
+                                        <span class="text-gray-700">{{ $detail->fasilitas }}</span>
+                                    </div>
                                 @endforeach
                             </div>
                             <div class="flex items-center justify-between">
-                                <span class="text-2xl font-bold text-blue-500">
-                                    Rp {{ number_format($medium->harga, 0, ',', '.') }}/bln
-                                </span>
+                                <span class="text-xl font-bold text-cyan-600">Rp {{ number_format($medium->harga, 0, ',', '.') }}/bln</span>
                                 @if ($medium->status == 'Tersedia')
                                     <a href="{{ route('booking-detail', $medium->id) }}"
-                                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all transform hover:scale-110 text-sm">
-                                        Detail
-                                    </a>
+                                        class="bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 text-white px-4 py-2 rounded-lg text-sm transition-all shadow-md">Detail</a>
                                 @else
-                                    <button disabled class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-all transform text-sm">Terisi Penuh</button>
+                                    <span class="bg-gray-100 text-gray-500 px-4 py-2 rounded-lg text-sm">Terisi</span>
                                 @endif
                             </div>
                         </div>
@@ -230,34 +172,29 @@
 
                 <!-- Exclusive -->
                 @if ($exclusive)
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all transform hover:scale-100 hover:-translate-y-2 animate-slide-up"
-                        style="animation-delay: 0.3s">
-                        <div class="h-48 bg-gray-300 overflow-hidden group">
-                            <img src="{{ Storage::url($exclusive->gambar) }}" alt="Kamar {{ $exclusive->tipe }}"
-                                class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" onerror="this.src='/placeholder.svg?height=300&width=400'">
+                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-slide-up" style="animation-delay: 0.3s">
+                        <div class="h-48 overflow-hidden">
+                            <img src="{{ Storage::url($exclusive->gambar) }}" alt="Kamar {{ $exclusive->tipe }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                                onerror="this.src='/placeholder.svg?height=300&width=400'">
                         </div>
                         <div class="p-6">
-                            <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ $exclusive->tipe }}</h3>
-                            <p class="text-gray-600 text-sm mb-4">{{ $exclusive->deskripsi }}</p>
-                            <div class="space-y-2 mb-6 text-sm text-gray-700">
-                                @foreach ($exclusive->detailKamar->take(4) as $detail)
-                                    <p class="transform transition-transform">
-                                        <i class="fas fa-check text-blue-500 mr-2"></i>
-                                        {{ $detail->fasilitas }}
-                                    </p>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">{{ $exclusive->tipe }}</h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ $exclusive->deskripsi }}</p>
+                            <div class="space-y-1.5 mb-5 text-sm">
+                                @foreach ($exclusive->detailKamar->take(3) as $detail)
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-check-circle text-emerald-500 text-xs"></i>
+                                        <span class="text-gray-700">{{ $detail->fasilitas }}</span>
+                                    </div>
                                 @endforeach
                             </div>
                             <div class="flex items-center justify-between">
-                                <span class="text-2xl font-bold text-blue-500">
-                                    Rp {{ number_format($exclusive->harga, 0, ',', '.') }}/bln
-                                </span>
+                                <span class="text-xl font-bold text-cyan-600">Rp {{ number_format($exclusive->harga, 0, ',', '.') }}/bln</span>
                                 @if ($exclusive->status == 'Tersedia')
                                     <a href="{{ route('booking-detail', $exclusive->id) }}"
-                                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all transform hover:scale-110 text-sm">
-                                        Detail
-                                    </a>
+                                        class="bg-slate-100 hover:bg-slate-200 text-slate-800 px-4 py-2 rounded-lg text-sm transition-colors">Detail</a>
                                 @else
-                                    <button disabled class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-all transform text-sm">Terisi Penuh</button>
+                                    <span class="bg-gray-100 text-gray-500 px-4 py-2 rounded-lg text-sm">Terisi</span>
                                 @endif
                             </div>
                         </div>
@@ -474,21 +411,23 @@
         </div>
     </section>
 
-    <!-- 8. CALL TO ACTION SECTION -->
-    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-blue-500" id="kontak">
+    <!-- 8. CALL TO ACTION -->
+    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-cyan-600 to-blue-600" id="kontak">
         <div class="max-w-4xl mx-auto text-center animate-fade-in">
             <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
                 Siap Merasakan Kenyamanan?
             </h2>
-            <p class="text-lg text-blue-100 mb-10 leading-relaxed">
-                Jangan lewatkan kesempatan untuk menginap di tempat yang nyaman dan terpercaya. Hubungi kami sekarang untuk informasi lebih lanjut atau booking langsung.
+            <p class="text-lg text-cyan-100 mb-10 leading-relaxed max-w-2xl mx-auto">
+                Jangan lewatkan kesempatan untuk menginap di tempat yang nyaman dan terpercaya. Hubungi kami sekarang!
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="https://wa.me/{{ $pengaturan->no_telepon ?? '6287870327957' }}" target="_blank" class="bg-white hover:bg-gray-100 text-blue-500 px-8 py-4 rounded-lg font-semibold transition-all transform hover:scale-100 hover:shadow-2xl">
-                    <i class="fab fa-whatsapp mr-2"></i>WhatsApp
+                <a href="https://wa.me/{{ str_replace([' ', '+'], '', $pengaturan->no_telepon ?? '6287870327957') }}" target="_blank"
+                    class="bg-white hover:bg-gray-100 text-cyan-600 px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+                    <i class="fab fa-whatsapp mr-2"></i> WhatsApp
                 </a>
-                <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ $pengaturan->email_kos ?? 'rumahkedua@gmail.com' }}" target="_blank" class="border-2 border-white hover:bg-white/10 text-white px-8 py-4 rounded-lg font-semibold transition-all transform hover:scale-100">
-                    <i class="fas fa-envelope mr-2"></i>Hubungi Email
+                <a href="mailto:{{ $pengaturan->email_kos ?? 'rumahkedua@gmail.com' }}"
+                    class="border-2 border-white hover:bg-white/20 text-white px-8 py-4 rounded-xl font-semibold transition-all transform hover:scale-105">
+                    <i class="fas fa-envelope mr-2"></i> Kirim Email
                 </a>
             </div>
         </div>

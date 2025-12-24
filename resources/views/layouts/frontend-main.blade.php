@@ -22,11 +22,13 @@
             --color-primary-dark: #1e40af;
             --color-neutral-light: #f9fafb;
             --color-neutral-dark: #1f2937;
+            --color-neutral-50: #f9fafb;
             --color-accent: #0891b2;
         }
 
         body {
             scroll-behavior: smooth;
+            background-color: var(--color-neutral-50);
         }
 
         .transition-bg {

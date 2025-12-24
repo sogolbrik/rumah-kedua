@@ -3,7 +3,7 @@
 
 @section('frontend-main')
     <div x-data="{ show: false }" x-init="setTimeout(() => show = true, 100)" x-show="show" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 scale-95"
-        x-transition:enter-end="opacity-100 scale-100" class="max-w-3xl mx-auto p-6 rounded-xl shadow-lg mt-25 mb-12 border border-indigo-100 bg-gradient-to-br from-indigo-50/30 to-teal-50/20">
+        x-transition:enter-end="opacity-100 scale-100" class="max-w-3xl mx-auto p-6 rounded-xl shadow-lg mt-30 mb-12 border border-indigo-100 bg-gradient-to-br from-indigo-50/30 to-teal-50/20">
 
         <!-- Header -->
         <div class="text-center mb-8">

@@ -3,7 +3,7 @@
 @section('title', 'Profil Penghuni')
 
 @section('frontend-main')
-    <div class="bg-gradient-to-br from-indigo-50 to-teal-50">
+    <div class="bg-gradient-to-br mt-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-18">
             <!-- Header Utama -->
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
