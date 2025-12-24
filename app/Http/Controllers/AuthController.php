@@ -8,12 +8,26 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str; // ✅ Import ini
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
     public function login()
     {
+        if (!Auth::check()) {
+            Auth::viaRemember();
+        }
+
+        if (Auth::check()) {
+            // Berhasil login via remember cookie → redirect ke dashboard
+            if (Auth::user()->role === 'admin') {
+                return redirect('dashboard-admin');
+            } elseif (Auth::user()->role === 'penghuni') {
+                return redirect('dashboard-penghuni');
+            }
+            return redirect('/');
+        }
+
         return view('auth.login');
     }
 
@@ -77,23 +91,6 @@ class AuthController extends Controller
         if (Auth::attempt($validation, $remember)) {
             $request->session()->regenerate();
 
-            if ($remember) {
-                $user = User::findOrFail(Auth::id());
-
-                $token = $user->remember_token;
-                if (empty($token)) {
-                    $token = Str::random(60);
-                    $user->remember_token = $token;
-                    $user->save();
-                }
-
-                $cookieName = Auth::getRecallerName();
-                $cookieValue = $user->id . '|' . $token . '|' . $user->password;
-
-                Cookie::queue(Cookie::make($cookieName, $cookieValue, 7 * 24 * 60));
-            }
-
-            // Redirect...
             if (Auth::user()->role === 'admin') {
                 return redirect('dashboard-admin')->with('success', 'Login Berhasil');
             } elseif (Auth::user()->role === 'penghuni') {

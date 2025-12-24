@@ -39,6 +39,7 @@ return [
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
+            'remember' => 10080, // dalam menit: 7 hari = 7 * 24 * 60 = 10080
         ],
     ],
 

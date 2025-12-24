@@ -46,32 +46,36 @@
                         <i class="fa-solid fa-chevron-down text-xs transition-transform duration-300" :class="open ? 'rotate-180 text-slate-900' : 'text-slate-500'"></i>
                     </button>
 
-                    <ul x-show="open" x-collapse.duration.200ms class="mt-2 ml-2 space-y-1.5 pl-4 border-l-2 border-slate-200/40">
-                        <li>
-                            <a href="{{ route('kamar.index') }}"
-                                class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all
-                                {{ request()->routeIs('kamar.*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-slate-600 hover:bg-slate-200/50 hover:text-slate-800' }}">
-                                <i class="fa-solid fa-door-open text-xs"></i>
-                                <span>Kamar</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('galeri.index') }}"
-                                class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all
-                                {{ request()->routeIs('galeri.*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-slate-600 hover:bg-slate-200/50 hover:text-slate-800' }}">
-                                <i class="fa-solid fa-images text-xs"></i>
-                                <span>Galeri</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('user.index') }}"
-                                class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all
-                                {{ request()->routeIs('user.*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-slate-600 hover:bg-slate-200/50 hover:text-slate-800' }}">
-                                <i class="fa-solid fa-users text-xs"></i>
-                                <span>User</span>
-                            </a>
-                        </li>
-                    </ul>
+                    <!-- Smooth collapse wrapper -->
+                    <div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 max-h-0" x-transition:enter-end="opacity-100 max-h-[500px]"
+                        x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 max-h-[500px]" x-transition:leave-end="opacity-0 max-h-0" class="overflow-hidden">
+                        <ul class="mt-2 ml-2 space-y-1.5 pl-4 border-l-2 border-slate-200/40">
+                            <li>
+                                <a href="{{ route('kamar.index') }}"
+                                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all
+                                    {{ request()->routeIs('kamar.*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-slate-600 hover:bg-slate-200/50 hover:text-slate-800' }}">
+                                    <i class="fa-solid fa-door-open text-xs"></i>
+                                    <span>Kamar</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('galeri.index') }}"
+                                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all
+                                    {{ request()->routeIs('galeri.*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-slate-600 hover:bg-slate-200/50 hover:text-slate-800' }}">
+                                    <i class="fa-solid fa-images text-xs"></i>
+                                    <span>Galeri</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('user.index') }}"
+                                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all
+                                    {{ request()->routeIs('user.*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-slate-600 hover:bg-slate-200/50 hover:text-slate-800' }}">
+                                    <i class="fa-solid fa-users text-xs"></i>
+                                    <span>User</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
 
                 <!-- Transaksi -->
