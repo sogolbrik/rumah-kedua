@@ -164,39 +164,8 @@
 
     {{-- Sweetalert --}}
     <script src="{{ asset('assets/vendor/sweetalert/sweetalert.min.js') }}"></script>
-    {{-- Success --}}
-    @if (session('success'))
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: '{{ session('success') }}',
-                position: "top-end",
-                toast: true,
-                timer: 3000,
-                showConfirmButton: false,
-                customClass: {
-                    popup: 'rounded-xl'
-                }
-            });
-        </script>
-    @endif
 
-    {{-- Error --}}
-    @if (session('error'))
-        <script>
-            Swal.fire({
-                icon: 'error',
-                title: '{{ session('error') }}',
-                timer: 3000,
-                position: "top-end",
-                toast: true,
-                showConfirmButton: false,
-                customClass: {
-                    popup: 'rounded-xl'
-                }
-            });
-        </script>
-    @endif
+    <x-alert-loader :success="session('success') ?? ''" :error="session('error') ?? ''" :info="session('info') ?? ''" />
 </body>
 
 </html>
