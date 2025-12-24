@@ -6,137 +6,141 @@
     <!-- Header Utama -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
         <div>
-            <h1 class="text-2xl font-bold text-slate-900">Daftar Kamar</h1>
+            <h1 class="text-2xl font-bold text-slate-900 bg-clip-text bg-gradient-to-r from-slate-900 to-slate-700">
+                Daftar Kamar
+            </h1>
             <p class="mt-0.5 text-sm text-slate-600">Semua informasi kamar ada di sini, gampang banget buat dilihat dan dikelola.</p>
         </div>
         <div>
-            <a href="{{ Route('kamar.create') }}" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 text-white px-4 py-2.5 text-sm font-medium hover:bg-blue-700 transition-colors">
+            <a href="{{ route('kamar.create') }}"
+                class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2.5 text-sm font-medium hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg transition-all duration-200">
                 <i class="fa-solid fa-plus-circle text-sm"></i>
                 Tambah Kamar
             </a>
         </div>
     </div>
 
-    <div class="mt-4 rounded-xl border border-slate-200 bg-white overflow-hidden shadow-sm">
+    <div class="mt-4 rounded-2xl border border-slate-200/40 bg-white overflow-hidden shadow-[0_4px_20px_-8px_rgba(0,0,0,0.06)]">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
-                <thead class="bg-slate-50 text-slate-600">
+                <thead class="bg-gradient-to-r from-slate-50 to-white border-b border-slate-200/50">
                     <tr>
-                        <th class="text-left px-6 py-4 w-12">No</th>
+                        <th class="text-left px-6 py-4 w-12"><span class="text-slate-500">#</span></th>
                         <th class="text-left px-6 py-4">
-                            <i class="fa-solid fa-hashtag mr-2 text-xs"></i>
-                            Kode Kamar
+                            <span class="text-slate-700 font-medium flex items-center gap-2">
+                                <i class="fa-solid fa-hashtag text-slate-500 text-xs"></i> Kode Kamar
+                            </span>
                         </th>
                         <th class="text-left px-6 py-4">
-                            <i class="fa-solid fa-tag mr-2 text-xs"></i>
-                            Harga
+                            <span class="text-slate-700 font-medium flex items-center gap-2">
+                                <i class="fa-solid fa-tag text-green-500 text-xs"></i> Harga
+                            </span>
                         </th>
                         <th class="text-left px-6 py-4 w-36">
-                            <i class="fa-solid fa-circle-info mr-2 text-xs"></i>
-                            Status
+                            <span class="text-slate-700 font-medium flex items-center gap-2">
+                                <i class="fa-solid fa-circle-info text-amber-500 text-xs"></i> Status
+                            </span>
                         </th>
                         <th class="text-right px-6 py-4 w-52">
-                            <i class="fa-solid fa-gears mr-2 text-xs"></i>
-                            Aksi
+                            <span class="text-slate-700 font-medium flex items-center gap-2 justify-end">
+                                <i class="fa-solid fa-gears text-slate-500 text-xs"></i> Aksi
+                            </span>
                         </th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100">
-                    @foreach ($kamar as $item)
-                        <tr class="hover:bg-slate-50/50 transition-colors">
+                <tbody class="divide-y divide-slate-100/60">
+                    @forelse ($kamar as $item)
+                        <tr class="hover:bg-slate-50/70 transition-colors duration-200 group">
                             <td class="px-6 py-4 font-medium text-slate-700">{{ $loop->iteration }}</td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-2">
                                     <i class="fa-solid fa-door-closed text-slate-400 text-sm"></i>
-                                    <span class="font-medium text-slate-900">{{ $item->kode_kamar }}</span>
+                                    <span class="font-semibold text-slate-900 group-hover:text-indigo-900">{{ $item->kode_kamar }}</span>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-2">
                                     <i class="fa-solid fa-money-bill-wave text-green-500 text-sm"></i>
-                                    <span class="text-slate-900">Rp {{ number_format($item->harga, 0, ',', '.') }}</span>
+                                    <span class="text-slate-900 font-medium">Rp {{ number_format($item->harga, 0, ',', '.') }}</span>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
                                 @if ($item->status == 'Tersedia')
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
-                                        <i class="fa-solid fa-circle-check text-xs"></i>
-                                        Tersedia
+                                        <i class="fa-solid fa-circle-check text-xs"></i> Tersedia
                                     </span>
                                 @else
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
-                                        <i class="fa-solid fa-bed text-xs"></i>
-                                        Terisi
+                                        <i class="fa-solid fa-bed text-xs"></i> Terisi
                                     </span>
                                 @endif
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex justify-end gap-2">
                                     <button type="button" onclick="showDetailModal({{ $item->id }})"
-                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 hover:border-slate-300 transition-colors">
-                                        <i class="fa-solid fa-eye text-xs"></i>
-                                        Detail
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 transition-all shadow-sm hover:shadow">
+                                        <i class="fa-solid fa-eye text-xs"></i> Detail
                                     </button>
                                     <a href="{{ route('kamar.edit', $item->id) }}"
-                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm bg-blue-100 border border-blue-200 text-blue-700 hover:bg-blue-200 hover:border-blue-300 transition-colors">
-                                        <i class="fa-solid fa-pen-to-square text-xs"></i>
-                                        Edit
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm bg-white border border-blue-200 text-blue-700 hover:bg-blue-50 transition-all shadow-sm hover:shadow">
+                                        <i class="fa-solid fa-pen-to-square text-xs"></i> Edit
                                     </a>
                                     <form action="{{ route('kamar.destroy', $item->id) }}" method="POST" class="inline" id="hapus-data-{{ $item->id }}">
                                         @csrf
                                         @method('DELETE')
                                         <button type="button"
-                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm bg-red-100 border border-red-200 text-red-700 hover:bg-red-200 hover:border-red-300 transition-colors"
+                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm bg-white border border-red-200 text-red-700 hover:bg-red-50 transition-all shadow-sm hover:shadow"
                                             onclick="konfirmasiHapusKamar({{ $item->id }}, '{{ $item->kode_kamar }}')">
-                                            <i class="fa-solid fa-trash-can text-xs"></i>
-                                            Hapus
+                                            <i class="fa-solid fa-trash-can text-xs"></i> Hapus
                                         </button>
                                     </form>
                                 </div>
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="5" class="px-6 py-12 text-center text-slate-500">
+                                <div class="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-slate-100 text-slate-400 mb-3">
+                                    <i class="fa-solid fa-door-closed text-2xl"></i>
+                                </div>
+                                <p class="text-base font-medium">Tidak ada kamar</p>
+                                <p class="text-sm text-slate-500 mt-1">Tambahkan kamar pertama Anda sekarang!</p>
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
 
         <!-- Pagination -->
         @if ($kamar->hasPages())
-            <div class="border-t border-slate-200 px-6 py-4 bg-slate-50">
-                <div class="flex items-center justify-between">
-                    <p class="text-sm text-slate-700">
-                        Menampilkan
-                        <span class="font-medium">{{ $kamar->firstItem() }}</span>
-                        sampai
-                        <span class="font-medium">{{ $kamar->lastItem() }}</span>
-                        dari
-                        <span class="font-medium">{{ $kamar->total() }}</span>
-                        hasil
+            <div class="border-t border-slate-200/30 px-6 py-4 bg-slate-50/50">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <p class="text-sm text-slate-600 text-center sm:text-left">
+                        Menampilkan <span class="font-bold text-slate-800">{{ $kamar->firstItem() }}</span>–
+                        <span class="font-bold text-slate-800">{{ $kamar->lastItem() }}</span> dari
+                        <span class="font-bold text-slate-800">{{ $kamar->total() }}</span> hasil
                     </p>
-                    <div class="flex gap-1">
+                    <div class="flex gap-2">
                         @if ($kamar->onFirstPage())
-                            <span class="inline-flex items-center px-3 py-1.5 rounded-md text-sm bg-slate-100 text-slate-400 cursor-not-allowed">
-                                <i class="fa-solid fa-chevron-left mr-1 text-xs"></i>
-                                Sebelumnya
+                            <span class="inline-flex items-center px-4 py-2 rounded-lg text-sm bg-slate-100 text-slate-400 cursor-not-allowed font-medium">
+                                <i class="fa-solid fa-chevron-left mr-1 text-xs"></i> Sebelumnya
                             </span>
                         @else
                             <a href="{{ $kamar->previousPageUrl() }}"
-                                class="inline-flex items-center px-3 py-1.5 rounded-md text-sm bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors">
-                                <i class="fa-solid fa-chevron-left mr-1 text-xs"></i>
-                                Sebelumnya
+                                class="inline-flex items-center px-4 py-2 rounded-lg text-sm bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-medium shadow-sm hover:shadow transition-colors">
+                                <i class="fa-solid fa-chevron-left mr-1 text-xs"></i> Sebelumnya
                             </a>
                         @endif
 
                         @if ($kamar->hasMorePages())
                             <a href="{{ $kamar->nextPageUrl() }}"
-                                class="inline-flex items-center px-3 py-1.5 rounded-md text-sm bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors">
-                                Selanjutnya
-                                <i class="fa-solid fa-chevron-right ml-1 text-xs"></i>
+                                class="inline-flex items-center px-4 py-2 rounded-lg text-sm bg-gradient-to-r from-blue-600 to-slate-400 text-white font-medium shadow-md hover:shadow-lg hover:from-blue-700 hover:to-slate-500 transition-all">
+                                Selanjutnya <i class="fa-solid fa-chevron-right ml-1 text-xs"></i>
                             </a>
                         @else
-                            <span class="inline-flex items-center px-3 py-1.5 rounded-md text-sm bg-slate-100 text-slate-400 cursor-not-allowed">
-                                Selanjutnya
-                                <i class="fa-solid fa-chevron-right ml-1 text-xs"></i>
+                            <span class="inline-flex items-center px-4 py-2 rounded-lg text-sm bg-slate-100 text-slate-400 cursor-not-allowed font-medium">
+                                Selanjutnya <i class="fa-solid fa-chevron-right ml-1 text-xs"></i>
                             </span>
                         @endif
                     </div>
@@ -613,6 +617,66 @@
 
         .mini-galeri-item img {
             @apply w-full h-full object-cover;
+        }
+
+        /* Sesuaikan aspect ratio */
+        .aspect-w-16::before {
+            padding-bottom: 75%;
+        }
+
+        .aspect-w-16>* {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Smooth modal */
+        #detailModal ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #detailModal ::-webkit-scrollbar-track {
+            background: #f8fafc;
+            border-radius: 3px;
+        }
+
+        #detailModal ::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 3px;
+        }
+
+        #detailModal ::-webkit-scrollbar-thumb:hover {
+            background: #cbd5e1;
+        }
+
+        /* Sembunyikan scrollbar horizontal */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Styling miniatur galeri */
+        .mini-galeri-item {
+            @apply flex-shrink-0 w-16 h-16 rounded-lg border-2 border-slate-200 overflow-hidden transition-all duration-200 cursor-pointer;
+        }
+
+        .mini-galeri-item.active {
+            @apply border-cyan-500 ring-2 ring-cyan-200;
+        }
+
+        .mini-galeri-item img {
+            @apply w-full h-full object-cover;
+        }
+
+        /* Custom backdrop blur for modal */
+        #modalBackdrop {
+            backdrop-filter: blur(4px);
         }
     </style>
 @endsection

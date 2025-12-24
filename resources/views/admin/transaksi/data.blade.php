@@ -6,11 +6,14 @@
     <!-- Header Utama -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
         <div>
-            <h1 class="text-2xl font-bold text-slate-900">Daftar Transaksi</h1>
+            <h1 class="text-2xl font-bold text-slate-900 bg-clip-text bg-gradient-to-r from-slate-900 to-slate-700">
+                Daftar Transaksi
+            </h1>
             <p class="mt-0.5 text-sm text-slate-600">Semua informasi transaksi ada di sini, gampang banget buat dilihat dan dikelola.</p>
         </div>
         <div>
-            <a href="{{ route('transaksi.create') }}" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 text-white px-4 py-2.5 text-sm font-medium hover:bg-blue-700 transition-colors">
+            <a href="{{ route('transaksi.create') }}"
+                class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2.5 text-sm font-medium hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg transition-all duration-200">
                 <i class="fa-solid fa-plus-circle text-sm"></i>
                 Tambah Transaksi
             </a>
@@ -18,94 +21,101 @@
     </div>
 
     @if (session('success'))
-        <div class="mt-4 rounded-lg bg-emerald-50 border border-emerald-200 p-4">
+        <div class="mt-4 rounded-xl bg-emerald-50 border border-emerald-200/60 p-4 shadow-sm">
             <div class="flex items-center gap-2 text-emerald-800">
-                <i class="fa-solid fa-circle-check"></i>
+                <i class="fa-solid fa-circle-check text-lg"></i>
                 <span class="font-medium">{{ session('success') }}</span>
             </div>
         </div>
     @endif
 
     @if (session('error'))
-        <div class="mt-4 rounded-lg bg-red-50 border border-red-200 p-4">
+        <div class="mt-4 rounded-xl bg-red-50 border border-red-200/60 p-4 shadow-sm">
             <div class="flex items-center gap-2 text-red-800">
-                <i class="fa-solid fa-circle-exclamation"></i>
+                <i class="fa-solid fa-circle-exclamation text-lg"></i>
                 <span class="font-medium">{{ session('error') }}</span>
             </div>
         </div>
     @endif
 
-    <div class="mt-4 rounded-xl border border-slate-200 bg-white overflow-hidden shadow-sm">
+    <div class="mt-4 rounded-2xl border border-slate-200/40 bg-white overflow-hidden shadow-[0_4px_20px_-8px_rgba(0,0,0,0.06)]">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
-                <thead class="bg-slate-50 text-slate-600">
+                <thead class="bg-gradient-to-r from-slate-50 to-white border-b border-slate-200/50">
                     <tr>
-                        <th class="text-left px-6 py-4 w-12">No</th>
-                        <th class="text-left px-6 py-4">
-                            <i class="fa-solid fa-hashtag mr-2 text-xs"></i>
-                            Kode Transaksi
+                        <th class="text-left px-6 py-4 w-12">
+                            <span class="text-slate-500">#</span>
                         </th>
                         <th class="text-left px-6 py-4">
-                            <i class="fa-solid fa-money-bill-wave mr-2 text-xs"></i>
-                            Total Bayar
+                            <span class="text-slate-700 font-medium flex items-center gap-2">
+                                <i class="fa-solid fa-hashtag text-xs text-slate-500"></i>
+                                Kode Transaksi
+                            </span>
+                        </th>
+                        <th class="text-left px-6 py-4">
+                            <span class="text-slate-700 font-medium flex items-center gap-2">
+                                <i class="fa-solid fa-money-bill-wave text-xs text-green-500"></i>
+                                Total Bayar
+                            </span>
                         </th>
                         <th class="text-left px-6 py-4 w-36">
-                            <i class="fa-solid fa-circle-info mr-2 text-xs"></i>
-                            Status
+                            <span class="text-slate-700 font-medium flex items-center gap-2">
+                                <i class="fa-solid fa-circle-info text-xs text-amber-500"></i>
+                                Status
+                            </span>
                         </th>
                         <th class="text-right px-6 py-4 w-52">
-                            <i class="fa-solid fa-gears mr-2 text-xs"></i>
-                            Aksi
+                            <span class="text-slate-700 font-medium flex items-center gap-2 justify-end">
+                                <i class="fa-solid fa-gears text-xs text-slate-500"></i>
+                                Aksi
+                            </span>
                         </th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100">
+                <tbody class="divide-y divide-slate-100/60">
                     @forelse ($transaksis as $transaksi)
-                        <tr class="hover:bg-slate-50/50 transition-colors">
+                        <tr class="hover:bg-slate-50/70 transition-colors duration-200 group">
                             <td class="px-6 py-4 font-medium text-slate-700 align-top">{{ $loop->iteration }}</td>
                             <td class="px-6 py-4 align-top">
                                 <div class="flex flex-col">
-                                    <span class="font-medium text-slate-900">{{ $transaksi->kode }}</span>
+                                    <span class="font-semibold text-slate-900 group-hover:text-indigo-900">{{ $transaksi->kode }}</span>
                                     @if ($transaksi->midtrans_order_id)
-                                        <span class="text-xs text-slate-500 mt-1">{{ $transaksi->midtrans_order_id }}</span>
+                                        <span class="text-xs text-slate-500 mt-1 truncate max-w-[180px]">{{ $transaksi->midtrans_order_id }}</span>
                                     @endif
                                 </div>
                             </td>
                             <td class="px-6 py-4 align-top">
                                 <div class="flex items-center gap-2">
                                     <i class="fa-solid fa-money-bill-wave text-green-500 text-sm"></i>
-                                    <span class="text-slate-900">Rp {{ number_format($transaksi->total_bayar, 0, ',', '.') }}</span>
+                                    <span class="text-slate-900 font-medium">Rp {{ number_format($transaksi->total_bayar, 0, ',', '.') }}</span>
                                 </div>
                             </td>
                             <td class="px-6 py-4 align-top">
                                 @php
-                                    $statusColors = [
-                                        'pending' => 'bg-yellow-100 text-yellow-800 border-yellow-200',
-                                        'paid' => 'bg-emerald-100 text-emerald-800 border-emerald-200',
-                                        'failed' => 'bg-red-100 text-red-800 border-red-200',
-                                        'cancelled' => 'bg-slate-100 text-slate-800 border-slate-200',
-                                        'expired' => 'bg-gray-100 text-gray-800 border-gray-200',
-                                        'challenge' => 'bg-blue-100 text-blue-800 border-blue-200',
+                                    $statusConfig = [
+                                        'pending' => ['label' => 'Menunggu', 'color' => 'bg-yellow-100 text-yellow-800 border-yellow-200', 'icon' => 'fa-clock'],
+                                        'paid' => ['label' => 'Lunas', 'color' => 'bg-emerald-100 text-emerald-800 border-emerald-200', 'icon' => 'fa-circle-check'],
+                                        'failed' => ['label' => 'Gagal', 'color' => 'bg-red-100 text-red-800 border-red-200', 'icon' => 'fa-circle-exclamation'],
+                                        'cancelled' => ['label' => 'Dibatalkan', 'color' => 'bg-slate-100 text-slate-800 border-slate-200', 'icon' => 'fa-ban'],
+                                        'expired' => ['label' => 'Kadaluarsa', 'color' => 'bg-gray-100 text-gray-800 border-gray-200', 'icon' => 'fa-hourglass-end'],
+                                        'challenge' => ['label' => 'Tantangan', 'color' => 'bg-blue-100 text-blue-800 border-blue-200', 'icon' => 'fa-shield-halved'],
                                     ];
-                                    $statusIcons = [
-                                        'pending' => 'fa-clock',
-                                        'paid' => 'fa-circle-check',
-                                        'failed' => 'fa-circle-exclamation',
-                                        'cancelled' => 'fa-ban',
-                                        'expired' => 'fa-hourglass-end',
-                                        'challenge' => 'fa-shield-halved',
+                                    $status = $statusConfig[$transaksi->status_pembayaran] ?? [
+                                        'label' => 'Tidak Diketahui',
+                                        'color' => 'bg-slate-100 text-slate-800 border-slate-200',
+                                        'icon' => 'fa-circle',
                                     ];
                                 @endphp
                                 <span
-                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border {{ $statusColors[$transaksi->status_pembayaran] ?? 'bg-slate-100 text-slate-800 border-slate-200' }}">
-                                    <i class="fa-solid {{ $statusIcons[$transaksi->status_pembayaran] ?? 'fa-circle' }} text-xs"></i>
-                                    {{ ucfirst($transaksi->status_pembayaran) }}
+                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border {{ $status['color'] }} transition-all duration-150 group-hover:scale-105 group-hover:shadow-sm">
+                                    <i class="fa-solid {{ $status['icon'] }} text-xs"></i>
+                                    {{ $status['label'] }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 align-top">
                                 <div class="flex justify-end gap-2">
                                     <button type="button" onclick="showDetailModal({{ $transaksi->id }})"
-                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 hover:border-slate-300 transition-colors">
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 hover:border-slate-300 transition-all shadow-sm hover:shadow">
                                         <i class="fa-solid fa-eye text-xs"></i>
                                         Detail
                                     </button>
@@ -115,7 +125,7 @@
                                             @csrf
                                             @method('DELETE')
                                             <button type="button"
-                                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm bg-red-100 border border-red-200 text-red-700 hover:bg-red-200 hover:border-red-300 transition-colors"
+                                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm bg-white border border-red-200 text-red-700 hover:bg-red-50 hover:border-red-300 transition-all shadow-sm hover:shadow"
                                                 onclick="konfirmasiHapusTransaksi({{ $transaksi->id }}, '{{ $transaksi->kode }}')">
                                                 <i class="fa-solid fa-trash-can text-xs"></i>
                                                 Hapus
@@ -127,8 +137,11 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-4 text-center text-slate-500">
-                                Tidak ada transaksi
+                            <td colspan="6" class="px-6 py-12 text-center text-slate-500">
+                                <div class="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-slate-100 text-slate-400 mb-3">
+                                    <i class="fa-regular fa-credit-card text-2xl"></i>
+                                </div>
+                                <p class="text-base font-medium">Tidak ada transaksi</p>
                             </td>
                         </tr>
                     @endforelse
@@ -138,41 +151,33 @@
 
         <!-- Pagination -->
         @if ($transaksis->hasPages())
-            <div class="border-t border-slate-200 px-6 py-4 bg-slate-50">
-                <div class="flex items-center justify-between">
-                    <p class="text-sm text-slate-700">
-                        Menampilkan
-                        <span class="font-medium">{{ $transaksis->firstItem() }}</span>
-                        sampai
-                        <span class="font-medium">{{ $transaksis->lastItem() }}</span>
-                        dari
-                        <span class="font-medium">{{ $transaksis->total() }}</span>
-                        hasil
+            <div class="border-t border-slate-200/30 px-6 py-4 bg-slate-50/50">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <p class="text-sm text-slate-600 text-center sm:text-left">
+                        Menampilkan <span class="font-bold text-slate-800">{{ $transaksis->firstItem() }}</span>–
+                        <span class="font-bold text-slate-800">{{ $transaksis->lastItem() }}</span> dari
+                        <span class="font-bold text-slate-800">{{ $transaksis->total() }}</span> hasil
                     </p>
-                    <div class="flex gap-1">
+                    <div class="flex gap-2">
                         @if ($transaksis->onFirstPage())
-                            <span class="inline-flex items-center px-3 py-1.5 rounded-md text-sm bg-slate-100 text-slate-400 cursor-not-allowed">
-                                <i class="fa-solid fa-chevron-left mr-1 text-xs"></i>
-                                Sebelumnya
+                            <span class="inline-flex items-center px-4 py-2 rounded-lg text-sm bg-slate-100 text-slate-400 cursor-not-allowed font-medium">
+                                <i class="fa-solid fa-chevron-left mr-1 text-xs"></i> Sebelumnya
                             </span>
                         @else
                             <a href="{{ $transaksis->previousPageUrl() }}"
-                                class="inline-flex items-center px-3 py-1.5 rounded-md text-sm bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors">
-                                <i class="fa-solid fa-chevron-left mr-1 text-xs"></i>
-                                Sebelumnya
+                                class="inline-flex items-center px-4 py-2 rounded-lg text-sm bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-medium shadow-sm hover:shadow transition-colors">
+                                <i class="fa-solid fa-chevron-left mr-1 text-xs"></i> Sebelumnya
                             </a>
                         @endif
 
                         @if ($transaksis->hasMorePages())
                             <a href="{{ $transaksis->nextPageUrl() }}"
-                                class="inline-flex items-center px-3 py-1.5 rounded-md text-sm bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors">
-                                Selanjutnya
-                                <i class="fa-solid fa-chevron-right ml-1 text-xs"></i>
+                                class="inline-flex items-center px-4 py-2 rounded-lg text-sm bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-medium shadow-md hover:shadow-lg hover:from-emerald-700 hover:to-teal-700 transition-all">
+                                Selanjutnya <i class="fa-solid fa-chevron-right ml-1 text-xs"></i>
                             </a>
                         @else
-                            <span class="inline-flex items-center px-3 py-1.5 rounded-md text-sm bg-slate-100 text-slate-400 cursor-not-allowed">
-                                Selanjutnya
-                                <i class="fa-solid fa-chevron-right ml-1 text-xs"></i>
+                            <span class="inline-flex items-center px-4 py-2 rounded-lg text-sm bg-slate-100 text-slate-400 cursor-not-allowed font-medium">
+                                Selanjutnya <i class="fa-solid fa-chevron-right ml-1 text-xs"></i>
                             </span>
                         @endif
                     </div>

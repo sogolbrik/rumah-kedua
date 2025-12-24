@@ -6,174 +6,198 @@
     <!-- Header Utama -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
         <div>
-            <h1 class="text-2xl font-bold text-slate-900">Daftar User</h1>
+            <h1 class="text-2xl font-bold text-slate-900 bg-clip-text bg-gradient-to-r from-slate-900 to-slate-700">
+                Daftar User
+            </h1>
             <p class="mt-0.5 text-sm text-slate-600">Semua informasi user ada di sini, gampang banget buat dilihat dan dikelola.</p>
         </div>
         <div>
-            <a href="{{ Route('user.create') }}" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 text-white px-4 py-2.5 text-sm font-medium hover:bg-blue-700 transition-colors">
+            <a href="{{ route('user.create') }}"
+                class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2.5 text-sm font-medium hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg transition-all duration-200">
                 <i class="fa-solid fa-plus-circle text-sm"></i>
                 Tambah User
             </a>
         </div>
     </div>
 
-    <div class="mt-4 rounded-xl border border-slate-200 bg-white overflow-hidden shadow-sm">
+    @if (session('success'))
+        <div class="mt-4 rounded-xl bg-emerald-50 border border-emerald-200/60 p-4 shadow-sm">
+            <div class="flex items-center gap-2 text-emerald-800">
+                <i class="fa-solid fa-circle-check text-lg"></i>
+                <span class="font-medium">{{ session('success') }}</span>
+            </div>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="mt-4 rounded-xl bg-red-50 border border-red-200/60 p-4 shadow-sm">
+            <div class="flex items-center gap-2 text-red-800">
+                <i class="fa-solid fa-circle-exclamation text-lg"></i>
+                <span class="font-medium">{{ session('error') }}</span>
+            </div>
+        </div>
+    @endif
+
+    <div class="mt-4 rounded-2xl border border-slate-200/40 bg-white overflow-hidden shadow-[0_4px_20px_-8px_rgba(0,0,0,0.06)]">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
-                <thead class="bg-slate-50 text-slate-600">
+                <thead class="bg-gradient-to-r from-slate-50 to-white border-b border-slate-200/50">
                     <tr>
-                        <th class="text-left px-6 py-4 w-12">No</th>
+                        <th class="text-left px-6 py-4 w-12"><span class="text-slate-500">#</span></th>
                         <th class="text-left px-6 py-4">
-                            <i class="fa-solid fa-user mr-2 text-xs"></i>
-                            Nama
+                            <span class="text-slate-700 font-medium flex items-center gap-2">
+                                <i class="fa-solid fa-user text-slate-500 text-xs"></i> Nama
+                            </span>
                         </th>
                         <th class="text-left px-6 py-4">
-                            <i class="fa-solid fa-envelope mr-2 text-xs"></i>
-                            Email
+                            <span class="text-slate-700 font-medium flex items-center gap-2">
+                                <i class="fa-solid fa-envelope text-slate-500 text-xs"></i> Email
+                            </span>
                         </th>
                         <th class="text-left px-6 py-4">
-                            <i class="fa-solid fa-circle-info mr-2 text-xs"></i>
-                            Status
+                            <span class="text-slate-700 font-medium flex items-center gap-2">
+                                <i class="fa-solid fa-circle-info text-amber-500 text-xs"></i> Status
+                            </span>
                         </th>
                         <th class="text-left px-6 py-4 w-36">
-                            <i class="fa-solid fa-user-tag mr-2 text-xs"></i>
-                            Role
+                            <span class="text-slate-700 font-medium flex items-center gap-2">
+                                <i class="fa-solid fa-user-tag text-purple-500 text-xs"></i> Role
+                            </span>
                         </th>
                         <th class="text-right px-6 py-4 w-52">
-                            <i class="fa-solid fa-gears mr-2 text-xs"></i>
-                            Aksi
+                            <span class="text-slate-700 font-medium flex items-center gap-2 justify-end">
+                                <i class="fa-solid fa-gears text-slate-500 text-xs"></i> Aksi
+                            </span>
                         </th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100">
-                    @foreach ($users as $user)
-                        <tr class="hover:bg-slate-50/50 transition-colors">
+                <tbody class="divide-y divide-slate-100/60">
+                    @forelse ($users as $user)
+                        <tr class="hover:bg-slate-50/70 transition-colors duration-200 group">
                             <td class="px-6 py-4 font-medium text-slate-700">{{ $loop->iteration }}</td>
                             <td class="px-6 py-4">
-                                <div class="flex items-center gap-2">
+                                <div class="flex items-center gap-3">
                                     @if ($user->avatar)
-                                        <img src="{{ Storage::url($user->avatar) }}" alt="{{ $user->name }}" class="w-8 h-8 rounded-full object-cover">
+                                        <img src="{{ Storage::url($user->avatar) }}" alt="{{ $user->name }}" class="w-10 h-10 rounded-full object-cover ring-2 ring-slate-200">
                                     @else
-                                        <div @php
-                                        $initial = strtoupper(substr($user->name, 0, 1));
-                                            if (in_array($initial, ['A','B','C','D','E'])) {
-                                                $gradient = 'from-indigo-500 to-teal-500 ring-indigo-200';
-                                            } elseif (in_array($initial, ['F','G','H','I','J','K','L','M'])) {
-                                                $gradient = 'from-rose-500 to-orange-500 ring-rose-200';
+                                        @php
+                                            $initial = strtoupper(substr($user->name, 0, 1));
+                                            if (in_array($initial, ['A', 'B', 'C', 'D', 'E'])) {
+                                                $bg = 'bg-gradient-to-br from-indigo-500 to-teal-500';
+                                                $ring = 'ring-indigo-200';
+                                            } elseif (in_array($initial, ['F', 'G', 'H', 'I', 'J', 'K', 'L', 'M'])) {
+                                                $bg = 'bg-gradient-to-br from-rose-500 to-orange-500';
+                                                $ring = 'ring-rose-200';
                                             } else {
-                                                $gradient = 'from-violet-500 to-pink-500 ring-violet-200';
-                                            } @endphp
-                                            class="w-12 h-12 rounded-full bg-gradient-to-r {{ $gradient }} flex items-center justify-center text-white font-bold text-sm ring-2">
+                                                $bg = 'bg-gradient-to-br from-violet-500 to-pink-500';
+                                                $ring = 'ring-violet-200';
+                                            }
+                                        @endphp
+                                        <div class="w-10 h-10 rounded-full {{ $bg }} flex items-center justify-center text-white font-bold text-sm ring-2 {{ $ring }}">
                                             {{ substr($user->name, 0, 2) }}
                                         </div>
                                     @endif
-                                    <span class="font-medium text-slate-900">{{ $user->name }}</span>
+                                    <span class="font-medium text-slate-900 group-hover:text-indigo-900">{{ $user->name }}</span>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-2">
                                     <i class="fa-solid fa-envelope text-slate-400 text-sm"></i>
-                                    <span class="text-slate-900">{{ $user->email }}</span>
+                                    <span class="text-slate-900 truncate max-w-[180px]">{{ $user->email }}</span>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
                                 @if (!$penghuniMenunggak->contains($user->id))
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-white text-green-600 font-semibold shadow-sm border border-green-200">
-                                        <i class="fa-solid fa-check text-green-500"></i>
-                                        Aktif
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                        <i class="fa-solid fa-check text-emerald-600 text-xs"></i> Aktif
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-white text-amber-600 font-semibold shadow-sm border border-amber-200">
-                                        <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
-                                        Menunggak
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
+                                        <i class="fa-solid fa-triangle-exclamation text-amber-600 text-xs"></i> Menunggak
+                                    </span>
                                 @endif
-                                </span>
                             </td>
                             <td class="px-6 py-4">
                                 @if ($user->role == 'admin')
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200">
-                                        <i class="fa-solid fa-shield-halved text-xs"></i>
-                                        Admin
+                                        <i class="fa-solid fa-shield-halved text-xs"></i> Admin
                                     </span>
                                 @elseif($user->role == 'penghuni')
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
-                                        <i class="fa-solid fa-house-user text-xs"></i>
-                                        Penghuni
+                                        <i class="fa-solid fa-house-user text-xs"></i> Penghuni
                                     </span>
                                 @else
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
-                                        <i class="fa-solid fa-user text-xs"></i>
-                                        User
+                                        <i class="fa-solid fa-user text-xs"></i> User
                                     </span>
                                 @endif
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex justify-end gap-2">
                                     <button type="button" onclick="showDetailModal({{ $user->id }})"
-                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 hover:border-slate-300 transition-colors">
-                                        <i class="fa-solid fa-eye text-xs"></i>
-                                        Detail
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 transition-all shadow-sm hover:shadow">
+                                        <i class="fa-solid fa-eye text-xs"></i> Detail
                                     </button>
                                     <a href="{{ route('user.edit', $user->id) }}"
-                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm bg-blue-100 border border-blue-200 text-blue-700 hover:bg-blue-200 hover:border-blue-300 transition-colors">
-                                        <i class="fa-solid fa-pen-to-square text-xs"></i>
-                                        Edit
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm bg-white border border-blue-200 text-blue-700 hover:bg-blue-50 transition-all shadow-sm hover:shadow">
+                                        <i class="fa-solid fa-pen-to-square text-xs"></i> Edit
                                     </a>
                                     <form action="{{ route('user.destroy', $user->id) }}" method="POST" class="inline" id="hapus-data-{{ $user->id }}">
                                         @csrf
                                         @method('DELETE')
                                         <button type="button"
-                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm bg-red-100 border border-red-200 text-red-700 hover:bg-red-200 hover:border-red-300 transition-colors"
+                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm bg-white border border-red-200 text-red-700 hover:bg-red-50 transition-all shadow-sm hover:shadow"
                                             onclick="konfirmasiHapusUser({{ $user->id }}, '{{ $user->name }}')">
-                                            <i class="fa-solid fa-trash-can text-xs"></i>
-                                            Hapus
+                                            <i class="fa-solid fa-trash-can text-xs"></i> Hapus
                                         </button>
                                     </form>
                                 </div>
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center text-slate-500">
+                                <div class="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-slate-100 text-slate-400 mb-3">
+                                    <i class="fa-regular fa-user text-2xl"></i>
+                                </div>
+                                <p class="text-base font-medium">Tidak ada user</p>
+                                <p class="text-sm text-slate-500 mt-1">Buat user pertama Anda sekarang!</p>
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
 
-        <!-- Pagination (jika menggunakan paginate) -->
+        <!-- Pagination -->
         @if ($users->hasPages())
-            <div class="border-t border-slate-200 px-6 py-4 bg-slate-50">
-                <div class="flex items-center justify-between">
-                    <p class="text-sm text-slate-700">
-                        Menampilkan
-                        <span class="font-medium">{{ $users->firstItem() }}</span>
-                        sampai
-                        <span class="font-medium">{{ $users->lastItem() }}</span>
-                        dari
-                        <span class="font-medium">{{ $users->total() }}</span>
-                        hasil
+            <div class="border-t border-slate-200/30 px-6 py-4 bg-slate-50/50">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <p class="text-sm text-slate-600 text-center sm:text-left">
+                        Menampilkan <span class="font-bold text-slate-800">{{ $users->firstItem() }}</span>–
+                        <span class="font-bold text-slate-800">{{ $users->lastItem() }}</span> dari
+                        <span class="font-bold text-slate-800">{{ $users->total() }}</span> hasil
                     </p>
-                    <div class="flex gap-1">
+                    <div class="flex gap-2">
                         @if ($users->onFirstPage())
-                            <span class="inline-flex items-center px-3 py-1.5 rounded-md text-sm bg-slate-100 text-slate-400 cursor-not-allowed">
-                                <i class="fa-solid fa-chevron-left mr-1 text-xs"></i>
-                                Sebelumnya
+                            <span class="inline-flex items-center px-4 py-2 rounded-lg text-sm bg-slate-100 text-slate-400 cursor-not-allowed font-medium">
+                                <i class="fa-solid fa-chevron-left mr-1 text-xs"></i> Sebelumnya
                             </span>
                         @else
                             <a href="{{ $users->previousPageUrl() }}"
-                                class="inline-flex items-center px-3 py-1.5 rounded-md text-sm bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors">
-                                <i class="fa-solid fa-chevron-left mr-1 text-xs"></i>
-                                Sebelumnya
+                                class="inline-flex items-center px-4 py-2 rounded-lg text-sm bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-medium shadow-sm hover:shadow transition-colors">
+                                <i class="fa-solid fa-chevron-left mr-1 text-xs"></i> Sebelumnya
                             </a>
                         @endif
 
                         @if ($users->hasMorePages())
                             <a href="{{ $users->nextPageUrl() }}"
-                                class="inline-flex items-center px-3 py-1.5 rounded-md text-sm bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors">
-                                Selanjutnya
-                                <i class="fa-solid fa-chevron-right ml-1 text-xs"></i>
+                                class="inline-flex items-center px-4 py-2 rounded-lg text-sm bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-medium shadow-md hover:shadow-lg hover:from-blue-700 hover:to-cyan-700 transition-all">
+                                Selanjutnya <i class="fa-solid fa-chevron-right ml-1 text-xs"></i>
                             </a>
                         @else
-                            <span class="inline-flex items-center px-3 py-1.5 rounded-md text-sm bg-slate-100 text-slate-400 cursor-not-allowed">
-                                Selanjutnya
-                                <i class="fa-solid fa-chevron-right ml-1 text-xs"></i>
+                            <span class="inline-flex items-center px-4 py-2 rounded-lg text-sm bg-slate-100 text-slate-400 cursor-not-allowed font-medium">
+                                Selanjutnya <i class="fa-solid fa-chevron-right ml-1 text-xs"></i>
                             </span>
                         @endif
                     </div>
@@ -586,6 +610,23 @@
     </script>
 
     <style>
+        .aspect-w-1::before {
+            padding-bottom: 100%;
+        }
+
+        .aspect-w-16::before {
+            padding-bottom: 56.25%;
+        }
+
+        .aspect-w-1>*,
+        .aspect-w-16>* {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
         .aspect-w-1 {
             position: relative;
         }

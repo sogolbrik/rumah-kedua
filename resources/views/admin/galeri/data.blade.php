@@ -31,14 +31,16 @@
                     </div>
                     <div class="p-4">
                         <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-medium text-slate-700">#{{ ($galeri->currentPage() - 1) * $galeri->perPage() + $loop->iteration }}</span>
+                            <span class="text-xs font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full">
+                                #{{ ($galeri->currentPage() - 1) * $galeri->perPage() + $loop->iteration }}
+                            </span>
                         </div>
-                        <form action="{{ route('galeri.destroy', $item->id) }}" method="POST" class="inline-block" id="hapus-data-{{ $item->id }}">
+
+                        <form action="{{ route('galeri.destroy', $item->id) }}" method="POST" class="inline-block w-full" id="hapus-data-{{ $item->id }}">
                             @csrf
                             @method('DELETE')
-                            <button type="button"
-                                class="w-full inline-flex items-center justify-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-medium text-red-700 transition-colors hover:bg-red-100 hover:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                                onclick="konfirmasiHapusGaleri({{ $item->id }})">
+                            <button type="button" onclick="konfirmasiHapusGaleri({{ $item->id }})"
+                                class="w-full inline-flex items-center justify-center gap-1.5 rounded-lg border border-red-200 bg-white text-xs font-medium text-red-700 py-2 transition-colors hover:bg-red-50 hover:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:ring-offset-2 shadow-sm hover:shadow">
                                 <i class="fa-solid fa-trash text-xs"></i>
                                 Hapus Gambar
                             </button>
@@ -69,43 +71,35 @@
         </div>
     </div>
 
-    <!-- Pagination (tidak diubah) -->
+    <!-- Pagination -->
     @if (isset($galeri) && $galeri->hasPages())
-        <div class="mt-8 border-t border-slate-200 pt-6">
+        <div class="mt-8 border-t border-slate-200/40 pt-6">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <p class="text-sm text-slate-700">
-                    Menampilkan
-                    <span class="font-medium">{{ $galeri->firstItem() }}</span>
-                    sampai
-                    <span class="font-medium">{{ $galeri->lastItem() }}</span>
-                    dari
-                    <span class="font-medium">{{ $galeri->total() }}</span>
-                    gambar
+                <p class="text-sm text-slate-600">
+                    Menampilkan <span class="font-semibold text-slate-800">{{ $galeri->firstItem() }}</span>
+                    sampai <span class="font-semibold text-slate-800">{{ $galeri->lastItem() }}</span>
+                    dari <span class="font-semibold text-slate-800">{{ $galeri->total() }}</span> gambar
                 </p>
-                <div class="flex gap-1.5">
+                <div class="flex gap-2">
                     @if ($galeri->onFirstPage())
-                        <span class="inline-flex items-center gap-1 px-3.5 py-2 rounded-lg text-sm bg-slate-100 text-slate-400 cursor-not-allowed">
-                            <i class="fa-solid fa-chevron-left text-xs"></i>
-                            Sebelumnya
+                        <span class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm bg-slate-100 text-slate-400 cursor-not-allowed font-medium">
+                            <i class="fa-solid fa-chevron-left text-xs"></i> Sebelumnya
                         </span>
                     @else
                         <a href="{{ $galeri->previousPageUrl() }}"
-                            class="inline-flex items-center gap-1 px-3.5 py-2 rounded-lg text-sm bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors">
-                            <i class="fa-solid fa-chevron-left text-xs"></i>
-                            Sebelumnya
+                            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-medium shadow-sm hover:shadow transition-colors">
+                            <i class="fa-solid fa-chevron-left text-xs"></i> Sebelumnya
                         </a>
                     @endif
 
                     @if ($galeri->hasMorePages())
                         <a href="{{ $galeri->nextPageUrl() }}"
-                            class="inline-flex items-center gap-1 px-3.5 py-2 rounded-lg text-sm bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors">
-                            Selanjutnya
-                            <i class="fa-solid fa-chevron-right text-xs"></i>
+                            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm bg-gradient-to-r from-slate-700 to-slate-800 text-white font-medium shadow-md hover:shadow-lg hover:from-slate-700 hover:to-slate-700 transition-all">
+                            Selanjutnya <i class="fa-solid fa-chevron-right text-xs ml-1"></i>
                         </a>
                     @else
-                        <span class="inline-flex items-center gap-1 px-3.5 py-2 rounded-lg text-sm bg-slate-100 text-slate-400 cursor-not-allowed">
-                            Selanjutnya
-                            <i class="fa-solid fa-chevron-right text-xs"></i>
+                        <span class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm bg-slate-100 text-slate-400 cursor-not-allowed font-medium">
+                            Selanjutnya <i class="fa-solid fa-chevron-right text-xs ml-1"></i>
                         </span>
                     @endif
                 </div>
@@ -142,22 +136,4 @@
             });
         }
     </script>
-
-    @if (session('success'))
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                Swal.fire({
-                    icon: 'success',
-                    title: "{{ session('success') }}",
-                    position: "top-end",
-                    toast: true,
-                    timer: 3000,
-                    showConfirmButton: false,
-                    customClass: {
-                        popup: 'rounded-xl'
-                    }
-                });
-            });
-        </script>
-    @endif
 @endsection
