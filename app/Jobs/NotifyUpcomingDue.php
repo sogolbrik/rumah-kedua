@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Transaksi;
+use App\Services\FonnteService;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -20,7 +21,7 @@ class NotifyUpcomingDue implements ShouldQueue
     {
     }
 
-    public function handle(): void
+    public function handle(FonnteService $fonnteService): void
     {
         $user = $this->transaksi->user;
         if (!$user || $user->role !== 'penghuni') {
@@ -51,15 +52,15 @@ class NotifyUpcomingDue implements ShouldQueue
             "Terima kasih,\n" .
             "*- RumahKedua*";
 
-        $response = Http::timeout(30)->get('http://localhost:5000/api/Whatsapp/openandsend', [
-            'number' => $number,
-            'message' => $message,
-        ]);
+        $response = $fonnteService->send($number, $message);
 
-        if ($response->successful()) {
+        $status = $response['status'] ?? null;
+        $isSuccess = $status === true || $status === 'true' || in_array($status, ['success', 'queued'], true);
+
+        if ($isSuccess) {
             $this->transaksi->update(['notifikasi_hampir_jatuh_tempo_terkirim_pada' => now()]);
         } else {
-            throw new \Exception('Gagal mengirim notifikasi WhatsApp: ' . $response->body());
+            throw new \Exception('Fonnte API error: ' . json_encode($response));
         }
     }
 }

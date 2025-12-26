@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Transaksi;
+use App\Services\FonnteService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -23,7 +24,7 @@ class ProcessAutoBlock implements ShouldQueue
     {
     }
 
-    public function handle(): void
+    public function handle(FonnteService $fonnteService): void
     {
         $user = $this->transaksi->user;
         if (!$user || $user->role !== 'penghuni') {
@@ -65,12 +66,9 @@ class ProcessAutoBlock implements ShouldQueue
 
         if ($validNumber) {
             try {
-                $response = Http::timeout(30)->get('http://localhost:5000/api/Whatsapp/openandsend', [
-                    'number' => $validNumber,
-                    'message' => $message,
-                ]);
+                $response = $fonnteService->send($validNumber, $message);
 
-                if ($response->successful()) {
+                if (isset($response['status']) && in_array($response['status'], ['success', 'queued'])) {
                     //Log::info("✅ Notifikasi blokir WA sukses ke {$validNumber} (Transaksi: {$this->transaksi->kode})");
                 } else {
                     //Log::error("❌ Gagal kirim WA blokir untuk {$this->transaksi->kode}: " . $response->body());
@@ -81,9 +79,9 @@ class ProcessAutoBlock implements ShouldQueue
         }
 
         $user->update([
-            'id_kamar'      => null,
+            'id_kamar' => null,
             'tanggal_masuk' => null,
-            'role'          => 'user',
+            'role' => 'user',
         ]);
 
         $kamar->update(['status' => 'Tersedia']);

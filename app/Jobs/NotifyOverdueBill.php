@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Transaksi;
+use App\Services\FonnteService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -26,7 +27,7 @@ class NotifyOverdueBill implements ShouldQueue
         $this->transaksi = $transaksi;
     }
 
-    public function handle(): void
+    public function handle(FonnteService $fonnteService): void
     {
         try {
             $user = $this->transaksi->user;
@@ -56,18 +57,14 @@ class NotifyOverdueBill implements ShouldQueue
                 "Terima kasih,\n" .
                 "*- RumahKedua*";
 
-            $response = Http::timeout(30)->get('http://localhost:5000/api/Whatsapp/openandsend', [
-                'number' => $number,
-                'message' => $message,
-            ]);
+            $response = $fonnteService->send($number, $message);
 
-            if ($response->successful()) {
-                //Log::info("✅ Notifikasi WA sukses ke {$number} (Transaksi: {$this->transaksi->kode})");
-
+            if (isset($response['status']) && in_array($response['status'], ['success', 'queued'])) {
+                // Log::info("✅ Notifikasi WA sukses ke {$number} (Transaksi: {$this->transaksi->kode})");
                 $this->transaksi->update(['notifikasi_jatuh_tempo_terkirim_pada' => now()]);
             } else {
-                //Log::error("❌ Gagal kirim WA untuk {$this->transaksi->kode}: " . $response->body());
-                throw new \Exception('WhatsApp API failed');
+                // Log::error("❌ Gagal kirim WA via Fonnte untuk {$this->transaksi->kode}", $response);
+                throw new \Exception('Fonnte API returned error: ' . json_encode($response));
             }
 
         } catch (\Exception $e) {

@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Services\FonnteService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -33,7 +34,7 @@ class SendBulkWhatsAppAnnouncement implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(): void
+    public function handle(FonnteService $fonnteService): void
     {
         foreach ($this->numbers as $index => $number) {
             try {
@@ -42,13 +43,10 @@ class SendBulkWhatsAppAnnouncement implements ShouldQueue
                     continue;
                 }
 
-                $response = Http::timeout(30)->get("http://localhost:5000/api/Whatsapp/openandsend", [
-                    'number' => $number,
-                    'message' => $this->message,
-                ]);
+                $response = $fonnteService->send($number, $this->message);
 
                 // Opsional: log respons
-                if (!$response->successful()) {
+                if (isset($response['status']) && in_array($response['status'], ['success', 'queued'])) {
                     //Log::error("Gagal kirim ke {$number}: " . $response->body());
                 } else {
                     //Log::info("Berhasil kirim ke {$number}");

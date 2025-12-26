@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Transaksi;
+use App\Services\FonnteService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -19,7 +20,7 @@ class NotifyWarningBeforeBlock implements ShouldQueue
     {
     }
 
-    public function handle(): void
+    public function handle(FonnteService $fonnteService): void
     {
         $user = $this->transaksi->user;
         if (!$user || $user->role !== 'penghuni')
@@ -43,16 +44,13 @@ class NotifyWarningBeforeBlock implements ShouldQueue
             "Terima kasih,\n" .
             "*- RumahKedua*";
 
-        $response = Http::timeout(30)->get('http://localhost:5000/api/Whatsapp/openandsend', [
-            'number' => $number,
-            'message' => $message,
-        ]);
+        $response = $fonnteService->send($number, $message);
 
-        if ($response->successful()) {
+        if (isset($response['status']) && in_array($response['status'], ['success', 'queued'])) {
             $this->transaksi->update(['notifikasi_peringatan_blokir_terkirim_pada' => now()]);
             //Log::info("✅ Peringatan blokir dikirim: {$this->transaksi->kode}");
         } else {
-            throw new \Exception('Gagal kirim WA');
+            throw new \Exception('Fonnte API returned error: ' . json_encode($response));
         }
     }
 }
