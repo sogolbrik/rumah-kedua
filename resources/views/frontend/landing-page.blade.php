@@ -109,8 +109,7 @@
                 @if ($standard)
                     <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-slide-up" style="animation-delay: 0.1s">
                         <div class="h-48 overflow-hidden">
-                            <img src="{{ Storage::url($standard->gambar) }}" alt="Kamar {{ $standard->tipe }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-                                onerror="this.src='/placeholder.svg?height=300&width=400'">
+                            <img src="{{ Storage::url($standard->gambar) }}" alt="Kamar {{ $standard->tipe }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
                         </div>
                         <div class="p-6">
                             <h3 class="text-xl font-bold text-gray-900 mb-2">{{ $standard->tipe }}</h3>
@@ -143,8 +142,7 @@
                             PALING POPULER
                         </div>
                         <div class="h-48 overflow-hidden mt-6">
-                            <img src="{{ Storage::url($medium->gambar) }}" alt="Kamar {{ $medium->tipe }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-                                onerror="this.src='/placeholder.svg?height=300&width=400'">
+                            <img src="{{ Storage::url($medium->gambar) }}" alt="Kamar {{ $medium->tipe }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
                         </div>
                         <div class="p-6">
                             <h3 class="text-xl font-bold text-gray-900 mb-2">{{ $medium->tipe }}</h3>
@@ -174,8 +172,7 @@
                 @if ($exclusive)
                     <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-slide-up" style="animation-delay: 0.3s">
                         <div class="h-48 overflow-hidden">
-                            <img src="{{ Storage::url($exclusive->gambar) }}" alt="Kamar {{ $exclusive->tipe }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-                                onerror="this.src='/placeholder.svg?height=300&width=400'">
+                            <img src="{{ Storage::url($exclusive->gambar) }}" alt="Kamar {{ $exclusive->tipe }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
                         </div>
                         <div class="p-6">
                             <h3 class="text-xl font-bold text-gray-900 mb-2">{{ $exclusive->tipe }}</h3>
