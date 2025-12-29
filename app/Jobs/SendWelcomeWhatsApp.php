@@ -9,9 +9,9 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
-
 // use Illuminate\Support\Facades\Log;
+
+use Illuminate\Support\Facades\Log;
 
 class SendWelcomeWhatsApp implements ShouldQueue
 {
@@ -57,20 +57,20 @@ class SendWelcomeWhatsApp implements ShouldQueue
                 "*- RumahKedua*";
 
             if (!preg_match('/^628[0-9]{8,13}$/', $this->number)) {
-                Log::warning("Nomor WhatsApp tidak valid untuk welcome message: {$this->number}");
+                // Log::warning("Nomor WhatsApp tidak valid untuk welcome message: {$this->number}");
                 return;
             }
 
             $response = $fonnteService->send($this->number, $message);
 
             if (isset($response['status']) && in_array($response['status'], ['success', 'queued'])) {
-                Log::info("Berhasil kirim welcome WA ke {$this->number}");
+                // Log::info("Berhasil kirim welcome WA ke {$this->number}");
             } else {
-                Log::error("Gagal kirim welcome WA ke {$this->number}: " . json_encode($response));
+                // Log::error("Gagal kirim welcome WA ke {$this->number}: " . json_encode($response));
             }
 
         } catch (\Exception $e) {
-            Log::error("Exception saat kirim welcome WA ke {$this->number}: " . $e->getMessage());
+            // Log::error("Exception saat kirim welcome WA ke {$this->number}: " . $e->getMessage());
             // Job akan otomatis di-retry karena implements ShouldQueue
             throw $e; // Penting: lempar ulang agar sistem tahu ini gagal
         }
