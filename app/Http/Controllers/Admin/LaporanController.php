@@ -13,6 +13,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
 class LaporanController extends Controller
@@ -135,13 +136,15 @@ class LaporanController extends Controller
         $tanggalMulai = $request->get('tanggal_mulai', now()->subMonth()->startOfMonth()->format('Y-m-d'));
         $tanggalSelesai = $request->get('tanggal_selesai', now()->format('Y-m-d'));
 
-        $transaksi = Transaksi::whereBetween('created_at', [
+        $periodeLabel = Carbon::parse($tanggalMulai)->locale('id')->isoFormat('D MMM Y') . ' – ' . Carbon::parse($tanggalSelesai)->locale('id')->isoFormat('D MMM Y');
+
+        $transaksi = Transaksi::with('user', 'kamar')->whereBetween('created_at', [
             Carbon::parse($tanggalMulai)->startOfDay(),
             Carbon::parse($tanggalSelesai)->endOfDay(),
         ])->latest()->get();
 
         return Excel::download(
-            new TransaksiExport($transaksi),
+            new TransaksiExport($transaksi, $periodeLabel),
             "laporan-transaksi-{$tanggalMulai}-{$tanggalSelesai}.xlsx"
         );
     }
@@ -190,8 +193,15 @@ class LaporanController extends Controller
 
         $kamar = $query->latest()->get();
 
+        $parts = [];
+        if ($tipe)
+            $parts[] = "Tipe: {$tipe}";
+        if ($status)
+            $parts[] = "Status: " . ($status === 'tersedia' ? 'Tersedia' : 'Terisi');
+        $filterLabel = !empty($parts) ? implode(', ', $parts) : 'Semua Kamar';
+
         return Excel::download(
-            new KamarExport($kamar),
+            new KamarExport($kamar, $filterLabel),
             "laporan-kamar" . ($tipe ? "-{$tipe}" : '') . ($status ? "-{$status}" : '') . ".xlsx"
         );
     }
