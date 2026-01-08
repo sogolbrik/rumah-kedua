@@ -9,12 +9,12 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
+// use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class SendBulkWhatsAppAnnouncement implements ShouldQueue
 {
-    use Queueable, InteractsWithQueue, Queueable, SerializesModels;
+    use Queueable, InteractsWithQueue, SerializesModels;
 
     public $timeout = 60;
     public $maxExceptions = 3;
@@ -36,30 +36,48 @@ class SendBulkWhatsAppAnnouncement implements ShouldQueue
      */
     public function handle(FonnteService $fonnteService): void
     {
+        $total = count($this->numbers);
+        // Log::info("Bulk WA dimulai ke {$total} nomor");
+
+        $messages = [];
+
         foreach ($this->numbers as $index => $number) {
-            try {
-                if (!is_numeric($number) || strlen($number) < 10) {
-                    //Log::warning("Nomor tidak valid: {$number}");
-                    continue;
-                }
-
-                $response = $fonnteService->send($number, $this->message);
-
-                // Opsional: log respons
-                if (isset($response['status']) && in_array($response['status'], ['success', 'queued'])) {
-                    //Log::error("Gagal kirim ke {$number}: " . $response->body());
-                } else {
-                    //Log::info("Berhasil kirim ke {$number}");
-                }
-
-            } catch (\Exception $e) {
-                //Log::error("Exception saat kirim ke {$number}: " . $e->getMessage());
+            if (!is_numeric($number) || strlen($number) < 10) {
+                continue;
             }
 
-            // Beri jeda 1 detik antar kirim (opsional, bisa diatur)
-            if ($index < count($this->numbers) - 1) {
-                sleep(1);
+            $messages[] = [
+                'target' => $number,
+                'message' => $this->message,
+                'delay' => (string) ($index + 1),
+            ];
+        }
+
+        if (empty($messages)) {
+            // Log::warning('⚠️ Tidak ada pesan valid untuk dikirim');
+            return;
+        }
+
+        try {
+            $response = $fonnteService->sendBulk($messages);
+            // Log::info('Payload ke Fonnte', [
+            //     'data' => json_encode($messages),
+            // ]);
+
+            if (!isset($response['status']) || $response['status'] !== true) {
+                // Log::error('Fonnte menolak bulk', $response);
+                throw new \Exception('Fonnte bulk gagal');
             }
+
+            // Log::info('Response Fonnte Bulk', $response);
+
+        } catch (\Throwable $e) {
+            // Log::error('Bulk WA gagal', [
+            //     'error' => $e->getMessage(),
+            // ]);
+
+            throw $e;
         }
     }
+
 }

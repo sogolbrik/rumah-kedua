@@ -24,6 +24,7 @@ class UserSeeder extends Seeder
             'name' => 'sogol',
             'email' => 'sogol@kos.com',
             'password' => bcrypt('sogol123'),
+            'telepon' => 6287870327957,
             'role' => 'user',
         ]);
 
@@ -47,11 +48,11 @@ class UserSeeder extends Seeder
             'tanggal_masuk' => date('Y-m-d'),
         ]);
 
-        $names = ['Budi Santoso', 'Siti Nurhaliza', 'Andi Wijaya', 'Rina Marlina', 'Agus Prasetyo', 'Dewi Lestari', 'Hendra Gunawan', 'Maya Sari', 'Rizki Ramadhan', 'Putri Amelia'];
+        $nama = ['Budi Santoso', 'Siti Nurhaliza', 'Andi Wijaya', 'Rina Marlina', 'Agus Prasetyo', 'Dewi Lestari', 'Hendra Gunawan', 'Maya Sari', 'Rizki Ramadhan', 'Putri Amelia'];
         for ($i = 0; $i < 10; $i++) {
             User::create([
-                'name' => $names[$i],
-                'email' => strtolower(str_replace(' ', '', $names[$i])) . '@kos.com',
+                'name' => $nama[$i],
+                'email' => strtolower(str_replace(' ', '', $nama[$i])) . '@kos.com',
                 'password' => bcrypt('user123'),
                 'role' => 'user',
             ]);

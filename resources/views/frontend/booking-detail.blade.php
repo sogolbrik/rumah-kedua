@@ -206,7 +206,7 @@
                     <div class="mb-10">
                         <div class="flex items-start justify-between mb-4">
                             <div>
-                                <span class="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-semibold mb-3">
+                                <span class="inline-block px-3 py-1 bg-blue-500 text-white rounded-full text-xs font-semibold mb-3">
                                     {{ $kamar->tipe }}
                                 </span>
                                 <h1 class="text-4xl font-bold text-neutral-900 mb-2">
@@ -483,7 +483,7 @@
                 </div>
 
                 <!-- Right Column: Sidebar Info -->
-                <div class="lg:col-span-1 sticky top-20 h-max">
+                <div class="lg:col-span-1 sticky top-25 h-max">
                     <div class="glass-card rounded-2xl p-8 sticky top-8">
                         <!-- Price Card -->
                         <div class="mb-8 pb-8 border-b border-neutral-200">

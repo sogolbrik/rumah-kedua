@@ -41,21 +41,38 @@ class FonnteService
 
             $result = $response->json();
 
-            Log::info('Fonnte API Response', [
-                'target' => $target,
-                'status' => $response->status(),
-                'response' => $result,
-            ]);
+            // Log::info('Fonnte API Response', [
+            //     'target' => $target,
+            //     'status' => $response->status(),
+            //     'response' => $result,
+            // ]);
 
             return $result;
         } catch (\Exception $e) {
-            Log::error('Fonnte API Error', [
-                'target' => $target,
-                'message' => $message,
-                'error' => $e->getMessage(),
-            ]);
+            // Log::error('Fonnte API Error', [
+            //     'target' => $target,
+            //     'message' => $message,
+            //     'error' => $e->getMessage(),
+            // ]);
 
             return ['error' => $e->getMessage()];
         }
     }
+
+    // kirim banyak nomor
+    public function sendBulk(array $messages): array
+    {
+        return Http::withHeaders([
+            'Authorization' => $this->apiKey,
+        ])
+            ->asMultipart()
+            ->post($this->apiUrl, [
+                [
+                    'name' => 'data',
+                    'contents' => json_encode($messages),
+                ],
+            ])
+            ->json();
+    }
+
 }
