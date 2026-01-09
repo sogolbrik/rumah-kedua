@@ -1,76 +1,78 @@
 <aside
-    class="fixed inset-y-0 left-0 z-40 w-72 transform bg-gradient-to-b from-slate-50 to-slate-100 border-r border-slate-200 lg:relative lg:inset-auto lg:translate-x-0 transition-transform duration-300 ease-in-out h-screen pb-16 shadow-lg lg:shadow-none"
+    class="fixed inset-y-0 left-0 z-40 w-72 transform bg-white border-r border-slate-200/60 lg:relative lg:inset-auto lg:translate-x-0 transition-all duration-300 ease-in-out h-screen flex flex-col shadow-2xl lg:shadow-none"
     :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'" aria-label="Sidebar Navigasi">
-    <!-- Header Logo -->
-    <div class="h-16 flex items-center gap-3 px-5 border-b border-slate-200/60 sticky top-0 bg-white/80 backdrop-blur-lg z-10">
-        @if ($pengaturan->logo)
-            <img src="{{ Storage::url($pengaturan->logo) }}" alt="Logo Kos" class="h-10 w-10 rounded-xl object-cover">
-        @else
-            <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-sm">
-                <i class="fa-solid fa-house text-sm"></i>
-            </div>
-        @endif
-        <div class="flex flex-col">
-            <span class="font-bold text-slate-900 tracking-tight">{{ $pengaturan->nama_kos ?? 'RumahKedua' }}</span>
-            <span class="text-[10px] text-slate-500 uppercase tracking-wider font-medium">Admin Panel</span>
+
+    <div class="h-20 flex items-center gap-3.5 px-6 sticky top-0 bg-white/80 backdrop-blur-md z-20">
+        <div class="relative group">
+            @if ($pengaturan->logo)
+                <img src="{{ Storage::url($pengaturan->logo) }}" alt="Logo Kos" class="h-11 w-11 rounded-2xl object-cover shadow-sm group-hover:scale-105 transition-transform">
+            @else
+                <div
+                    class="h-11 w-11 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-lg shadow-blue-200 group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-house-chimney text-base"></i>
+                </div>
+            @endif
+            <div class="absolute -bottom-1 -right-1 h-4 w-4 bg-emerald-500 border-2 border-white rounded-full"></div>
         </div>
-        <button class="ml-auto lg:hidden p-2 rounded-lg hover:bg-slate-200/50 text-slate-600 transition-colors" @click="sidebarOpen = false" aria-label="Tutup navigasi">
-            <i class="fa-solid fa-xmark text-sm"></i>
+
+        <div class="flex flex-col">
+            <span class="font-black text-slate-900 tracking-tight leading-none text-lg">{{ $pengaturan->nama_kos ?? 'RumahKedua' }}</span>
+            <span class="text-[10px] text-blue-600 uppercase tracking-[0.15em] font-black mt-1">Management v1.0</span>
+        </div>
+
+        <button class="ml-auto lg:hidden p-2 rounded-xl hover:bg-slate-100 text-slate-400 transition-colors" @click="sidebarOpen = false">
+            <i class="fa-solid fa-chevron-left text-xs"></i>
         </button>
     </div>
-    <!-- Navigation Menu -->
-    <nav class="px-4 py-5 flex flex-col h-full relative">
-        <div class="flex-1">
-            <!-- Menu Section Label -->
-            <div class="px-2 pb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">MENU UTAMA</div>
+
+    <nav class="flex-1 px-4 py-6 overflow-y-auto custom-scrollbar space-y-8">
+
+        <div>
+            <div class="px-4 mb-4 flex items-center justify-between">
+                <span class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Menu Utama</span>
+                <div class="h-px w-12 bg-slate-100"></div>
+            </div>
 
             <ul class="space-y-1.5">
-                <!-- Dashboard -->
                 <li>
                     <a href="{{ route('dashboard-admin') }}"
-                        class="flex items-center gap-3.5 px-4 py-2.5 rounded-xl transition-all duration-200 group
-                        {{ request()->routeIs('dashboard-admin') ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md' : 'text-slate-700 hover:bg-slate-200/60 hover:text-slate-900' }}">
-                        <i class="fa-solid fa-home text-sm group-hover:scale-110 transition-transform"></i>
-                        <span class="font-medium">Dashboard</span>
+                        class="flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all duration-300 group
+                        {{ request()->routeIs('dashboard-admin') ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 active-nav' : 'text-slate-600 hover:bg-slate-50 hover:text-blue-600' }}">
+                        <i class="fa-solid fa-home text-sm {{ request()->routeIs('dashboard-admin') ? '' : 'group-hover:rotate-6 transition-transform' }}"></i>
+                        <span class="font-bold text-[14px]">Dashboard</span>
                     </a>
                 </li>
 
-                <!-- Dropdown Master Data -->
-                <li x-cloak x-data="{ open: {{ request()->routeIs('kamar.*') || request()->routeIs('user.*') || request()->routeIs('galeri.*') ? 'true' : 'false' }} }">
+                <li x-data="{ open: {{ request()->routeIs('kamar.*') || request()->routeIs('user.*') || request()->routeIs('galeri.*') ? 'true' : 'false' }} }">
                     <button @click="open = !open"
-                        class="flex items-center justify-between w-full px-4 py-2.5 rounded-xl text-slate-700 hover:bg-slate-200/60 hover:text-slate-900 transition-all duration-200">
+                        class="flex items-center justify-between w-full px-4 py-3 rounded-2xl text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition-all duration-300 group">
                         <div class="flex items-center gap-3.5">
-                            <i class="fa-solid fa-layer-group text-sm"></i>
-                            <span class="font-medium">Master Data</span>
+                            <i class="fa-solid fa-box-archive text-sm group-hover:scale-110 transition-transform"></i>
+                            <span class="font-bold text-[14px]">Master Data</span>
                         </div>
-                        <i class="fa-solid fa-chevron-down text-xs transition-transform duration-300" :class="open ? 'rotate-180 text-slate-900' : 'text-slate-500'"></i>
+                        <i class="fa-solid fa-chevron-right text-[10px] transition-transform duration-300" :class="open ? 'rotate-90 text-blue-600' : 'text-slate-400'"></i>
                     </button>
 
-                    <!-- Smooth collapse wrapper -->
-                    <div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 max-h-0" x-transition:enter-end="opacity-100 max-h-[500px]"
-                        x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 max-h-[500px]" x-transition:leave-end="opacity-0 max-h-0" class="overflow-hidden">
-                        <ul class="mt-2 ml-2 space-y-1.5 pl-4 border-l-2 border-slate-200/40">
+                    <div x-show="open" x-collapse x-cloak>
+                        <ul class="mt-1 ml-6 space-y-1 border-l-2 border-slate-100 pl-4">
                             <li>
                                 <a href="{{ route('kamar.index') }}"
-                                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all
-                                    {{ request()->routeIs('kamar.*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-slate-600 hover:bg-slate-200/50 hover:text-slate-800' }}">
-                                    <i class="fa-solid fa-door-open text-xs"></i>
+                                    class="flex items-center gap-3 py-2 px-3 rounded-xl text-sm transition-all
+                                    {{ request()->routeIs('kamar.*') ? 'text-blue-600 font-bold' : 'text-slate-500 hover:text-blue-600' }}">
                                     <span>Kamar</span>
                                 </a>
                             </li>
                             <li>
                                 <a href="{{ route('galeri.index') }}"
-                                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all
-                                    {{ request()->routeIs('galeri.*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-slate-600 hover:bg-slate-200/50 hover:text-slate-800' }}">
-                                    <i class="fa-solid fa-images text-xs"></i>
+                                    class="flex items-center gap-3 py-2 px-3 rounded-xl text-sm transition-all
+                                    {{ request()->routeIs('galeri.*') ? 'text-blue-600 font-bold' : 'text-slate-500 hover:text-blue-600' }}">
                                     <span>Galeri</span>
                                 </a>
                             </li>
                             <li>
                                 <a href="{{ route('user.index') }}"
-                                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all
-                                    {{ request()->routeIs('user.*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-slate-600 hover:bg-slate-200/50 hover:text-slate-800' }}">
-                                    <i class="fa-solid fa-users text-xs"></i>
+                                    class="flex items-center gap-3 py-2 px-3 rounded-xl text-sm transition-all
+                                    {{ request()->routeIs('user.*') ? 'text-blue-600 font-bold' : 'text-slate-500 hover:text-blue-600' }}">
                                     <span>User</span>
                                 </a>
                             </li>
@@ -78,94 +80,89 @@
                     </div>
                 </li>
 
-                <!-- Transaksi -->
                 <li>
                     <a href="{{ route('transaksi.index') }}"
-                        class="flex items-center gap-3.5 px-4 py-2.5 rounded-xl transition-all duration-200 group
-                        {{ request()->routeIs('transaksi.index') ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md' : 'text-slate-700 hover:bg-slate-200/60 hover:text-slate-900' }}">
-                        <i class="fa-solid fa-receipt text-sm group-hover:scale-110 transition-transform"></i>
-                        <span class="font-medium">Transaksi</span>
-                    </a>
-                </li>
-
-                <!-- Pengumuman -->
-                <li>
-                    <a href="{{ route('pengumuman-admin') }}"
-                        class="flex items-center gap-3.5 px-4 py-2.5 rounded-xl transition-all duration-200 group
-                        {{ request()->routeIs('pengumuman-admin') ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md' : 'text-slate-700 hover:bg-slate-200/60 hover:text-slate-900' }}">
-                        <i class="fa-solid fa-bullhorn text-sm group-hover:scale-110 transition-transform"></i>
-                        <span class="font-medium">Pengumuman</span>
-                    </a>
-                </li>
-
-                <!-- Laporan -->
-                <li>
-                    <a href="{{ route('laporan.index') }}"
-                        class="flex items-center gap-3.5 px-4 py-2.5 rounded-xl transition-all duration-200 group
-                        {{ request()->routeIs('laporan.*') ? 'bg-gradient-to-r from-violet-500 to-purple-500 text-white shadow-md' : 'text-slate-700 hover:bg-slate-200/60 hover:text-slate-900' }}">
-                        <i class="fa-solid fa-chart-line text-sm group-hover:scale-110 transition-transform"></i>
-                        <span class="font-medium">Laporan</span>
-                    </a>
-                </li>
-            </ul>
-
-            <!-- Other Section -->
-            <div class="mt-6 px-2 pb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">LAINNYA</div>
-            <ul class="space-y-1.5">
-                <li>
-                    <a href="{{ route('pengaturan-admin.index') }}"
-                        class="flex items-center gap-3.5 px-4 py-2.5 rounded-xl transition-all group {{ request()->routeIs('pengaturan-admin.*') ? 'bg-gradient-to-r from-slate-500 to-slate-700 text-white shadow-md' : 'text-slate-700 hover:bg-slate-200/60 hover:text-slate-900' }}">
-                        <i class="fa-solid fa-gear text-sm group-hover:rotate-12 transition-transform"></i>
-                        <span class="font-medium">Pengaturan</span>
+                        class="flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all duration-300 group
+                        {{ request()->routeIs('transaksi.index') ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-100' : 'text-slate-600 hover:bg-slate-50 hover:text-emerald-500' }}">
+                        <i class="fa-solid fa-wallet text-sm group-hover:-translate-y-0.5 transition-transform"></i>
+                        <span class="font-bold text-[14px]">Transaksi</span>
                     </a>
                 </li>
             </ul>
         </div>
 
-        <!-- Profile Section -->
-        <div class="px-4 py-3 relative" x-data="{ openProfile: false }">
-            <div class="border-t border-slate-200 my-2"></div>
-            <button @click="openProfile = !openProfile"
-                class="flex items-center gap-3 w-full p-2 rounded-xl hover:bg-slate-200/60 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50">
-                <!-- Avatar -->
-                <div class="relative">
-                    @if (auth()->check() && auth()->user()->avatar)
-                        <img src="{{ Storage::url(auth()->user()->avatar) }}" alt="Avatar" class="h-10 w-10 rounded-full object-cover border-2 border-white shadow-sm">
-                    @else
-                        <div class="h-9 w-9 rounded-full bg-blue-100 flex items-center justify-center ring-1 ring-blue-200">
-                            <i class="fa-solid fa-user text-blue-600"></i>
-                        </div>
-                    @endif
-                    <span class="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-400 border-2 border-white"></span>
-                </div>
-                <!-- Name & Role -->
-                <div class="flex-1 text-left">
-                    <p class="text-sm font-semibold text-slate-900 leading-tight">{{ Auth::user()->name ?? 'Admin Kos' }}</p>
-                    <p class="text-xs text-slate-500 capitalize">{{ Auth::user()->role ?? 'admin' }}</p>
-                </div>
-                <!-- Dropdown Icon -->
-                <i class="fa-solid fa-chevron-up text-xs text-slate-400 transition-transform duration-300" :class="openProfile ? 'rotate-180' : ''"></i>
-            </button>
+        <div>
+            <div class="px-4 mb-4 flex items-center justify-between">
+                <span class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Sistem</span>
+                <div class="h-px w-12 bg-slate-100"></div>
+            </div>
 
-            <!-- Dropdown Menu -->
-            <div x-cloak x-show="openProfile" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2"
-                x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
-                x-transition:leave-end="opacity-0 translate-y-2" class="absolute bottom-full left-4 right-4 mb-2 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden z-20">
+            <ul class="space-y-1.5">
+                <li>
+                    <a href="{{ route('pengumuman-admin') }}"
+                        class="flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all duration-300 group
+                        {{ request()->routeIs('pengumuman-admin') ? 'bg-amber-500 text-white shadow-lg shadow-amber-100' : 'text-slate-600 hover:bg-slate-50 hover:text-amber-500' }}">
+                        <i class="fa-solid fa-bullhorn text-sm group-hover:animate-bounce"></i>
+                        <span class="font-bold text-[14px]">Pengumuman</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('laporan.index') }}"
+                        class="flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all duration-300 group
+                        {{ request()->routeIs('laporan.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'text-slate-600 hover:bg-slate-50 hover:text-indigo-600' }}">
+                        <i class="fa-solid fa-chart-pie text-sm group-hover:rotate-12 transition-transform"></i>
+                        <span class="font-bold text-[14px]">Laporan</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('pengaturan-admin.index') }}"
+                        class="flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all duration-300 group
+                        {{ request()->routeIs('pengaturan-admin.*') ? 'bg-slate-800 text-white shadow-lg shadow-slate-200' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
+                        <i class="fa-solid fa-sliders text-sm group-hover:rotate-90 transition-transform"></i>
+                        <span class="font-bold text-[14px]">Pengaturan</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
-                <a href="{{ route('profil-admin.index') }}" class="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
-                    <i class="fa-solid fa-user text-slate-500"></i>
-                    <span class="font-medium">Profil</span>
+    <div class="p-4 bg-slate-50/50 border-t border-slate-100" x-data="{ openProfile: false }">
+        <div class="relative">
+            <div x-cloak x-show="openProfile" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-4 scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="transition ease-in duration-150"
+                class="absolute bottom-full left-0 w-full mb-4 bg-white rounded-2xl shadow-2xl border border-slate-200/60 overflow-hidden z-50">
+
+                <div class="px-5 py-4 border-b border-slate-50 bg-slate-50/30">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Akun Anda</p>
+                </div>
+                <a href="{{ route('profil-admin.index') }}" class="flex items-center gap-3 px-5 py-3.5 text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-all">
+                    <i class="fa-solid fa-circle-user text-slate-400 group-hover:text-blue-500"></i> Profil Saya
                 </a>
-
-                <form method="POST" action="{{ route('logout') }}" class="block">
+                <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="flex items-center gap-3 w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                        <span class="font-medium">Keluar</span>
+                    <button type="submit" class="flex items-center gap-3 w-full px-5 py-3.5 text-sm font-bold text-red-600 hover:bg-red-50 transition-all">
+                        <i class="fa-solid fa-power-off text-red-400"></i> Keluar Aplikasi
                     </button>
                 </form>
             </div>
-        </div>
 
-    </nav>
+            <button @click="openProfile = !openProfile" class="flex items-center gap-3 w-full p-3 rounded-2xl bg-white border border-slate-200 shadow-sm hover:border-blue-300 transition-all group">
+                <div class="relative flex-shrink-0">
+                    @if (auth()->check() && auth()->user()->avatar)
+                        <img src="{{ Storage::url(auth()->user()->avatar) }}" class="h-10 w-10 rounded-xl object-cover ring-2 ring-slate-100">
+                    @else
+                        <div
+                            class="h-10 w-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 font-black border border-blue-100 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                            {{ substr(Auth::user()->name ?? 'A', 0, 1) }}
+                        </div>
+                    @endif
+                </div>
+                <div class="flex-1 text-left min-w-0">
+                    <p class="text-sm font-black text-slate-900 truncate tracking-tight">{{ Auth::user()->name ?? 'Admin Kos' }}</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase truncate">{{ Auth::user()->role ?? 'Superadmin' }}</p>
+                </div>
+                <i class="fa-solid fa-ellipsis-vertical text-slate-300 group-hover:text-slate-500 transition-colors px-1"></i>
+            </button>
+        </div>
+    </div>
 </aside>

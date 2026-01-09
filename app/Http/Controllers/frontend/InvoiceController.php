@@ -28,4 +28,15 @@ class InvoiceController extends Controller
 
         return $pdf->download("invoice-pembayaran-{$transaksi->kode}.pdf");
     }
+
+    public function previewInvoicePdf($id)
+    {
+        $transaksi = Transaksi::with('kamar', 'user')->findOrFail($id);
+
+        $pdf = Pdf::loadView('frontend.pembayaran.pdf.invoice-pdf', [
+            'transaksi' => $transaksi,
+        ]);
+
+        return $pdf->stream("invoice-pembayaran-{$transaksi->kode}.pdf");
+    }
 }

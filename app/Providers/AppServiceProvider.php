@@ -44,6 +44,7 @@ class AppServiceProvider extends ServiceProvider
                 ->where('role', 'penghuni')
                 ->whereHas('transaksi', function ($q) {
                     $q->whereDate('tanggal_jatuhtempo', '<', Carbon::today());
+                    $q->where('status_pembayaran', 'lunas');
                 })
                 ->latest();
 

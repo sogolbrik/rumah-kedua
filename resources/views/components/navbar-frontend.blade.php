@@ -17,7 +17,7 @@
 
             <!-- Desktop Menu -->
             <div class="hidden md:flex items-center gap-6">
-                @foreach ([['label' => 'Fasilitas', 'id' => 'fasilitas'], ['label' => 'Kamar', 'id' => 'kamar'], ['label' => 'Lokasi', 'id' => 'lokasi'], ['label' => 'Galeri', 'route' => 'galeri-kamar'], ['label' => 'Kontak', 'id' => 'kontak']] as $item)
+                @foreach ([['label' => 'Fasilitas', 'id' => 'fasilitas'], ['label' => 'Kamar', 'id' => 'kamar'], ['label' => 'Lokasi', 'id' => 'lokasi'], ['label' => 'Galeri', 'route' => 'galeri-kamar'], ['label' => 'FAQ', 'id' => 'faq']] as $item)
                     @if (isset($item['route']))
                         <a href="{{ route($item['route']) }}" class="text-gray-700 hover:text-cyan-600 font-medium relative group transition-colors duration-200">
                             {{ $item['label'] }}
@@ -59,7 +59,7 @@
             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4" id="mobile-menu"
             class="md:hidden pb-4 pt-3 space-y-2 bg-white/95 backdrop-blur-sm rounded-b-2xl border-t border-gray-100">
 
-            @foreach ([['label' => 'Fasilitas', 'id' => 'fasilitas'], ['label' => 'Kamar', 'id' => 'kamar'], ['label' => 'Lokasi', 'id' => 'lokasi'], ['label' => 'Galeri', 'route' => 'galeri-kamar'], ['label' => 'Kontak', 'id' => 'kontak']] as $item)
+            @foreach ([['label' => 'Fasilitas', 'id' => 'fasilitas'], ['label' => 'Kamar', 'id' => 'kamar'], ['label' => 'Lokasi', 'id' => 'lokasi'], ['label' => 'Galeri', 'route' => 'galeri-kamar'], ['label' => 'FAQ', 'id' => 'faq']] as $item)
                 @if (isset($item['route']))
                     <a href="{{ route($item['route']) }}" @click="mobileOpen = false" class="block px-4 py-2.5 text-gray-700 hover:bg-cyan-50 rounded-xl transition-colors font-medium">
                         {{ $item['label'] }}

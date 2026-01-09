@@ -51,11 +51,6 @@
                         </th>
                         <th class="text-left px-6 py-4">
                             <span class="text-slate-700 font-medium flex items-center gap-2">
-                                <i class="fa-solid fa-envelope text-slate-500 text-xs"></i> Email
-                            </span>
-                        </th>
-                        <th class="text-left px-6 py-4">
-                            <span class="text-slate-700 font-medium flex items-center gap-2">
                                 <i class="fa-solid fa-circle-info text-amber-500 text-xs"></i> Status
                             </span>
                         </th>
@@ -97,13 +92,10 @@
                                             {{ substr($user->name, 0, 2) }}
                                         </div>
                                     @endif
-                                    <span class="font-medium text-slate-900 group-hover:text-indigo-900">{{ $user->name }}</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-envelope text-slate-400 text-sm"></i>
-                                    <span class="text-slate-900 truncate max-w-[180px]">{{ $user->email }}</span>
+                                    <div class="flex flex-col">
+                                        <span class="font-medium text-slate-900 group-hover:text-indigo-900">{{ $user->name }}</span>
+                                        <span class="text-slate-400 text-[12px]">{{ $user->email }}</span>
+                                    </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4">

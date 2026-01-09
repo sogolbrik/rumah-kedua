@@ -4,333 +4,356 @@
 @section('frontend-main')
     <div x-data="{
         openContact: false,
-        detailModal: false,
-        detailData: { kode: '', total: '', metode: '', status: '', created_at: '' }
-    }" class="min-h-screen pt-18 pb-16 mt-10">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        openProfile: false,
+        detailModal: false
+    }" class="min-h-screen pt-28 pb-20 relative bg-[#f8fafc]">
 
-            <!-- Breadcrumb -->
-            <nav class="text-sm text-indigo-600 mb-5" aria-label="Breadcrumb">
-                <ol class="flex items-center space-x-1.5">
-                    <li><a href="{{ route('dashboard-penghuni') }}" class="hover:underline font-medium">Dashboard</a></li>
-                    <li class="text-indigo-300">/</li>
-                    <li class="font-semibold text-indigo-900">Penghuni</li>
-                </ol>
-            </nav>
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-100/40 rounded-full blur-[120px] -mr-48 -mt-48"></div>
+            <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-cyan-100/30 rounded-full blur-[100px] -ml-24 -mb-24"></div>
+        </div>
 
-            <!-- Header -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
-                <!-- Bagian Kiri: Salam + Info User -->
-                <div class="flex items-center gap-5">
-                    <!-- Avatar User -->
-                    <div class="relative">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
+
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                <nav class="flex items-center gap-2 text-sm font-medium" aria-label="Breadcrumb">
+                    <a href="{{ route('dashboard-penghuni') }}" class="text-slate-400 hover:text-blue-600 transition-colors">Workspace</a>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
+                    <span class="text-slate-900 font-bold tracking-tight">Resident Dashboard</span>
+                </nav>
+                <div class="flex items-center gap-3 text-xs font-mono text-slate-400 bg-white px-3 py-1.5 rounded-full border border-slate-200 shadow-sm">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                    LAST SYNC: {{ now()->format('H:i') }} WIB
+                </div>
+            </div>
+
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-12 animate-fade-in-up">
+                <div class="flex items-center gap-6">
+                    <div class="relative group">
+                        <div class="absolute -inset-1 bg-gradient-to-tr from-blue-600 to-cyan-400 rounded-[2rem] blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
                         @if ($user->avatar)
-                            <img src="{{ Storage::url($user->avatar) }}" alt="{{ $user->name }}" class="w-14 h-14 rounded-full ring-2 ring-indigo-300 object-cover shadow-sm">
+                            <img src="{{ Storage::url($user->avatar) }}" alt="{{ $user->name }}" class="relative w-20 h-20 rounded-[1.8rem] object-cover border-4 border-white shadow-xl">
                         @else
-                            <div
-                                class="w-14 h-14 rounded-full bg-gradient-to-br from-indigo-500 to-teal-500 flex items-center justify-center text-white font-bold text-lg ring-2 ring-indigo-300 shadow-sm">
+                            <div class="relative w-20 h-20 rounded-[1.8rem] bg-slate-900 flex items-center justify-center text-white font-black text-2xl border-4 border-white shadow-xl">
                                 {{ substr($user->name, 0, 2) }}
                             </div>
                         @endif
+                        <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 border-4 border-[#f8fafc] rounded-full"></div>
                     </div>
-
-                    <!-- Nama & Role -->
                     <div>
-                        <h1 class="text-2xl font-bold text-slate-900 bg-clip-text bg-gradient-to-r from-slate-900 to-slate-700">
-                            Halo, {{ $user->name }}!
+                        <h1 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tighter">
+                            Selamat Datang, <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">{{ explode(' ', $user->name)[0] }}</span>!
                         </h1>
-                        <p class="text-xs font-semibold px-2.5 py-1 bg-indigo-100 text-indigo-800 rounded-full w-fit mt-1">
-                            {{ $user->role ?? 'Penghuni' }}
-                        </p>
+                        <p class="text-slate-500 font-medium mt-1">Kelola hunian dan pantau transaksi Anda dengan mudah.</p>
                     </div>
                 </div>
 
-                <!-- Bagian Kanan: Tombol Aksi -->
-                <div class="flex flex-wrap gap-3 items-center">
-                    <div x-data="{ openProfile: false }" class="relative">
+                <div class="flex flex-wrap gap-3">
+                    <div class="relative">
                         <button @click="openProfile = !openProfile"
-                            class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 font-medium shadow-sm hover:shadow">
-                            <i class="fa-solid fa-user-gear text-slate-600"></i>
-                            <span>Pengaturan</span>
-                            <i class="fa-solid fa-chevron-down text-xs opacity-70"></i>
+                            class="flex items-center gap-3 px-6 py-3 bg-white border border-slate-200 text-slate-700 rounded-2xl hover:border-blue-300 hover:shadow-lg transition-all duration-300 font-bold text-sm">
+                            <i class="fa-solid fa-user-gear text-blue-500"></i>
+                            Settings
+                            <i class="fa-solid fa-chevron-down text-[10px] transition-transform" :class="openProfile ? 'rotate-180' : ''"></i>
                         </button>
+                        <template x-teleport="body">
+                            <div x-cloak x-show="openProfile" @click.outside="openProfile = false" x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 scale-95 translate-y-2" x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                                x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+                                class="fixed top-[120px] right-[calc((100vw-1280px)/2+1rem)] 
+                                w-56 bg-white rounded-2xl shadow-2xl border border-slate-100 
+                                py-2 z-[9999] overflow-hidden origin-top-right">
+                                <a href="{{ route('profil-penghuni.index') }}" class="flex items-center gap-3 px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition-colors">
+                                    <i class="fa-solid fa-circle-user opacity-50"></i> Edit Profile
+                                </a>
 
-                        <div x-cloak x-show="openProfile" @click.outside="openProfile = false" class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-200 py-1.5 z-10">
-                            <a href="{{ route('profil-penghuni.index') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 items-center">
-                                <i class="fa-solid fa-user-edit mr-2 text-slate-500"></i> Edit Profil
-                            </a>
-                            <form method="POST" action="{{ route('logout') }}" x-data>
-                                @csrf
-                                <button type="submit" class="w-full text-left px-4 py-2 text-sm text-rose-600 hover:bg-rose-50 flex items-center">
-                                    <i class="fa-solid fa-arrow-right-from-bracket mr-2"></i> Logout
-                                </button>
-                            </form>
-                        </div>
+                                <div class="h-px bg-slate-100 my-1 mx-4"></div>
+
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 text-sm text-rose-500 hover:bg-rose-50 transition-colors">
+                                        <i class="fa-solid fa-power-off opacity-50"></i> Secure Logout
+                                    </button>
+                                </form>
+                            </div>
+                        </template>
+
+
                     </div>
 
                     <button @click="openContact = true"
-                        class="group px-5 py-2.5 bg-gradient-to-r from-blue-500 to-sky-500 text-white rounded-xl shadow-md hover:shadow-lg hover:from-blue-600 hover:to-sky-600 transition-all duration-200 font-medium">
-                        <i class="fa-solid fa-headset mr-2 group-hover:animate-bounce"></i> Hubungi Admin
+                        class="group flex items-center gap-3 px-6 py-3 bg-slate-900 text-white rounded-2xl shadow-xl shadow-slate-200 hover:bg-blue-600 hover:-translate-y-1 transition-all duration-300 font-bold text-sm">
+                        <i class="fa-solid fa-headset group-hover:rotate-12 transition-transform"></i>
+                        Support Center
                     </button>
                 </div>
             </div>
 
-            <!-- Grid Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                <!-- Kartu Kamar -->
-                <div class="bg-white rounded-2xl shadow-lg border border-white/50 overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5">
-                    @if ($user->kamar)
-                        @if ($user->kamar->gambar)
-                            <div class="h-44 overflow-hidden">
-                                <img src="{{ Storage::url($user->kamar->gambar) }}" alt="Kamar {{ $user->kamar->kode_kamar }}"
-                                    class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-10">
+
+                <div class="lg:col-span-8 group">
+                    <div
+                        class="relative bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden h-full flex flex-col md:flex-row transition-all duration-500 hover:shadow-2xl hover:border-blue-100">
+                        @if ($user->kamar)
+                            <div class="md:w-2/5 relative overflow-hidden">
+                                <img src="{{ Storage::url($user->kamar->gambar) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
+                                <div class="absolute bottom-6 left-6">
+                                    <span class="px-4 py-1.5 bg-blue-500 text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg">
+                                        {{ $user->kamar->tipe }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="md:w-3/5 p-8 md:p-10 flex flex-col justify-center">
+                                <div class="flex justify-between items-start mb-4">
+                                    <h2 class="text-4xl font-black text-slate-900 tracking-tighter">{{ $user->kamar->kode_kamar }}</h2>
+                                    <div class="px-4 py-1.5 bg-emerald-50 text-emerald-600 rounded-full text-xs font-bold border border-emerald-100 flex items-center gap-2">
+                                        <span class="w-2 h-2 bg-emerald-500 rounded-full"></span> Active Unit
+                                    </div>
+                                </div>
+                                <p class="text-slate-500 leading-relaxed text-sm mb-8 italic">"{{ Str::limit($user->kamar->deskripsi, 140) }}"</p>
+
+                                <div class="grid grid-cols-2 gap-6 pt-6 border-t border-slate-100">
+                                    <div>
+                                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Monthly Rent</p>
+                                        <p class="text-xl font-black text-slate-900">Rp {{ number_format($user->kamar->harga, 0, ',', '.') }}</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Billing Cycle</p>
+                                        <p class="text-sm font-bold text-slate-700">Setiap Jatuh Tempo Anda</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @else
+                            <div class="w-full py-16 text-center space-y-6">
+                                <div class="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center mx-auto border border-slate-100">
+                                    <i class="fa-solid fa-door-open text-3xl text-slate-300"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-slate-900">Unit Belum Terdaftar</h3>
+                                    <p class="text-slate-500 max-w-xs mx-auto mt-2">Segera pilih unit kamar impian Anda untuk menikmati fasilitas premium kami.</p>
+                                </div>
+                                <a href="{{ route('booking') }}" class="inline-flex items-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-2xl font-bold hover:bg-slate-900 transition-all">
+                                    Eksplorasi Unit <i class="fa-solid fa-arrow-right text-xs"></i>
+                                </a>
                             </div>
                         @endif
-                        <div class="p-5">
-                            <div class="inline-flex items-center px-3 py-1.5 bg-indigo-100 text-indigo-800 rounded-full text-xs font-bold mb-3">
-                                {{ $user->kamar->tipe }}
-                            </div>
-                            <h3 class="font-bold text-xl text-slate-900">{{ $user->kamar->kode_kamar }}</h3>
-                            <p class="text-slate-600 mt-2 text-sm leading-relaxed">{{ Str::limit($user->kamar->deskripsi, 90) }}</p>
-                            <div class="mt-5 flex items-center justify-between">
-                                <span class="text-sm text-slate-500 font-medium">Harga</span>
-                                <span class="text-lg font-bold text-teal-600">Rp {{ number_format($user->kamar->harga, 0, ',', '.') }}</span>
-                            </div>
-                            <div class="mt-3 flex items-center">
-                                <span class="inline-flex items-center px-3 py-1 rounded-full bg-teal-100 text-teal-800 text-xs font-medium">
-                                    <i class="fa-solid fa-circle text-teal-500 mr-1.5 text-[6px]"></i> Aktif
-                                </span>
-                            </div>
-                        </div>
-                    @else
-                        <div class="text-center py-12 px-6">
-                            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 text-indigo-600 mb-4 shadow-sm">
-                                <i class="fa-solid fa-door-open text-2xl"></i>
-                            </div>
-                            <h3 class="font-bold text-lg text-slate-900 mb-2">Belum Punya Kamar?</h3>
-                            <p class="text-slate-600 text-sm mb-4 max-w-xs mx-auto">Temukan kamar impian Anda sekarang!</p>
-                            <a href="{{ route('booking') }}"
-                                class="inline-block px-5 py-2.5 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white rounded-xl shadow transition-all duration-300 font-medium">
-                                Lihat Kamar Tersedia
-                            </a>
-                        </div>
-                    @endif
-                </div>
-
-                <!-- Statistik Penghuni -->
-                <div class="bg-white rounded-2xl shadow-lg border border-white/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 p-5 md:col-span-1">
-                    <h3 class="font-bold text-lg text-slate-900 mb-4 flex items-center">
-                        <i class="fa-solid fa-chart-line text-indigo-600 mr-2"></i> Statistik Anda
-                    </h3>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="p-4 rounded-xl bg-indigo-50 border border-indigo-100">
-                            <div class="text-xs text-indigo-600 font-medium">Total Transaksi</div>
-                            <div class="text-xl font-bold text-indigo-800 mt-1">{{ $totalTransaksi }}</div>
-                        </div>
-                        <div class="p-4 rounded-xl bg-teal-50 border border-teal-100">
-                            <div class="text-xs text-teal-600 font-medium">Total Bayar</div>
-                            <div class="text-xl font-bold text-teal-800 mt-1">Rp {{ number_format($totalBayar, 0, ',', '.') }}</div>
-                        </div>
-                        <div class="p-4 rounded-xl bg-amber-50 border border-amber-100">
-                            <div class="text-xs text-amber-600 font-medium">Terakhir Bayar</div>
-                            <div class="text-xl font-bold text-amber-800 mt-1">
-                                {{ $terakhirBayar?->translatedFormat('d F Y') ?? '–' }}
-                            </div>
-                        </div>
-                        <div class="p-4 rounded-xl {{ $menunggak ? 'bg-rose-50 border-rose-100' : 'bg-emerald-50 border-emerald-100' }}">
-                            <div class="text-xs {{ $menunggak ? 'text-rose-600' : 'text-emerald-600' }} font-medium">Status Tagihan</div>
-                            <div class="flex items-center mt-1">
-                                <i class="fa-solid {{ $menunggak ? 'fa-triangle-exclamation text-rose-500' : 'fa-circle-check text-emerald-500' }} mr-1.5 text-sm"></i>
-                                <span class="text-xl font-bold {{ $menunggak ? 'text-rose-800' : 'text-emerald-800' }}">
-                                    {{ $menunggak ? 'Menunggak' : 'Lunas' }}
-                                </span>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
-                <!-- Ringkasan Kontrak -->
-                <div class="bg-white rounded-2xl shadow-lg border border-white/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 p-5">
-                    <h3 class="font-bold text-lg text-slate-900 mb-4 flex items-center">
-                        <i class="fa-solid fa-file-contract text-indigo-600 mr-2"></i> Kontrak Anda
-                    </h3>
-                    @if ($user->kamar)
-                        @php
-                            $trx = $user->transaksi->sortByDesc('tanggal_pembayaran')->first();
-                        @endphp
-                        <ul class="space-y-4 text-sm">
-                            <li class="flex justify-between pb-2 border-b border-slate-100">
-                                <span class="text-slate-500">Tanggal Masuk</span>
-                                <span class="font-semibold text-slate-800">
-                                    {{ $trx?->masuk_kamar?->translatedFormat('d M Y') ?? '–' }}
-                                </span>
-                            </li>
-                            <li class="flex justify-between pb-2 border-b border-slate-100">
-                                <span class="text-slate-500">Durasi</span>
-                                <span class="font-semibold text-slate-800">
-                                    {{ $trx?->durasi ?? '–' }} bulan
-                                </span>
-                            </li>
-                            <li class="flex justify-between">
-                                <span class="text-slate-500">Jatuh Tempo</span>
-                                <span class="font-semibold {{ $trx && $trx->tanggal_jatuhtempo < now() && $trx->status_pembayaran !== 'paid' ? 'text-rose-600' : 'text-slate-800' }}">
-                                    {{ $trx?->tanggal_jatuhtempo?->translatedFormat('d F Y') ?? '–' }}
-                                </span>
-                            </li>
-                        </ul>
-                    @else
-                        <p class="text-slate-500 italic">Belum ada kontrak aktif.</p>
-                    @endif
+                <div class="lg:col-span-4 grid grid-cols-1 gap-6">
+                    <div class="bg-slate-900 rounded-[2rem] p-8 relative overflow-hidden group">
+                        <div class="absolute -right-4 -top-4 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all"></div>
+                        <i class="fa-solid fa-wallet text-blue-400 text-xl mb-4"></i>
+                        <h4 class="text-slate-400 text-xs font-black uppercase tracking-widest mb-1">Total Investasi Hunian</h4>
+                        <p class="text-2xl font-black text-white tracking-tight">Rp {{ number_format($totalBayar, 0, ',', '.') }}</p>
+                        <div class="mt-4 flex items-center gap-2">
+                            <span class="text-[10px] text-emerald-400 font-bold bg-emerald-400/10 px-2 py-0.5 rounded-md">
+                                <i class="fa-solid fa-check-double mr-1"></i> Verified
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-[2rem] p-8 border border-slate-200 shadow-sm hover:shadow-xl transition-all">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-900 border border-slate-100">
+                                <i class="fa-solid fa-calendar-check"></i>
+                            </div>
+                            <span
+                                class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter {{ $menunggak ? 'bg-rose-50 text-rose-600 border border-rose-100' : 'bg-emerald-50 text-emerald-600 border border-emerald-100' }}">
+                                {{ $menunggak ? 'Outstanding' : 'Cleared' }}
+                            </span>
+                        </div>
+                        <h4 class="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Status Pembayaran</h4>
+                        <p class="text-xl font-black text-slate-900">{{ $menunggak ? 'Ada Tunggakan' : 'Lunas & Aman' }}</p>
+                        <p class="text-xs text-slate-400 mt-2 italic">Update terakhir: {{ $terakhirBayar?->translatedFormat('d M Y') ?? 'N/A' }}</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Alert Menunggak -->
             @if ($menunggak)
-                <div class="mb-8 p-5 bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center gap-4 animate-fadeIn">
-                    <div class="flex-shrink-0 w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center">
-                        <i class="fa-solid fa-triangle-exclamation text-amber-600 text-xl"></i>
+                <div class="mb-12 relative group animate-bounce-slow">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-rose-500 to-orange-500 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+                    <div class="relative bg-white border border-rose-100 p-6 md:p-8 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div class="flex items-center gap-6">
+                            <div class="w-16 h-16 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-500 text-2xl shadow-inner">
+                                <i class="fa-solid fa-triangle-exclamation animate-pulse"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-black text-slate-900 tracking-tight">Perhatian: Tagihan Tertunggak</h3>
+                                <p class="text-slate-500 text-sm">Selesaikan pembayaran sebelum tanggal jatuh tempo untuk menghindari denda administratif.</p>
+                            </div>
+                        </div>
+                        <a href="{{ route('penghuni.pembayaran') }}"
+                            class="w-full md:w-auto px-10 py-4 bg-rose-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-rose-200 hover:bg-slate-900 hover:-translate-y-1 transition-all">
+                            Bayar Sekarang
+                        </a>
                     </div>
-                    <div class="flex-1">
-                        <div class="font-bold text-amber-800">Tagihan Anda Tertunggak!</div>
-                        <div class="text-amber-700">Segera lakukan pembayaran untuk menghindari pemutusan layanan.</div>
-                    </div>
-                    <a href="{{ route('penghuni.pembayaran') }}"
-                        class="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-xl shadow transition-all duration-300 font-medium whitespace-nowrap">
-                        Bayar Sekarang
-                    </a>
                 </div>
             @endif
 
-            <!-- Tabel Transaksi -->
-            <div class="bg-white rounded-2xl shadow-lg border border-white/50 overflow-hidden transition-all duration-300 hover:shadow-xl">
-                <div class="px-6 py-4 border-b border-slate-100/50">
-                    <h3 class="font-bold text-lg text-slate-900 flex items-center">
-                        <i class="fa-solid fa-receipt text-indigo-600 mr-2"></i> Riwayat Transaksi
-                    </h3>
+            <div class="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden">
+                <div class="px-10 py-8 border-b border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-50/50">
+                    <div>
+                        <h3 class="text-xl font-black text-slate-900 tracking-tight">Ledger Transaksi</h3>
+                        <p class="text-slate-500 text-xs font-medium mt-1 uppercase tracking-widest">Transaction History & Invoices</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-slate-400">Total: {{ $totalTransaksi }} Records</span>
+                    </div>
                 </div>
+
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
-                        <thead class="bg-slate-50 text-slate-700">
-                            <tr>
-                                <th class="px-6 py-3 text-left font-medium text-xs uppercase tracking-wider">#</th>
-                                <th class="px-6 py-3 text-left font-medium text-xs uppercase tracking-wider">Kode</th>
-                                <th class="px-6 py-3 text-left font-medium text-xs uppercase tracking-wider">Tanggal Bayar</th>
-                                <th class="px-6 py-3 text-left font-medium text-xs uppercase tracking-wider">Jatuh Tempo</th>
-                                <th class="px-6 py-3 text-left font-medium text-xs uppercase tracking-wider">Metode</th>
-                                <th class="px-6 py-3 text-left font-medium text-xs uppercase tracking-wider">Status</th>
-                                <th class="px-6 py-3 text-right font-medium text-xs uppercase tracking-wider">Total</th>
-                                <th class="px-6 py-3 text-left font-medium text-xs uppercase tracking-wider">Aksi</th>
+                        <thead>
+                            <tr class="bg-white text-slate-400 border-b border-slate-100">
+                                <th class="px-8 py-5 text-left font-black uppercase tracking-widest text-[10px]">Reference</th>
+                                <th class="px-8 py-5 text-left font-black uppercase tracking-widest text-[10px]">Issued Date</th>
+                                <th class="px-8 py-5 text-left font-black uppercase tracking-widest text-[10px]">Method</th>
+                                <th class="px-8 py-5 text-left font-black uppercase tracking-widest text-[10px]">Status</th>
+                                <th class="px-8 py-5 text-right font-black uppercase tracking-widest text-[10px]">Amount</th>
+                                <th class="px-8 py-5 text-center font-black uppercase tracking-widest text-[10px]">Action</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100">
+                        <tbody class="divide-y divide-slate-50">
                             @forelse($transaksis as $trx)
-                                <tr class="hover:bg-slate-50 transition-colors duration-200">
-                                    <td class="px-6 py-4 text-slate-700">{{ $loop->iteration + ($transaksis->currentPage() - 1) * $transaksis->perPage() }}</td>
-                                    <td class="px-6 py-4 font-mono text-indigo-700 font-medium">{{ $trx->kode }}</td>
-                                    <td class="px-6 py-4">{{ $trx->tanggal_pembayaran?->format('d M Y') ?? '–' }}</td>
-                                    <td class="px-6 py-4">{{ $trx->tanggal_jatuhtempo?->format('d M Y') ?? '–' }}</td>
-                                    <td class="px-6 py-4 capitalize text-slate-700">{{ $trx->metode_pembayaran ?? '–' }}</td>
-                                    <td class="px-6 py-4">
-                                        @switch($trx->status_pembayaran)
-                                            @case('paid')
-                                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 font-medium text-xs">
-                                                    <i class="fa-solid fa-circle-check text-emerald-500 text-[8px]"></i> Lunas
-                                                </span>
-                                            @break
-
-                                            @case('pending')
-                                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-800 font-medium text-xs">
-                                                    <i class="fa-solid fa-clock text-amber-500 text-[8px]"></i> Menunggu
-                                                </span>
-                                            @break
-
-                                            @default
-                                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-100 text-rose-800 font-medium text-xs">
-                                                    <i class="fa-solid fa-circle-xmark text-rose-500 text-[8px]"></i> {{ ucfirst($trx->status_pembayaran) }}
-                                                </span>
-                                        @endswitch
+                                <tr class="hover:bg-blue-50/30 transition-colors group">
+                                    <td class="px-8 py-6">
+                                        <span class="font-mono font-bold text-blue-600">#{{ $trx->kode }}</span>
                                     </td>
-                                    <td class="px-6 py-4 text-right font-bold text-slate-900">Rp {{ number_format($trx->total_bayar, 0, ',', '.') }}</td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-8 py-6 text-slate-600 font-medium">
+                                        {{ $trx->tanggal_pembayaran?->format('d M, Y') ?? '—' }}
+                                    </td>
+                                    <td class="px-8 py-6">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-2 h-2 bg-slate-300 rounded-full"></div>
+                                            <span class="capitalize text-slate-700 font-bold tracking-tight text-xs">{{ $trx->midtrans_payment_type ?? 'Cash' }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-8 py-6">
+                                        @php
+                                            $statusClasses = [
+                                                'paid' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
+                                                'pending' => 'bg-amber-50 text-amber-600 border-amber-100',
+                                                'failed' => 'bg-rose-50 text-rose-600 border-rose-100',
+                                                'cancelled' => 'bg-slate-50 text-slate-600 border-slate-200',
+                                                'expired' => 'bg-orange-50 text-orange-600 border-orange-200',
+                                            ];
+                                            $currentClass = $statusClasses[$trx->status_pembayaran] ?? 'bg-gray-50 text-gray-600 border-gray-200';
+                                            $labelMap = [
+                                                'paid' => 'Settled',
+                                                'pending' => 'Pending',
+                                                'failed' => 'Failed',
+                                                'cancelled' => 'Cancelled',
+                                                'expired' => 'Expired',
+                                            ];
+                                            $displayLabel = $labelMap[$trx->status_pembayaran] ?? ucfirst($trx->status_pembayaran);
+                                        @endphp
+                                        <span class="inline-flex items-center px-3 py-1 rounded-lg border {{ $currentClass }} font-black text-[10px] uppercase">
+                                            {{ $displayLabel }}
+                                        </span>
+                                    </td>
+                                    <td class="px-8 py-6 text-right">
+                                        <span class="font-black text-slate-900">Rp {{ number_format($trx->total_bayar, 0, ',', '.') }}</span>
+                                    </td>
+                                    <td class="px-8 py-6 text-center">
                                         <a href="{{ route('user.pembayaran.invoice', $trx->id) }}"
-                                            class="px-3.5 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-100 rounded-lg hover:bg-indigo-200 transition-colors duration-200">
-                                            Detail
+                                            class="inline-flex items-center justify-center w-10 h-10 bg-white border border-slate-200 text-slate-400 rounded-xl hover:text-blue-600 hover:border-blue-200 hover:shadow-md transition-all">
+                                            <i class="fa-solid fa-file-invoice text-sm"></i>
                                         </a>
                                     </td>
                                 </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="8" class="px-6 py-12 text-center text-slate-500">
-                                            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 text-slate-400 mb-3">
-                                                <i class="fa-regular fa-receipt text-xl"></i>
-                                            </div>
-                                            <p class="text-base font-medium">Belum ada transaksi.</p>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="px-6 py-4 border-t border-slate-100/50">
-                        {{ $transaksis->links() }}
-                    </div>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="px-8 py-20 text-center">
+                                        <div class="text-slate-300 mb-4 text-4xl"><i class="fa-solid fa-box-open"></i></div>
+                                        <p class="text-slate-500 font-bold">Belum ada riwayat transaksi tercatat.</p>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
-
-                <!-- Modal: Hubungi Admin -->
-                <div x-show="openContact" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
-                    x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-                    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" @click.outside="openContact = false" role="dialog" aria-modal="true">
-                    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-slate-100">
-                        <h3 class="font-bold text-xl text-slate-900 mb-3">Hubungi Admin</h3>
-                        <p class="text-slate-600 mb-4">Tim kami siap membantu Anda kapan saja!</p>
-                        <ul class="space-y-3">
-                            <li class="flex items-center">
-                                <div class="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center mr-3 text-indigo-600">
-                                    <i class="fa-solid fa-phone"></i>
-                                </div>
-                                <span>+62 858-7032-7957</span>
-                            </li>
-                            <li class="flex items-center">
-                                <div class="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center mr-3 text-amber-600">
-                                    <i class="fa-solid fa-envelope"></i>
-                                </div>
-                                <span>rumahkedua@gmail.com</span>
-                            </li>
-                            <li class="flex items-center">
-                                <a href="https://wa.me/6285870327957" target="_blank" rel="noopener noreferrer" class="flex items-center">
-                                    <div class="w-9 h-9 rounded-full bg-teal-100 flex items-center justify-center mr-3 text-teal-600">
-                                        <i class="fa-brands fa-whatsapp"></i>
-                                    </div>
-                                    <span>WhatsApp Resmi</span>
-                                </a>
-                            </li>
-                        </ul>
-                        <div class="mt-6 flex justify-end">
-                            <button @click="openContact = false" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl font-medium transition-colors duration-200">
-                                Tutup
-                            </button>
-                        </div>
-                    </div>
+                <div class="px-10 py-6 bg-slate-50/50 border-t border-slate-100">
+                    {{ $transaksis->links() }}
                 </div>
-
-                <style>
-                    @keyframes fadeIn {
-                        from {
-                            opacity: 0;
-                            transform: translateY(10px);
-                        }
-
-                        to {
-                            opacity: 1;
-                            transform: translateY(0);
-                        }
-                    }
-
-                    .animate-fadeIn {
-                        animation: fadeIn 0.4s ease-out forwards;
-                    }
-                </style>
             </div>
         </div>
-    @endsection
+
+        <div x-show="openContact" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <div x-show="openContact" @click="openContact = false" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                class="absolute inset-0 bg-slate-900/40 backdrop-blur-md"></div>
+
+            <div x-show="openContact" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-8"
+                x-transition:enter-end="opacity-100 scale-100 translate-y-0" class="relative bg-white rounded-[3rem] shadow-2xl max-w-lg w-full overflow-hidden border border-white/20">
+                <div class="bg-slate-900 p-10 text-white relative">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl"></div>
+                    <h3 class="text-3xl font-black tracking-tight mb-2">Concierge Support</h3>
+                    <p class="text-slate-400 text-sm">Tim kami siap membantu kendala teknis maupun administratif Anda.</p>
+                </div>
+                <div class="p-10 space-y-4">
+                    @foreach ([['icon' => 'fa-brands fa-whatsapp', 'color' => 'text-emerald-500', 'bg' => 'bg-emerald-50', 'label' => 'WhatsApp Support', 'value' => '+62 858-7032-7957', 'link' => 'https://wa.me/6285870327957'], ['icon' => 'fa-envelope', 'color' => 'text-blue-500', 'bg' => 'bg-blue-50', 'label' => 'Official Email', 'value' => 'care@rumahkedua.id', 'link' => 'mailto:rumahkedua@gmail.com'], ['icon' => 'fa-clock', 'color' => 'text-amber-500', 'bg' => 'bg-amber-50', 'label' => 'Service Hours', 'value' => 'Mon - Sat, 08:00 - 20:00', 'link' => '#']] as $item)
+                        <a href="{{ $item['link'] }}" class="flex items-center gap-5 p-4 rounded-2xl border border-slate-100 hover:border-blue-200 hover:bg-blue-50/30 transition-all group">
+                            <div class="w-12 h-12 {{ $item['bg'] }} {{ $item['color'] }} rounded-xl flex items-center justify-center text-xl shadow-sm">
+                                <i class="fa {{ $item['icon'] }} {{ strpos($item['icon'], 'fa-') === 0 ? '' : 'fa-solid' }}"></i>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ $item['label'] }}</p>
+                                <p class="text-slate-900 font-bold">{{ $item['value'] }}</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right ml-auto text-slate-300 group-hover:text-blue-500 transition-colors"></i>
+                        </a>
+                    @endforeach
+                    <button @click="openContact = false" class="w-full mt-6 py-4 bg-slate-100 text-slate-600 rounded-2xl font-black text-sm hover:bg-slate-200 transition-colors">
+                        Dismiss
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        [x-cloak] {
+            display: none !important;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        @keyframes bounce-slow {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        .animate-bounce-slow {
+            animation: bounce-slow 4s ease-in-out infinite;
+        }
+    </style>
+@endsection

@@ -3,7 +3,6 @@
 @section('title', 'Dashboard')
 
 @section('admin-main')
-    <!-- Header Utama -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
         <div>
             <h1 class="text-2xl font-bold text-slate-900">Dashboard</h1>
@@ -18,444 +17,325 @@
         </div>
     </div>
 
-    <!-- Card Section -->
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {{-- Card: Hunian Terisi --}}
-        <div x-data="countUp({{ $kamar->where('status', 'Terisi')->count() ? round(($kamar->where('status', 'Terisi')->count() / $kamar->where('status', 'Tersedia')->count()) * 100, 0) : 0 }})" x-init="animate"
-            class="group rounded-xl p-5 shadow-sm hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-blue-500 to-blue-600 text-white relative overflow-hidden">
-            <div class="absolute -top-3 -right-3 h-16 w-16 bg-white/10 rounded-full blur-lg group-hover:scale-125 transition-transform duration-500"></div>
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm opacity-90">Hunian Terisi</p>
-                    <p class="mt-1 text-2xl font-bold" x-text="display + '%'">0%</p>
+        <div x-data="countUp({{ $kamar->where('status', 'Terisi')->count() ? round(($kamar->where('status', 'Terisi')->count() / $kamar->count()) * 100, 0) : 0 }})" x-init="animate" class="group relative overflow-hidden rounded-[2rem] bg-slate-900 p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
+            <div class="relative z-10">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="h-12 w-12 rounded-2xl bg-white/10 flex items-center justify-center text-white transition-transform group-hover:scale-110">
+                        <i class="fa-solid fa-people-roof text-xl"></i>
+                    </div>
+                    <span class="text-[10px] font-black uppercase tracking-tighter text-slate-400">Occupancy Rate</span>
                 </div>
-                <div class="h-11 w-11 rounded-xl bg-white/20 flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
-                    <i class="fa-solid fa-building-user text-lg text-white"></i>
+                <p class="text-4xl font-black text-white" x-text="display + '%'"></p>
+                <p class="text-xs font-medium text-slate-400 mt-1">Rasio Unit Terisi</p>
+
+                <div class="mt-4 h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
+                    <div class="h-full rounded-full bg-blue-500 transition-all duration-1000 ease-out shadow-[0_0_12px_rgba(59,130,246,0.6)]" :style="'width: ' + display + '%'"></div>
                 </div>
             </div>
-            <div class="mt-4 h-2 w-full rounded-full bg-white/30 overflow-hidden">
-                <div class="h-full rounded-full bg-white transition-all duration-1000 ease-out" :style="'width: ' + display + '%'"></div>
+            <div class="absolute -right-6 -bottom-6 text-white/5 text-8xl transition-transform group-hover:scale-110">
+                <i class="fa-solid fa-building"></i>
             </div>
         </div>
 
         {{-- Card: Kamar Tersedia --}}
         <div x-data="countUp({{ $kamar->where('status', 'Tersedia')->count() }})" x-init="animate"
-            class="group rounded-xl p-5 shadow-sm hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white relative overflow-hidden">
-            <div class="absolute -top-3 -right-3 h-16 w-16 bg-white/10 rounded-full blur-lg group-hover:scale-125 transition-transform duration-500"></div>
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm opacity-90">Kamar Tersedia</p>
-                    <p class="mt-1 text-2xl font-bold" x-text="display">0</p>
+            class="group relative overflow-hidden rounded-[2rem] bg-white border border-slate-200 p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+            <div class="relative z-10 text-slate-900">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="h-12 w-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 transition-transform group-hover:rotate-12">
+                        <i class="fa-solid fa-door-open text-xl"></i>
+                    </div>
+                    <span class="text-[10px] font-black uppercase tracking-tighter text-slate-400">Available Units</span>
                 </div>
-                <div class="h-11 w-11 rounded-xl bg-white/20 flex items-center justify-center group-hover:-rotate-12 transition-transform duration-300">
-                    <i class="fa-solid fa-door-open text-lg text-white"></i>
+                <p class="text-4xl font-black" x-text="display"></p>
+                <p class="text-xs font-medium text-slate-500 mt-1">Total {{ $kamar->count() }} Kamar</p>
+                <div class="mt-4 flex items-center gap-2">
+                    <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-[10px] font-bold text-emerald-600 uppercase">Siap Huni</span>
                 </div>
             </div>
-            <p class="mt-3 text-xs opacity-90">Dari total {{ $kamar->count() }} kamar</p>
         </div>
 
-        {{-- Card: Pendapatan Bulan Ini --}}
+        {{-- Card: Pendapatan --}}
         <div x-data="countUp({{ $transaksi->where('status_pembayaran', 'paid')->sum('total_bayar') }})" x-init="animate"
-            class="group rounded-xl p-5 shadow-sm hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-violet-500 to-violet-600 text-white relative overflow-hidden">
-            <div class="absolute -top-3 -right-3 h-16 w-16 bg-white/10 rounded-full blur-lg group-hover:scale-125 transition-transform duration-500"></div>
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm opacity-90">Pendapatan Bulan Ini</p>
-                    <p class="mt-1 text-2xl font-bold" x-text="'Rp ' + formatNumber(display)">Rp 0</p>
-                </div>
-                <div class="h-11 w-11 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <i class="fa-solid fa-wallet text-lg text-white"></i>
-                </div>
-            </div>
-            @php
-                $bulanIni = \Carbon\Carbon::now()->startOfMonth();
-                $bulanLalu = \Carbon\Carbon::now()->subMonth()->startOfMonth();
-
-                $penjualanBulanIni = $transaksi->where('status_pembayaran', 'paid')->where('created_at', '>=', $bulanIni)->sum('total_bayar');
-                $penjualanBulanLalu = $transaksi->where('status_pembayaran', 'paid')->where('created_at', '>=', $bulanLalu)->where('created_at', '<', $bulanIni)->sum('total_bayar');
-
-                if ($penjualanBulanLalu > 0) {
-                    $persentasePerubahan = round((($penjualanBulanIni - $penjualanBulanLalu) / $penjualanBulanLalu) * 100, 1);
-                } else {
-                    $persentasePerubahan = $penjualanBulanIni > 0 ? 100 : 0;
-                }
-
-                $trendNaik = $persentasePerubahan >= 0;
-            @endphp
-            <p class="mt-3 text-xs inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/20">
-                <i class="fa-solid fa-arrow-{{ $trendNaik ? 'up' : 'down' }} text-white"></i>
-                <span>{{ $trendNaik ? '+' : '' }}{{ $persentasePerubahan }}% dari bulan lalu</span>
-            </p>
-        </div>
-
-        {{-- Card: Transaksi Pending --}}
-        <div x-data="countUp({{ $transaksi->where('status_pembayaran', 'pending')->count() }})" x-init="animate"
-            class="group rounded-xl p-5 shadow-sm hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-amber-500 to-amber-600 text-white relative overflow-hidden">
-            <div class="absolute -top-3 -right-3 h-16 w-16 bg-white/10 rounded-full blur-lg group-hover:scale-125 transition-transform duration-500"></div>
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm opacity-90">Transaksi Pending</p>
-                    <p class="mt-1 text-2xl font-bold" x-text="display">0</p>
-                </div>
-                <div class="h-11 w-11 rounded-xl bg-white/20 flex items-center justify-center group-hover:rotate-45 transition-transform duration-300">
-                    <i class="fa-solid fa-clock text-lg text-white"></i>
-                </div>
-            </div>
-            <p class="mt-3 text-xs opacity-90">Perlu verifikasi manual</p>
-        </div>
-    </div>
-
-    <!-- Table Section -->
-    <div class="mt-8 grid grid-cols-1 xl:grid-cols-3 gap-5">
-        {{-- Transaksi Terbaru --}}
-        <div x-data="{ hoveredStatus: null }"
-            class="xl:col-span-2 rounded-2xl border border-slate-200/40 bg-gradient-to-br from-white to-slate-50 p-6 shadow-[0_4px_20px_-6px_rgba(0,0,0,0.08)] hover:shadow-md transition-all duration-300 ease-out transform overflow-hidden relative">
-            <!-- Accent top bar -->
-            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-cyan-500 to-emerald-500 rounded-t-2xl"></div>
-
-            <div class="flex items-center justify-between mb-5">
-                <h2 class="text-lg font-bold text-slate-800 tracking-tight bg-clip-text bg-gradient-to-r from-slate-800 to-slate-600">
-                    Transaksi Terbaru
-                </h2>
-                <a href="{{ route('transaksi.index') }}" class="inline-flex items-center gap-1.5 text-sm font-semibold text-cyan-600 hover:text-cyan-700 group transition-colors duration-200">
-                    Lihat semua
-                    <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
-                </a>
-            </div>
-
-            <div class="space-y-4">
-                @forelse ($transaksi->take(5) as $item)
-                    <div
-                        class="flex items-center justify-between p-4 rounded-xl border border-slate-200/50 bg-white/70 backdrop-blur-sm hover:bg-white transition-all duration-250 hover:shadow-[0_4px_12px_-4px_rgba(0,0,0,0.1)]">
-                        <!-- Tanggal -->
-                        <div class="text-xs font-medium text-slate-500 whitespace-nowrap">
-                            {{ $item->created_at->translatedFormat('d M Y') }}
-                        </div>
-
-                        <!-- Penyewa -->
-                        <div class="text-slate-800 font-semibold truncate max-w-[120px] md:max-w-[140px] mx-auto">
-                            {{ $item->user->name }}
-                        </div>
-
-                        <!-- Status (dengan Alpine.js hover effect) -->
-                        <div x-on:mouseenter="hoveredStatus = '{{ $item->id }}'" x-on:mouseleave="hoveredStatus = null" class="relative">
-                            @php
-                                $statusMap = [
-                                    'paid' => ['label' => 'Lunas', 'color' => 'bg-emerald-100', 'text' => 'text-emerald-800', 'border' => 'border-emerald-200'],
-                                    'pending' => ['label' => 'Menunggu', 'color' => 'bg-amber-100', 'text' => 'text-amber-800', 'border' => 'border-amber-200'],
-                                    'failed' => ['label' => 'Gagal', 'color' => 'bg-rose-100', 'text' => 'text-rose-800', 'border' => 'border-rose-200'],
-                                    'cancelled' => ['label' => 'Dibatalkan', 'color' => 'bg-slate-100', 'text' => 'text-slate-800', 'border' => 'border-slate-200'],
-                                    'expired' => ['label' => 'Kadaluarsa', 'color' => 'bg-orange-100', 'text' => 'text-orange-800', 'border' => 'border-orange-200'],
-                                    'challenge' => ['label' => 'Tantangan', 'color' => 'bg-violet-100', 'text' => 'text-violet-800', 'border' => 'border-violet-200'],
-                                    'default' => ['label' => 'Tidak Diketahui', 'color' => 'bg-slate-100', 'text' => 'text-slate-600', 'border' => 'border-slate-200'],
-                                ];
-                                $status = $statusMap[$item->status_pembayaran] ?? $statusMap['default'];
-                            @endphp
-
-                            <span :class="{
-                                '{{ $status['color'] }} {{ $status['text'] }} border {{ $status['border'] }}': true,
-                            }"
-                                class="px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200" :class="hoveredStatus === '{{ $item->id }}' ? 'scale-105 shadow-sm' : ''">
-                                {{ $status['label'] }}
-                            </span>
-                        </div>
+            class="group relative overflow-hidden rounded-[2rem] bg-white border border-slate-200 p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+            <div class="relative z-10">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="h-12 w-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600">
+                        <i class="fa-solid fa-wallet text-xl"></i>
                     </div>
-                @empty
-                    <div class="py-8 text-center">
-                        <div class="mb-2 text-slate-400">
-                            <i class="fa-regular fa-credit-card text-2xl"></i>
-                        </div>
-                        <p class="text-slate-500 text-sm font-medium">Belum ada transaksi</p>
-                    </div>
-                @endforelse
-            </div>
-        </div>
-
-        {{-- Pengumuman --}}
-        <div x-data="{ hovered: null }"
-            class="rounded-2xl border border-slate-200/40 bg-gradient-to-br from-white to-slate-50 p-6 shadow-[0_4px_16px_-6px_rgba(0,0,0,0.07)] hover:shadow-md transition-all duration-300 ease-out transform overflow-hidden relative">
-            <!-- Accent top bar -->
-            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-t-2xl"></div>
-
-            <div class="flex items-center justify-between mb-5">
-                <h2 class="text-lg font-bold text-slate-800 tracking-tight bg-clip-text bg-gradient-to-r from-slate-900 to-slate-700">
-                    Pengumuman
-                </h2>
-                <a href="{{ route('pengumuman-admin') }}" class="inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-600 hover:text-indigo-700 group transition-all duration-200">
-                    Kelola
-                    <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
-                </a>
-            </div>
-
-            <ul class="space-y-4">
-                @forelse ($pengumuman->take(3) as $item)
-                    <li x-on:mouseenter="hovered = '{{ $item->id }}'" x-on:mouseleave="hovered = null"
-                        class="relative p-4 rounded-xl border border-slate-200/50 bg-white/80 backdrop-blur-sm transition-all duration-250 hover:shadow-[0_6px_14px_-5px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 overflow-hidden group">
-                        <!-- Subtle hover highlight -->
-                        <div x-show="hovered === '{{ $item->id }}'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                            x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-                            class="absolute inset-0 bg-indigo-50/30 rounded-xl -z-10 pointer-events-none"></div>
-
-                        <p class="text-sm font-bold text-slate-900 group-hover:text-indigo-900 transition-colors duration-200 line-clamp-1">
-                            {{ $item->judul }}
-                        </p>
-                        <p class="text-xs text-slate-600 mt-2 leading-relaxed line-clamp-2">
-                            {{ Str::limit($item->isi, 60) }}
-                        </p>
-                    </li>
-                @empty
-                    <li class="py-8 text-center">
-                        <div class="mb-3 text-slate-400">
-                            <i class="fa-regular fa-bell-slash text-2xl"></i>
-                        </div>
-                        <p class="text-sm text-slate-500 font-medium">Belum ada pengumuman</p>
-                    </li>
-                @endforelse
-            </ul>
-        </div>
-    </div>
-
-    <!-- Chart Section -->
-    <div class="mt-8 grid grid-cols-1 xl:grid-cols-2 gap-5">
-        <!-- Line Chart: Penjualan Mingguan -->
-        <div
-            class="rounded-2xl border border-slate-200/40 bg-gradient-to-br from-white to-slate-50 p-5 shadow-[0_4px_16px_-6px_rgba(0,0,0,0.06)] h-64 overflow-hidden relative hover:shadow-md transition-all duration-300 ease-out">
-            <div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-400 to-blue-500"></div>
-            <div class="flex items-center gap-2 mb-3">
-                <i class="fa-solid fa-chart-line text-cyan-500 text-sm"></i>
-                <h3 class="text-lg font-bold text-slate-800">Penjualan 12 Bulan Terakhir</h3>
-            </div>
-            <div class="h-[calc(100%-28px)]">
-                <canvas id="salesChart" class="h-full w-full"></canvas>
-            </div>
-        </div>
-
-        <!-- Pie Chart: Distribusi Status Transaksi -->
-        <div
-            class="rounded-2xl border border-slate-200/40 bg-gradient-to-br from-white to-slate-50 p-5 shadow-[0_4px_16px_-6px_rgba(0,0,0,0.06)] h-64 overflow-hidden relative hover:shadow-md transition-all duration-300 ease-out">
-            <div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-400 to-pink-500"></div>
-            <div class="flex items-center gap-2 mb-3">
-                <i class="fa-solid fa-chart-pie text-purple-500 text-sm"></i>
-                <h3 class="text-lg font-bold text-slate-800">Distribusi Status Transaksi</h3>
-            </div>
-            <div class="h-[calc(100%-28px)]">
-                <canvas id="statusChart" class="h-full w-full"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <!-- Ranking Kamar Terbaik -->
-    <div class="mt-8">
-        <h2 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-            <i class="fa-solid fa-crown text-amber-500"></i>
-            Kamar Penghasil Terbaik (12 Bulan)
-        </h2>
-
-        <div class="space-y-3">
-            @forelse ($topKamar as $index => $kamar)
+                    <span class="text-[10px] font-black uppercase tracking-tighter text-slate-400">Revenue Month</span>
+                </div>
+                <p class="text-2xl font-black text-slate-900" x-text="'Rp ' + formatNumber(display)"></p>
                 @php
-                    $rank = $index + 1;
-                    $badgeColor = match ($rank) {
-                        1 => 'bg-amber-100 text-amber-800 border-amber-300',
-                        2 => 'bg-gray-100 text-gray-800 border-gray-300',
-                        3 => 'bg-amber-50 text-amber-700 border-amber-200',
-                        default => 'bg-slate-100 text-slate-800 border-slate-300',
-                    };
-                    $glowColor = match ($rank) {
-                        1 => 'shadow-[0_0_12px_-4px_rgba(251,191,36,0.4)]',
-                        2 => 'shadow-[0_0_12px_-4px_rgba(156,163,175,0.3)]',
-                        3 => 'shadow-[0_0_12px_-4px_rgba(251,191,36,0.2)]',
-                        default => '',
-                    };
-                    $medalColor = match ($rank) {
-                        1 => 'amber-600',
-                        2 => 'gray-600',
-                        3 => 'amber-700',
-                    }
+                    $bulanIni = \Carbon\Carbon::now()->startOfMonth();
+                    $bulanLalu = \Carbon\Carbon::now()->subMonth()->startOfMonth();
+                    $penjualanBulanIni = $transaksi->where('status_pembayaran', 'paid')->where('created_at', '>=', $bulanIni)->sum('total_bayar');
+                    $penjualanBulanLalu = $transaksi->where('status_pembayaran', 'paid')->where('created_at', '>=', $bulanLalu)->where('created_at', '<', $bulanIni)->sum('total_bayar');
+                    $persentasePerubahan = $penjualanBulanLalu > 0 ? round((($penjualanBulanIni - $penjualanBulanLalu) / $penjualanBulanLalu) * 100, 1) : ($penjualanBulanIni > 0 ? 100 : 0);
+                    $trendNaik = $persentasePerubahan >= 0;
                 @endphp
-                
+                <p class="mt-3 text-[10px] font-bold inline-flex items-center gap-1.5 px-3 py-1 rounded-lg {{ $trendNaik ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600' }}">
+                    <i class="fa-solid fa-arrow-{{ $trendNaik ? 'up' : 'down' }}"></i>
+                    {{ abs($persentasePerubahan) }}% vs Bulan Lalu
+                </p>
+            </div>
+        </div>
 
-                <div class="flex items-center justify-between p-4 rounded-xl border border-slate-200/60 bg-white hover:bg-slate-50 transition-colors duration-200 {{ $glowColor }}">
-                    <!-- Badge Peringkat -->
-                    <div class="flex items-center gap-4">
-                        <div class="{{ $badgeColor }} w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border shadow-sm">
-                            {{ $rank }}
-                            <i class="fa fa-medal text-{{ $medalColor }}"></i>
-                        </div>
-                        <div>
-                            <p class="font-semibold text-slate-900 text-sm">{{ $kamar->kode_kamar }}</p>
-                            <p class="text-xs text-slate-500 mt-0.5">{{ $kamar->total_transaksi }} transaksi</p>
-                        </div>
+        {{-- Card: Pending --}}
+        <div x-data="countUp({{ $transaksi->where('status_pembayaran', 'pending')->count() }})" x-init="animate"
+            class="group relative overflow-hidden rounded-[2rem] bg-white border border-slate-200 p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+            <div class="relative z-10">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="h-12 w-12 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600 transition-transform group-hover:rotate-45">
+                        <i class="fa-solid fa-circle-exclamation text-xl"></i>
                     </div>
-
-                    <!-- Pendapatan -->
-                    <div class="text-right">
-                        <p class="font-bold text-slate-900">Rp {{ number_format($kamar->total_pendapatan, 0, ',', '.') }}</p>
-                        <p class="text-xs text-slate-500 mt-0.5">Total pendapatan</p>
-                    </div>
+                    <span class="text-[10px] font-black uppercase tracking-tighter text-slate-400">Action Required</span>
                 </div>
-            @empty
-                <div class="py-6 text-center text-slate-500 text-sm">
-                    <i class="fa-regular fa-face-frown mb-1"></i><br>
-                    Belum ada transaksi dalam 12 bulan terakhir
+                <p class="text-4xl font-black text-slate-900" x-text="display"></p>
+                <p class="text-xs font-medium text-slate-500 mt-1">Transaksi Menunggu</p>
+                <div class="mt-4">
+                    <a href="{{ route('transaksi.index') }}" class="text-[10px] font-black text-amber-600 uppercase border-b-2 border-amber-200 hover:border-amber-600 transition-colors">
+                        Cek Verifikasi &rarr;
+                    </a>
                 </div>
-            @endforelse
+            </div>
         </div>
     </div>
 
+    <div class="mt-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <div class="lg:col-span-2 rounded-[2.5rem] bg-white border border-slate-200 p-8 shadow-sm relative">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h3 class="text-lg font-black text-slate-900">Statistik Pendapatan</h3>
+                    <p class="text-xs text-slate-500 font-medium">Visualisasi tren keuangan 12 bulan terakhir</p>
+                </div>
+                <div class="h-10 w-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+            </div>
+            <div class="h-72">
+                <canvas id="salesChart"></canvas>
+            </div>
+        </div>
+
+        <div class="rounded-[2.5rem] bg-slate-900 p-8 shadow-xl relative overflow-hidden">
+            <div class="relative z-10">
+                <h3 class="text-lg font-black text-white mb-1">Top Performers</h3>
+                <p class="text-xs text-slate-400 font-medium mb-6">Unit dengan ROI tertinggi tahun ini</p>
+
+                <div class="space-y-4">
+                    @forelse ($topKamar as $index => $kamar)
+                        @php $rank = $index + 1; @endphp
+                        <div class="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors group">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center text-sm font-black text-white border border-white/10 group-hover:bg-blue-600 transition-colors">
+                                    {{ $rank }}
+                                </div>
+                                <div>
+                                    <p class="text-sm font-bold text-white uppercase">{{ $kamar->kode_kamar }}</p>
+                                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{{ $kamar->total_transaksi }} Booking</p>
+                                </div>
+                            </div>
+                            <p class="text-sm font-black text-white">Rp{{ number_format($kamar->total_pendapatan / 1000000, 1) }}M</p>
+                        </div>
+                    @empty
+                        <p class="text-center text-slate-500 py-10 text-xs italic">Data belum tersedia</p>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        {{-- Transaksi Terbaru --}}
+        <div class="rounded-[2.5rem] bg-white border border-slate-200 p-8 shadow-sm">
+            <div class="flex items-center justify-between mb-8">
+                <h3 class="text-lg font-black text-slate-900 uppercase tracking-tight">Recent Activity</h3>
+                <a href="{{ route('transaksi.index') }}"
+                    class="h-8 w-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all shadow-sm">
+                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                </a>
+            </div>
+            <div class="space-y-3">
+                @foreach ($transaksi->take(5) as $item)
+                    <div class="flex items-center justify-between p-4 rounded-2xl border border-slate-100 hover:border-blue-200 hover:bg-blue-50/30 transition-all">
+                        <div class="flex items-center gap-4">
+                            <div class="h-10 w-10 rounded-full bg-slate-100 border-4 border-white shadow-sm flex items-center justify-center text-slate-400 text-xs font-black">
+                                {{ substr($item->user->name, 0, 2) }}
+                            </div>
+                            <div>
+                                <p class="text-sm font-black text-slate-800">{{ $item->user->name }}</p>
+                                <p class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">{{ $item->created_at->diffForHumans() }}</p>
+                            </div>
+                        </div>
+                        @php
+                            $colorMap = [
+                                'paid' => 'bg-emerald-500 text-white',
+                                'pending' => 'bg-amber-400 text-white',
+                                'failed' => 'bg-rose-500 text-white',
+                            ];
+                            $statusLabel = [
+                                'paid' => 'Success',
+                                'pending' => 'Pending',
+                                'failed' => 'Failed',
+                            ];
+                        @endphp
+                        <span class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-tighter {{ $colorMap[$item->status_pembayaran] ?? 'bg-slate-200 text-slate-600' }}">
+                            {{ $statusLabel[$item->status_pembayaran] ?? $item->status_pembayaran }}
+                        </span>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- Status Distribution --}}
+        <div class="rounded-[2.5rem] bg-white border border-slate-200 p-8 shadow-sm flex flex-col items-center">
+            <div class="w-full text-left mb-6">
+                <h3 class="text-lg font-black text-slate-900">Transaction Pulse</h3>
+                <p class="text-xs text-slate-500 font-medium">Distribusi status pembayaran saat ini</p>
+            </div>
+            <div class="relative w-full h-64">
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
 @endsection
 
 @push('scripts')
     <script src="{{ asset('assets/vendor/chart-js/chart.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // === Line Chart (Crypto-like) ===
+            // Line Chart Styling
             const ctx1 = document.getElementById('salesChart').getContext('2d');
+            const gradient = ctx1.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(59, 130, 246, 0.2)');
+            gradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
+
             new Chart(ctx1, {
                 type: 'line',
                 data: {
                     labels: @json($monthlySalesLabels),
                     datasets: [{
-                        label: 'Penjualan (Rp)',
                         data: @json($monthlySalesData),
-                        borderColor: '#4f46e5', // indigo-600
-                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
-                        borderWidth: 2,
-                        tension: 0.4, // smooth curve like crypto
+                        borderColor: '#2563eb',
+                        borderWidth: 4,
+                        backgroundColor: gradient,
                         fill: true,
+                        tension: 0.4,
                         pointRadius: 0,
-                        pointHoverRadius: 4
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#2563eb',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 3,
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    layout: {
-                        padding: {
-                            bottom: 10
-                        }
-                    },
                     plugins: {
                         legend: {
                             display: false
-                        },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false,
-                            callbacks: {
-                                label: function(context) {
-                                    return 'Rp ' + Number(context.parsed.y).toLocaleString('id-ID');
-                                }
-                            }
                         }
                     },
                     scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#f1f5f9',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: {
+                                    weight: 'bold',
+                                    size: 10
+                                },
+                                color: '#94a3b8'
+                            }
+                        },
                         x: {
                             grid: {
                                 display: false
                             },
                             ticks: {
-                                maxRotation: 0,
-                                callback: function(value, index, ticks) {
-                                    const date = @json($monthlySalesLabels)[value];
-                                    return date.split('-').slice(1).join('/'); // MM/DD
-                                }
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0,0,0,0.03)'
-                            },
-                            ticks: {
-                                callback: function(value) {
-                                    return 'Rp ' + value.toLocaleString('id-ID');
-                                }
+                                font: {
+                                    weight: 'bold',
+                                    size: 10
+                                },
+                                color: '#94a3b8'
                             }
                         }
                     }
                 }
             });
 
-            // === Pie Chart ===
+            // Doughnut Chart
             const ctx2 = document.getElementById('statusChart').getContext('2d');
-            const statusLabels = @json(array_keys($statusCounts));
-            const statusData = @json(array_values($statusCounts));
-
-            // Warna berdasarkan status
-            const colorMap = {
-                'paid': '#10b981', // emerald-500
-                'pending': '#f59e0b', // amber-500
-                'failed': '#ef4444', // red-500
-                'cancelled': '#6b7280', // gray-500
-                'expired': '#f97316', // orange-500
-                'challenge': '#8b5cf6' // violet-500
-            };
-            const backgroundColors = statusLabels.map(label => colorMap[label] || '#d1d5db');
-
             new Chart(ctx2, {
                 type: 'doughnut',
                 data: {
-                    labels: statusLabels.map(label => {
-                        const mapping = {
-                            'paid': 'Lunas',
-                            'pending': 'Menunggu',
-                            'failed': 'Gagal',
-                            'cancelled': 'Dibatalkan',
-                            'expired': 'Kadaluarsa',
-                            'challenge': 'Tantangan'
-                        };
-                        return mapping[label] || label;
-                    }),
+                    labels: @json(array_keys($statusCounts)),
                     datasets: [{
-                        data: statusData,
-                        backgroundColor: backgroundColors,
-                        borderWidth: 0
+                        data: @json(array_values($statusCounts)),
+                        backgroundColor: ['#10b981', '#fbbf24', '#ef4444', '#64748b', '#f97316', '#8b5cf6'],
+                        borderWidth: 8,
+                        borderColor: '#ffffff',
+                        hoverOffset: 20
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    layout: {
-                        padding: {
-                            bottom: 30
-                        }
-                    },
+                    cutout: '75%',
                     plugins: {
                         legend: {
                             position: 'bottom',
                             labels: {
-                                padding: 20,
                                 usePointStyle: true,
-                                pointStyle: 'circle'
+                                font: {
+                                    weight: 'bold',
+                                    size: 11
+                                }
                             }
                         }
-                    },
-                    cutout: '65%'
+                    }
                 }
             });
         });
-    </script>
 
-    <!-- Alpine.js CountUp Utility -->
-    <script>
+        // Alpine.js Components 
         document.addEventListener('alpine:init', () => {
             Alpine.data('countUp', (target) => ({
                 target: target,
                 display: 0,
                 animate() {
-                    const duration = 1200;
-                    const start = 0;
-                    const end = this.target;
+                    let start = 0;
+                    const duration = 1500;
                     const startTime = performance.now();
-
                     const step = (now) => {
-                        const elapsed = now - startTime;
-                        const progress = Math.min(elapsed / duration, 1);
-                        this.display = Math.floor(progress * (end - start) + start);
-                        if (progress < 1) {
-                            requestAnimationFrame(step);
-                        }
+                        const progress = Math.min((now - startTime) / duration, 1);
+                        this.display = Math.floor(progress * (this.target - start) + start);
+                        if (progress < 1) requestAnimationFrame(step);
                     };
                     requestAnimationFrame(step);
                 },
@@ -463,33 +343,23 @@
                     return num.toLocaleString('id-ID');
                 }
             }));
-        });
-    </script>
 
-    <!-- Alpine.js for Realtime Clock -->
-    <script>
-        document.addEventListener('alpine:init', () => {
             Alpine.data('realtimeClock', () => ({
                 time: '',
-
                 init() {
                     this.updateTime();
                     setInterval(() => this.updateTime(), 1000);
                 },
-
                 updateTime() {
-                    const now = new Date();
-                    const options = {
+                    this.time = new Date().toLocaleString('id-ID', {
                         weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
                         day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
                         hour: '2-digit',
                         minute: '2-digit',
-                        second: '2-digit',
-                        hour12: false
-                    };
-                    this.time = now.toLocaleString('id-ID', options);
+                        second: '2-digit'
+                    });
                 }
             }));
         });

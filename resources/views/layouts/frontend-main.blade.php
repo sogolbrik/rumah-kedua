@@ -49,66 +49,102 @@
     @yield('frontend-main')
 
     <!-- 9. FOOTER -->
-    <footer class="bg-gray-900 text-gray-300 py-16 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-                <!-- About -->
-                <div>
-                    <div class="flex items-center gap-2 mb-4">
-                        <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-home text-white text-sm"></i>
+    {{-- FOOTER: High-End Corporate Style --}}
+    <footer class="relative bg-slate-950 pt-24 pb-12 overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent"></div>
+
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-16 mb-20">
+
+                <div class="md:col-span-4 space-y-8">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/20">
+                            <i class="fas fa-home text-white text-lg"></i>
                         </div>
-                        <span class="text-xl font-bold text-white">RumahKedua</span>
+                        <span class="text-2xl font-black text-white tracking-tighter italic">Rumah<span class="text-blue-500">Kedua</span></span>
                     </div>
-                    <p class="text-gray-400 leading-relaxed">
-                        {{ $pengaturan->deskripsi_kos ?? 'Temukan kenyamanan seperti di rumah sendiri dengan layanan terbaik dan fasilitas lengkap.' }}
+                    <p class="text-slate-400 leading-relaxed text-lg max-w-sm">
+                        {{ $pengaturan->deskripsi_kos ?? 'Merevolusi cara Anda tinggal dengan menggabungkan estetika modern dan kenyamanan total dalam satu hunian eksklusif.' }}
                     </p>
-                </div>
-
-                <!-- Quick Links -->
-                <div>
-                    <h4 class="text-white font-semibold mb-4">Link Cepat</h4>
-                    <ul class="space-y-3 text-gray-400">
-                        <li><a href="{{ url('/#fasilitas') }}" class="hover:text-blue-400 transition-colors">Fasilitas</a></li>
-                        <li><a href="{{ url('/#kamar') }}" class="hover:text-blue-400 transition-colors">Pilihan Kamar</a></li>
-                        <li><a href="{{ url('/#lokasi') }}" class="hover:text-blue-400 transition-colors">Lokasi</a></li>
-                        <li><a href="{{ url('/#faq') }}" class="hover:text-blue-400 transition-colors">FAQ</a></li>
-                    </ul>
-                </div>
-
-                <!-- Kontak -->
-                <div>
-                    <h4 class="text-white font-semibold mb-4">Kontak</h4>
-                    <ul class="space-y-3 text-gray-400">
-                        <li class="flex gap-2"><i class="fas fa-phone w-4"></i> +{{ $pengaturan->no_telepon ?? '6287870327957' }}</li>
-                        <li class="flex gap-2"><i class="fas fa-envelope w-4"></i> {{ $pengaturan->email_kos ?? 'rumahkedua@gmail.com' }}</li>
-                        <li class="flex gap-2"><i class="fas fa-map-marker-alt w-4"></i> {{ $pengaturan->alamat_kos ?? 'Mojokerto Selatan' }}</li>
-                    </ul>
-                </div>
-
-                <!-- Sosial Media -->
-                <div>
-                    <h4 class="text-white font-semibold mb-4">Ikuti Kami</h4>
                     <div class="flex gap-4">
-                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-blue-500 rounded-full flex items-center justify-center transition-colors">
-                            <i class="fab fa-facebook-f text-white"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-blue-500 rounded-full flex items-center justify-center transition-colors">
-                            <i class="fab fa-instagram text-white"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-blue-500 rounded-full flex items-center justify-center transition-colors">
-                            <i class="fab fa-whatsapp text-white"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-blue-500 rounded-full flex items-center justify-center transition-colors">
-                            <i class="fab fa-youtube text-white"></i>
-                        </a>
+                        @foreach ([['icon' => 'fa-instagram', 'link' => '#'], ['icon' => 'fa-facebook-f', 'link' => '#'], ['icon' => 'fa-whatsapp', 'link' => '#'], ['icon' => 'fa-linkedin-in', 'link' => '#']] as $social)
+                            <a href="{{ $social['link'] }}"
+                                class="w-11 h-11 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-center text-slate-400 hover:text-white hover:border-blue-500 hover:bg-blue-600/10 transition-all group">
+                                <i class="fab {{ $social['icon'] }} group-hover:scale-110 transition-transform"></i>
+                            </a>
+                        @endforeach
                     </div>
                 </div>
+
+                <div class="md:col-span-2">
+                    <h4 class="text-white font-bold mb-8 uppercase tracking-widest text-xs">Eksplorasi</h4>
+                    <ul class="space-y-4">
+                        @foreach ([
+        'Fasilitas' => '#fasilitas',
+        'Pilihan Kamar' => '#kamar',
+        'Lokasi' => '#lokasi',
+        'FAQ' => '#faq',
+    ] as $title => $url)
+                            <li>
+                                <a href="{{ url($url) }}" class="group flex items-center text-slate-400 hover:text-cyan-400 transition-colors">
+                                    <span class="h-px w-0 bg-cyan-400 mr-0 group-hover:w-4 group-hover:mr-3 transition-all duration-300"></span>
+                                    {{ $title }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+
+                <div class="md:col-span-2">
+                    <h4 class="text-white font-bold mb-8 uppercase tracking-widest text-xs">Informasi</h4>
+                    <ul class="space-y-4 text-slate-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Syarat & Ketentuan</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Kebijakan Privasi</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Pusat Bantuan</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Karir</a></li>
+                    </ul>
+                </div>
+
+                <div class="md:col-span-4 space-y-8">
+                    <h4 class="text-white font-bold mb-8 uppercase tracking-widest text-xs">Kantor Pemasaran</h4>
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <div class="w-12 h-12 bg-slate-900 border border-slate-800 rounded-2xl flex-shrink-0 flex items-center justify-center text-blue-500">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="text-slate-400">
+                                <p class="text-white font-semibold mb-1">Alamat</p>
+                                <p class="text-sm leading-relaxed">{{ $pengaturan->alamat_kos ?? 'Jl. Raya Elit No. 123, Mojokerto Selatan, Jawa Timur' }}</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="w-12 h-12 bg-slate-900 border border-slate-800 rounded-2xl flex-shrink-0 flex items-center justify-center text-emerald-500">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div class="text-slate-400">
+                                <p class="text-white font-semibold mb-1">Hubungi Kami</p>
+                                <p class="text-sm">+{{ $pengaturan->no_telepon ?? '6287870327957' }}</p>
+                                <p class="text-sm">{{ $pengaturan->email_kos ?? 'official@rumahkedua.id' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
-            <!-- Footer Bottom -->
-            <div class="border-t border-gray-800 pt-8 text-center text-gray-400">
-                <p>&copy; 2025 RumahKedua. Semua hak cipta dilindungi.</p>
+            <div class="pt-12 border-t border-slate-900 flex flex-col md:flex-row justify-between items-center gap-6">
+                <p class="text-slate-500 text-sm">
+                    &copy; {{ date('Y') }} <span class="text-slate-300 font-bold tracking-tight">RumahKedua</span>. Built for Modern Living.
+                </p>
+                <div class="flex items-center gap-8">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                        <span class="text-slate-500 text-xs font-mono uppercase tracking-widest">System Operational</span>
+                    </div>
+                    <p class="text-slate-600 text-xs italic">Crafted by GlgDev as Sogolbrik</p>
+                </div>
             </div>
         </div>
     </footer>

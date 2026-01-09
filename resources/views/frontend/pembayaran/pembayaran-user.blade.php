@@ -5,25 +5,24 @@
     <style>
         :root {
             --color-primary: #2563eb;
-            --color-primary-light: #3b82f6;
-            --color-primary-dark: #1e40af;
-            --color-accent: #0891b2;
-            --color-neutral-50: #f9fafb;
-            --color-neutral-100: #f3f4f6;
-            --color-neutral-200: #e5e7eb;
-            --color-neutral-600: #4b5563;
-            --color-neutral-900: #111827;
-            --color-success: #10b981;
+            --color-primary-soft: #eff6ff;
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(229, 231, 235, 0.5);
         }
 
-        .shadow-soft {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        .duration-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .duration-card.active {
+            border-color: var(--color-primary);
+            background-color: var(--color-primary-soft);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.1);
         }
 
         [x-cloak] {
@@ -31,217 +30,203 @@
         }
     </style>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-18 mt-10" x-data="paymentApp({{ (int) $kamar->harga }}, {{ old('durasi', 1) }})" x-cloak>
-        <div class="max-w-6xl mx-auto mb-2 py-0">
-            <!-- Breadcrumb -->
-            <nav class="flex items-center gap-2 text-sm">
-                <a href="{{ Route('landing-page') }}" class="text-neutral-600 hover:text-primary transition-smooth">Home</a>
-                <span class="text-neutral-300">/</span>
-                <a href="{{ Route('booking') }}" class="text-neutral-600 hover:text-primary transition-smooth">Kamar</a>
-                <span class="text-neutral-300">/</span>
-                <span class="text-blue-600 font-medium">Pembayaran Kos</span>
-            </nav>
-        </div>
+    <div class="min-h-screen bg-gray-50/50 py-12 mt-16" x-data="paymentApp({{ (int) $kamar->harga }}, {{ old('durasi', 1) }})" x-cloak>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div class="space-y-6">
-                <div class="bg-white rounded-2xl shadow-soft p-6">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Form Pembayaran</h2>
-
-                    @if ($transaksiPending)
-                        <!-- Jika ada transaksi pending, tampilkan ringkasan dan tombol lanjutkan -->
-                        <div class="bg-gray-50 rounded-xl p-4 mb-6">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-gray-600">Harga per bulan:</span>
-                                <span class="font-semibold">Rp {{ number_format($kamar->harga, 0, ',', '.') }}</span>
-                            </div>
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-gray-600">Durasi:</span>
-                                <span class="font-semibold">{{ $transaksiPending->durasi }} Bulan</span>
-                            </div>
-                            <div class="border-t border-gray-200 pt-2 mt-2">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-lg font-bold text-gray-900">Total Pembayaran:</span>
-                                    <span class="text-2xl font-bold text-blue-600">Rp {{ number_format($transaksiPending->total_bayar, 0, ',', '.') }}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- User Data -->
-                        <div class="mb-6">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Data Penyewa</label>
-                            <div class="space-y-3">
-                                <div>
-                                    <input type="text" value="{{ auth()->user()->name }}" readonly
-                                        class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-gray-600 focus:outline-none">
-                                </div>
-                                <div>
-                                    <input type="email" value="{{ auth()->user()->email }}" readonly
-                                        class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-gray-600 focus:outline-none">
-                                </div>
-                            </div>
-                        </div>
-
-                        <button type="button" @click="lanjutkanPembayaran()"
-                            class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 shadow-soft hover:shadow-lg transform hover:-translate-y-0.5">
-                            Lanjutkan Pembayaran
-                        </button>
-                    @else
-                        <!-- Form untuk user baru -->
-                        <form method="POST" action="{{ route('user.pembayaran.buat-transaksi') }}" @submit="submitting = true">
-                            @csrf
-                            <input type="hidden" name="id_kamar" value="{{ $kamar->id }}">
-
-                            <!-- Duration Selection -->
-                            <div class="mb-6">
-                                <label class="block text-sm font-medium text-gray-700 mb-3">Durasi Pembayaran</label>
-                                <div class="grid grid-cols-3 gap-3">
-                                    <button type="button" @click="pilihDurasi(1)"
-                                        :class="durasi === 1 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-600'"
-                                        class="border-2 rounded-xl py-4 px-4 text-center transition-all duration-200 font-medium">
-                                        <div class="text-lg font-semibold">1 Bulan</div>
-                                        <div class="text-sm opacity-80">Rp {{ number_format($kamar->harga * 1, 0, ',', '.') }}</div>
-                                    </button>
-                                    <button type="button" @click="pilihDurasi(3)"
-                                        :class="durasi === 3 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-600'"
-                                        class="border-2 rounded-xl py-4 px-4 text-center transition-all duration-200 font-medium">
-                                        <div class="text-lg font-semibold">3 Bulan</div>
-                                        <div class="text-sm opacity-80">Rp {{ number_format($kamar->harga * 3, 0, ',', '.') }}</div>
-                                    </button>
-                                    <button type="button" @click="pilihDurasi(6)"
-                                        :class="durasi === 6 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-600'"
-                                        class="border-2 rounded-xl py-4 px-4 text-center transition-all duration-200 font-medium">
-                                        <div class="text-lg font-semibold">6 Bulan</div>
-                                        <div class="text-sm opacity-80">Rp {{ number_format($kamar->harga * 6, 0, ',', '.') }}</div>
-                                    </button>
-                                    <input type="hidden" name="durasi" value="{{ old('durasi', 1) }}" />
-                                </div>
-                                @error('durasi')
-                                    <p class="mt-2 bg-red-100 text-red-700 p-3 rounded-lg text-sm">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <!-- User Data -->
-                            <div class="mb-6">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Data Penyewa</label>
-                                <div class="space-y-3">
-                                    <div>
-                                        <input type="text" value="{{ auth()->user()->name }}" readonly
-                                            class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-gray-600 focus:outline-none">
-                                    </div>
-                                    <div>
-                                        <input type="email" value="{{ auth()->user()->email }}" readonly
-                                            class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-gray-600 focus:outline-none">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button type="submit" :disabled="submitting"
-                                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 shadow-soft hover:shadow-lg transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed">
-                                Lanjutkan ke Pembayaran
-                            </button>
-                        </form>
-                    @endif
-
-                    <!-- State: Loading -->
-                    <div x-show="submitting" class="text-center py-8">
-                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600 mb-4"></div>
-                        <p class="text-gray-600">Mempersiapkan pembayaran...</p>
-                        <p class="text-sm text-gray-500 mt-1">Mohon jangan tutup halaman ini.</p>
-                    </div>
-
-                    <!-- State: Error -->
-                    <div x-show="errorMessage" class="mt-4 bg-red-100 text-red-700 p-3 rounded-lg text-sm" x-text="errorMessage"></div>
-
-                    <!-- Flash Message (dari session) -->
-                    @if (session('success'))
-                        <div class="mt-4 bg-green-100 text-green-700 p-3 rounded-lg text-sm">
-                            {{ session('success') }}
-                        </div>
-                    @endif
-                    @if (session('error'))
-                        <div class="mt-4 bg-red-100 text-red-700 p-3 rounded-lg text-sm">
-                            {{ session('error') }}
-                        </div>
-                    @endif
-
-                    <p class="text-center text-sm text-gray-500 mt-4">
-                        Dengan melanjutkan, Anda menyetujui Syarat & Ketentuan yang berlaku
-                    </p>
-                </div>
-
-                <!-- Security Info -->
-                <div class="bg-white rounded-2xl shadow-soft p-6">
-                    <div class="flex items-center justify-center space-x-6 text-gray-600">
-                        <div class="flex items-center space-x-2">
-                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
-                                </path>
-                            </svg>
-                            <span class="text-sm">Pembayaran Aman</span>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
-                                </path>
-                            </svg>
-                            <span class="text-sm">Data Terlindungi</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="mb-8">
+                <nav class="flex items-center gap-2 text-sm text-gray-500 mb-4">
+                    <a href="{{ Route('landing-page') }}" class="hover:text-blue-600 transition-colors">Home</a>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path d="M9 5l7 7-7 7" />
+                    </svg>
+                    <a href="{{ Route('booking') }}" class="hover:text-blue-600 transition-colors">Kamar</a>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path d="M9 5l7 7-7 7" />
+                    </svg>
+                    <span class="text-blue-600 font-medium">Pembayaran</span>
+                </nav>
+                <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Selesaikan Pembayaran</h1>
+                <p class="mt-2 text-gray-600">Satu langkah lagi untuk mengamankan kamar impian Anda.</p>
             </div>
 
-            <!-- Right Column - Room Details -->
-            <div class="space-y-6">
-                <div class="glass-card rounded-2xl shadow-soft p-6 border border-white/50">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-xl font-bold text-gray-900">Detail Kamar</h3>
-                        <span class="bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full">Tersedia</span>
-                    </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 space-y-6">
 
-                    <div class="rounded-xl overflow-hidden mb-4">
-                        <img src="{{ Storage::url($kamar->gambar) }}" alt="Kamar Kos" class="w-full h-48 object-cover">
-                    </div>
-
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-center pb-2 border-b border-gray-200">
-                            <span class="text-gray-600">Tipe Kamar</span>
-                            <span class="font-semibold">{{ $kamar->tipe }}</span>
-                        </div>
-                        <div class="flex justify-between items-center pb-2 border-b border-gray-200">
-                            <span class="text-gray-600">Kode Kamar</span>
-                            <span class="font-semibold">{{ $kamar->kode_kamar }}</span>
-                        </div>
-                        <div class="flex justify-between items-center pb-2 border-b border-gray-200">
-                            <span class="text-gray-600">Harga per Bulan</span>
-                            <span class="text-lg font-bold text-blue-600">Rp {{ number_format($kamar->harga, 0, ',', '.') }}</span>
-                        </div>
-                        @if ($kamar->detailKamar)
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-600">Fasilitas</span>
-                                <div class="flex space-x-2">
-                                    @foreach ($kamar->detailKamar->take(3) as $detail)
-                                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">{{ $detail->fasilitas }}</span>
-                                    @endforeach
-                                    @if ($kamar->detailKamar->count() > 3)
-                                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
-                                            +{{ $kamar->detailKamar->count() - 3 }}
-                                        </span>
-                                    @endif
+                    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
+                        @if ($transaksiPending)
+                            <div class="bg-amber-50 border border-amber-100 rounded-2xl p-6 mb-8">
+                                <div class="flex items-start gap-4">
+                                    <div class="p-2 bg-amber-100 rounded-lg">
+                                        <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-amber-900">Transaksi Menunggu Pembayaran</h3>
+                                        <p class="text-amber-700 text-sm mt-1">Anda memiliki transaksi yang belum selesai. Segera lakukan pembayaran sebelum masa berlaku habis.</p>
+                                    </div>
                                 </div>
                             </div>
+
+                            <div class="space-y-4 mb-8">
+                                <div class="flex justify-between py-3 border-b border-gray-50">
+                                    <span class="text-gray-600">Durasi Sewa</span>
+                                    <span class="font-bold text-gray-900">{{ $transaksiPending->durasi }} Bulan</span>
+                                </div>
+                                <div class="flex justify-between items-center py-3">
+                                    <span class="text-gray-900 font-medium text-lg">Total Tagihan</span>
+                                    <span class="text-3xl font-black text-blue-600">Rp {{ number_format($transaksiPending->total_bayar, 0, ',', '.') }}</span>
+                                </div>
+                            </div>
+
+                            <button @click="lanjutkanPembayaran()" :disabled="isProcessing"
+                                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-2xl transition-all shadow-lg shadow-blue-200 flex items-center justify-center gap-3">
+                                <span x-show="!isProcessing">Bayar Sekarang</span>
+                                <div x-show="isProcessing" class="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                            </button>
+                        @else
+                            <form method="POST" action="{{ route('user.pembayaran.buat-transaksi') }}" @submit="submitting = true">
+                                @csrf
+                                <input type="hidden" name="id_kamar" value="{{ $kamar->id }}">
+
+                                <div class="mb-10">
+                                    <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-4">Pilih Durasi Sewa</label>
+                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                        @foreach ([1, 3, 6] as $bulan)
+                                            <button type="button" @click="pilihDurasi({{ $bulan }})"
+                                                :class="durasi === {{ $bulan }} ? 'active ring-2 ring-blue-600 ring-offset-2' : 'border-gray-200 hover:border-blue-300'"
+                                                class="duration-card border-2 rounded-2xl p-5 text-left bg-white relative overflow-hidden group">
+                                                <div class="relative z-10">
+                                                    <div class="text-sm font-medium" :class="durasi === {{ $bulan }} ? 'text-blue-600' : 'text-gray-500'">Paket {{ $bulan }} Bulan</div>
+                                                    <div class="text-xl font-bold mt-1 text-gray-900">Rp {{ number_format($kamar->harga * $bulan, 0, ',', '.') }}</div>
+                                                </div>
+                                                <div x-show="durasi === {{ $bulan }}" class="absolute top-2 right-2">
+                                                    <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd"
+                                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                            clip-rule="evenodd" />
+                                                    </svg>
+                                                </div>
+                                            </button>
+                                        @endforeach
+                                        <input type="hidden" name="durasi" :value="durasi" />
+                                    </div>
+                                </div>
+
+                                <div class="mb-10">
+                                    <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-4">Informasi Penyewa</label>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="relative">
+                                            <label class="text-xs font-semibold text-gray-400 absolute left-4 top-2">Nama Lengkap</label>
+                                            <input type="text" value="{{ auth()->user()->name }}" readonly
+                                                class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 pt-7 pb-2 text-gray-700 font-medium focus:outline-none">
+                                        </div>
+                                        <div class="relative">
+                                            <label class="text-xs font-semibold text-gray-400 absolute left-4 top-2">Email</label>
+                                            <input type="email" value="{{ auth()->user()->email }}" readonly
+                                                class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 pt-7 pb-2 text-gray-700 font-medium focus:outline-none">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="submit" :disabled="submitting"
+                                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-2xl transition-all shadow-lg shadow-blue-200 disabled:opacity-50 flex items-center justify-center gap-3 group">
+                                    <span x-show="!submitting">Lanjutkan ke Pembayaran</span>
+                                    <svg x-show="!submitting" class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                    </svg>
+                                    <div x-show="submitting" class="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                                </button>
+                            </form>
                         @endif
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex items-center gap-3 p-4 bg-white rounded-2xl border border-gray-100">
+                            <div class="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center text-green-600">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                </svg>
+                            </div>
+                            <span class="text-sm font-semibold text-gray-700">Pembayaran Terenkripsi</span>
+                        </div>
+                        <div class="flex items-center gap-3 p-4 bg-white rounded-2xl border border-gray-100">
+                            <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-600">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                            </div>
+                            <span class="text-sm font-semibold text-gray-700">Konfirmasi Instan</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-1">
+                    <div class="sticky top-28 space-y-6">
+                        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                            <div class="p-6 border-b border-gray-50">
+                                <h3 class="text-lg font-bold text-gray-900">Ringkasan Pesanan</h3>
+                            </div>
+
+                            <div class="p-6">
+                                <div class="flex gap-4 mb-6">
+                                    <img src="{{ Storage::url($kamar->gambar) }}" class="w-24 h-24 rounded-2xl object-cover shadow-sm" alt="Kamar">
+                                    <div>
+                                        <span class="text-xs font-bold text-blue-600 uppercase tracking-tighter">{{ $kamar->tipe }}</span>
+                                        <h4 class="font-bold text-gray-900 leading-tight mb-1">{{ $kamar->kode_kamar }}</h4>
+                                        <p class="text-sm text-gray-500">Mojokerto, Jawa Timur</p>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-3 py-4 border-y border-dashed border-gray-200">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-500">Harga per Bulan</span>
+                                        <span class="font-semibold text-gray-900">Rp {{ number_format($kamar->harga, 0, ',', '.') }}</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-500">Biaya Layanan</span>
+                                        <span class="font-semibold text-green-600">Gratis</span>
+                                    </div>
+                                </div>
+
+                                <div class="pt-6">
+                                    <div class="flex justify-between items-end">
+                                        <div>
+                                            <p class="text-xs font-bold text-gray-400 uppercase">Total Estimasi</p>
+                                            <p class="text-2xl font-black text-gray-900" x-text="formatRupiah(totalHarga)"></p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-sm font-bold text-blue-600" x-text="durasi + ' Bulan'"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-50 p-6">
+                                <h4 class="text-xs font-bold text-gray-500 uppercase mb-3">Fasilitas Utama</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach ($kamar->detailKamar->take(4) as $detail)
+                                        <span class="bg-white border border-gray-200 text-gray-600 text-[10px] px-2 py-1 rounded-lg font-bold">{{ $detail->fasilitas }}</span>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+
+                        <div x-show="errorMessage" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform -translate-y-2"
+                            class="bg-red-50 border border-red-100 text-red-700 p-4 rounded-2xl text-sm flex gap-3">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                            <span x-text="errorMessage"></span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Midtrans Snap JS -->
     <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
-
     <script>
         function paymentApp(harga, initialDurasi = 1) {
             return {
@@ -249,28 +234,17 @@
                 durasi: initialDurasi,
                 submitting: false,
                 errorMessage: null,
-                isProcessing: false, // Prevent double submission
+                isProcessing: false,
 
                 pilihDurasi(value) {
                     this.durasi = value;
-                    this.errorMessage = null; // Clear error saat pilih durasi baru
-
-                    // Safely update hidden input
-                    const hiddenInput = document.querySelector('input[name="durasi"]');
-                    if (hiddenInput) {
-                        hiddenInput.value = value;
-                    }
+                    this.errorMessage = null;
                 },
 
                 async lanjutkanPembayaran() {
-                    // Prevent double submission
-                    if (this.isProcessing) {
-                        console.warn('Payment already processing');
-                        return;
-                    }
+                    if (this.isProcessing) return;
 
                     this.isProcessing = true;
-                    this.submitting = true;
                     this.errorMessage = null;
 
                     try {
@@ -283,77 +257,50 @@
                             }
                         });
 
-                        // Check if response is OK
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-
+                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                         const data = await response.json();
 
                         if (data.success && data.snap_token) {
                             this.bayarSekarang(data.snap_token);
                         } else {
-                            this.errorMessage = data.message || 'Gagal menyiapkan pembayaran. Silakan coba lagi.';
-                            this.isProcessing = false; // Reset jika gagal
+                            this.errorMessage = data.message || 'Gagal menyiapkan pembayaran.';
+                            this.isProcessing = false;
                         }
                     } catch (error) {
-                        console.error('Payment Error:', error);
-
-                        // More specific error messages
-                        if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                            this.errorMessage = 'Koneksi bermasalah. Periksa internet Anda.';
-                        } else {
-                            this.errorMessage = 'Terjadi kesalahan. Silakan coba lagi atau hubungi admin.';
-                        }
-
+                        this.errorMessage = 'Terjadi kesalahan koneksi. Silakan coba lagi.';
                         this.isProcessing = false;
-                    } finally {
-                        this.submitting = false;
                     }
                 },
 
                 bayarSekarang(snapToken) {
-                    // Verify snap is loaded
                     if (typeof snap === 'undefined') {
-                        this.errorMessage = 'Payment gateway tidak tersedia. Refresh halaman.';
+                        this.errorMessage = 'Payment gateway error. Mohon refresh halaman.';
                         this.isProcessing = false;
                         return;
                     }
 
                     snap.pay(snapToken, {
-                        // onSuccess: (result) => {
-                        //     console.log('Payment success:', result);
-                        //     // Redirect dengan parameter success
-                        //     window.location.href = "{{ route('user.pembayaran.booking', ['id' => $kamar->id]) }}?verify_payment=1&status=success";
-                        // },
                         onSuccess: (result) => {
                             window.location.href = "{{ route('user.pembayaran.verifikasi-data') }}";
                         },
                         onPending: (result) => {
-                            console.log('Payment pending:', result);
-                            // Redirect dengan parameter pending
                             window.location.href = "{{ route('user.pembayaran.booking', ['id' => $kamar->id]) }}?status=pending";
                         },
                         onError: (result) => {
-                            console.error('Payment error:', result);
-                            this.errorMessage = 'Pembayaran gagal: ' + (result.status_message || 'Silakan coba lagi.');
+                            this.errorMessage = 'Pembayaran gagal. Silakan coba lagi.';
                             this.isProcessing = false;
                         },
                         onClose: () => {
-                            console.log('Payment popup closed');
-                            // Reset processing state ketika user close popup
                             this.isProcessing = false;
                             this.submitting = false;
                         }
                     });
                 },
 
-                // Computed property untuk total harga
                 get totalHarga() {
                     return this.harga * this.durasi;
                 },
 
-                // Format currency helper
                 formatRupiah(amount) {
                     return new Intl.NumberFormat('id-ID', {
                         style: 'currency',
@@ -364,20 +311,8 @@
             };
         }
 
-        // Initialize Alpine component
         document.addEventListener('alpine:init', () => {
             Alpine.data('paymentApp', paymentApp);
-        });
-
-        // Optional: Add Midtrans snap load check
-        document.addEventListener('DOMContentLoaded', () => {
-            const snapScript = document.querySelector('script[src*="snap.js"]');
-            if (snapScript) {
-                snapScript.addEventListener('error', () => {
-                    console.error('Failed to load Midtrans Snap');
-                    alert('Gagal memuat payment gateway. Refresh halaman.');
-                });
-            }
         });
     </script>
 @endsection

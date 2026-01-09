@@ -1,288 +1,232 @@
 @extends('layouts.frontend-main')
+
 @section('title', 'Bayar Tagihan Jatuh Tempo')
 
 @section('frontend-main')
-    <style>
-        :root {
-            --color-primary: #2563eb;
-            --color-primary-light: #3b82f6;
-            --color-primary-dark: #1e40af;
-            --color-accent: #0891b2;
-            --color-neutral-50: #f9fafb;
-            --color-neutral-100: #f3f4f6;
-            --color-neutral-200: #e5e7eb;
-            --color-neutral-600: #4b5563;
-            --color-neutral-900: #111827;
-            --color-success: #10b981;
-        }
+    <div class="min-h-screen bg-slate-50/50 pb-12" x-data="paymentApp({{ json_encode($transaksiPending) }}, {{ old('durasi') ? old('durasi') : 'null' }})" x-cloak>
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .shadow-soft {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-
-        [x-cloak] {
-            display: none !important;
-        }
-    </style>
-
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-18 mt-10" x-data="paymentApp({{ json_encode($transaksiPending) }}, {{ old('durasi') ? old('durasi') : 'null' }})" x-cloak>
-        <div class="max-w-6xl mx-auto mb-2 py-0">
-            <!-- Breadcrumb -->
-            <nav class="flex items-center gap-2 text-sm">
-                <a href="{{ route('dashboard-penghuni') }}" class="text-neutral-600 hover:text-primary transition-smooth">Dashboard</a>
-                <span class="text-neutral-300">/</span>
-                <span class="text-blue-600 font-medium">Bayar Tagihan</span>
-            </nav>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div class="space-y-6">
-                <div class="bg-white rounded-2xl shadow-soft p-6">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Bayar Tagihan Jatuh Tempo</h2>
-
-                    <!-- State: Tidak Ada Tagihan Jatuh Tempo -->
-                    @if (!$dataTransaksi && !$transaksiPending)
-                        <div class="text-center py-8 text-gray-500">
-                            <i class="fa-solid fa-file-invoice-dollar text-4xl mb-3 text-gray-400"></i>
-                            <p class="font-medium">{{ $message ?? 'Tidak ada tagihan jatuh tempo.' }}</p>
-                        </div>
-                    @else
-                        <!-- State: Transaksi Siap Dibayar (Data ditampilkan langsung oleh Blade) -->
-                        @if ($dataTransaksi)
-                            <div class="bg-gray-50 rounded-xl p-4 mb-6">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-gray-600">Kode Transaksi</span>
-                                    <span class="font-mono font-medium text-indigo-700">{{ $dataTransaksi['kode'] }}</span>
-                                </div>
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-gray-600">Kamar</span>
-                                    <span class="font-semibold">{{ $dataTransaksi['kamar_kode'] }}</span>
-                                </div>
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-gray-600">Periode</span>
-                                    <span class="font-semibold">{{ $dataTransaksi['periode_mulai'] }} – {{ $dataTransaksi['periode_akhir'] }}</span>
-                                </div>
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-gray-600">Jatuh Tempo</span>
-                                    <span class="font-semibold text-rose-600">{{ \Carbon\Carbon::parse($dataTransaksi['tanggal_jatuhtempo'])->format('d M Y') }}</span>
-                                </div>
-                                <div class="border-t border-gray-200 pt-2 mt-3">
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-lg font-bold text-gray-900">Total Tagihan:</span>
-                                        <span class="text-2xl font-bold text-blue-600">Rp {{ number_format($dataTransaksi['total_bayar'], 0, ',', '.') }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-
-                        <!-- Form untuk memilih durasi dan membuat transaksi -->
-                        @if (!$transaksiPending)
-                            <form method="POST" action="{{ route('penghuni.pembayaran.buat-transaksi') }}" @submit="submitting = true">
-                                @csrf
-                                <!-- Pilihan Durasi -->
-                                <div class="mb-6">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Durasi Pembayaran (Bulan)</label>
-                                    <div class="grid grid-cols-3 gap-3">
-                                        <button type="button" @click="durasi = 1; $el.form.durasi.value = 1"
-                                            :class="{ 'bg-blue-600 text-white': durasi === 1, 'bg-gray-200 text-gray-700 hover:bg-gray-300': durasi !== 1 }"
-                                            class="py-3 rounded-xl font-medium transition-colors">
-                                            1 Bulan
-                                        </button>
-                                        <button type="button" @click="durasi = 3; $el.form.durasi.value = 3"
-                                            :class="{ 'bg-blue-600 text-white': durasi === 3, 'bg-gray-200 text-gray-700 hover:bg-gray-300': durasi !== 3 }"
-                                            class="py-3 rounded-xl font-medium transition-colors">
-                                            3 Bulan
-                                        </button>
-                                        <button type="button" @click="durasi = 6; $el.form.durasi.value = 6"
-                                            :class="{ 'bg-blue-600 text-white': durasi === 6, 'bg-gray-200 text-gray-700 hover:bg-gray-300': durasi !== 6 }"
-                                            class="py-3 rounded-xl font-medium transition-colors">
-                                            6 Bulan
-                                        </button>
-                                        <!-- Input tersembunyi untuk mengirim nilai durasi -->
-                                        <input type="hidden" name="durasi" value="{{ old('durasi') }}" />
-                                    </div>
-                                    @error('durasi')
-                                        <div class="mt-4 mb-2 bg-red-100 text-red-700 p-3 rounded-lg text-sm">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <!-- User Data -->
-                                <div class="mb-6">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Data Penyewa</label>
-                                    <div class="space-y-3">
-                                        <div>
-                                            <input type="text" value="{{ auth()->user()->name }}" readonly
-                                                class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-gray-600 focus:outline-none">
-                                        </div>
-                                        <div>
-                                            <input type="email" value="{{ auth()->user()->email }}" readonly
-                                                class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-gray-600 focus:outline-none">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <button type="submit" :disabled="!durasi || submitting"
-                                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 shadow-soft hover:shadow-lg transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed">
-                                    Bayar Sekarang
-                                </button>
-                            </form>
-                        @else
-                            <!-- Jika ada transaksi pending, tampilkan tombol Lanjutkan Pembayaran -->
-                            <div class="mb-6">
-                                <div class="bg-blue-50 text-blue-800 p-3 rounded-lg text-sm">
-                                    <i class="fa-solid fa-info-circle mr-2"></i>
-                                    <span>Transaksi <strong>{{ $transaksiPending->kode }}</strong> sedang menunggu pembayaran.</span>
-                                </div>
-                            </div>
-
-                            <!-- User Data -->
-                            <div class="mb-6">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Data Penyewa</label>
-                                <div class="space-y-3">
-                                    <div>
-                                        <input type="text" value="{{ auth()->user()->name }}" readonly
-                                            class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-gray-600 focus:outline-none">
-                                    </div>
-                                    <div>
-                                        <input type="email" value="{{ auth()->user()->email }}" readonly
-                                            class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-gray-600 focus:outline-none">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button type="button" @click="lanjutkanPembayaran()" :disabled="submitting"
-                                class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 shadow-soft hover:shadow-lg transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed">
-                                Lanjutkan Pembayaran
-                            </button>
-                        @endif
-                    @endif
-
-                    <!-- State: Loading -->
-                    <div x-show="submitting" class="text-center py-8">
-                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600 mb-4"></div>
-                        <p class="text-gray-600">Mempersiapkan pembayaran...</p>
-                        <p class="text-sm text-gray-500 mt-1">Mohon jangan tutup halaman ini.</p>
-                    </div>
-
-                    <!-- State: Error -->
-                    <div x-show="errorMessage" class="mt-4 mb-2 bg-red-100 text-red-700 p-3 rounded-lg text-sm" x-text="errorMessage"></div>
-
-                    <!-- State: Success Message (from Laravel Session) -->
-                    @if (session('success'))
-                        <div x-data="{ show: true }" x-show="show" class="mt-4 mb-2 bg-green-100 text-green-700 p-3 rounded-lg text-sm">
-                            <div class="flex justify-between items-center">
-                                <span>{{ session('success') }}</span>
-                                <button @click="show = false" class="text-green-800 hover:text-green-900">
-                                    <i class="fa-solid fa-xmark"></i>
-                                </button>
-                            </div>
-                        </div>
-                    @endif
-
-                    <p class="text-center text-sm text-gray-500 mt-4">
-                        Pembayaran akan diproses melalui Midtrans. Data Anda aman dan terenkripsi.
-                    </p>
-                </div>
-
-                <!-- Security Info -->
-                <div class="bg-white rounded-2xl shadow-soft p-6">
-                    <div class="flex items-center justify-center space-x-6 text-gray-600">
-                        <div class="flex items-center space-x-2">
-                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
-                                </path>
-                            </svg>
-                            <span class="text-sm">Pembayaran Aman</span>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
-                                </path>
-                            </svg>
-                            <span class="text-sm">Data Terlindungi</span>
-                        </div>
+        <div class="bg-white border-b border-slate-200 mt-25 mb-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <div class="flex items-center gap-4">
+                    <a href="{{ route('dashboard-penghuni') }}" class="p-2 hover:bg-slate-100 rounded-full transition-colors">
+                        <i class="fa-solid fa-arrow-left text-slate-600"></i>
+                    </a>
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-900">Pembayaran Tagihan</h1>
+                        <nav class="flex items-center gap-2 text-xs font-medium text-slate-500 uppercase tracking-wider">
+                            <a href="{{ route('dashboard-penghuni') }}" class="hover:text-indigo-600">Dashboard</a>
+                            <i class="fa-solid fa-chevron-right text-[8px]"></i>
+                            <span class="text-indigo-600 font-bold">Bayar Tagihan</span>
+                        </nav>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Right Column - Room & Bill Details -->
-            <div class="space-y-6">
-                <div class="glass-card rounded-2xl shadow-soft p-6 border border-white/50">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-xl font-bold text-gray-900">Detail Tagihan</h3>
-                        <span class="bg-rose-100 text-rose-800 text-sm font-medium px-3 py-1 rounded-full">Jatuh Tempo</span>
-                    </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-                    @if (auth()->user()->kamar)
-                        <div class="rounded-xl overflow-hidden mb-4">
-                            <img src="{{ Storage::url(auth()->user()->kamar->gambar) }}" alt="Kamar Anda" class="w-full h-48 object-cover">
+                <div class="lg:col-span-7 space-y-6">
+
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                            <h3 class="font-bold text-slate-800 italic uppercase tracking-wider text-sm">Formulir Pembayaran</h3>
+                            <i class="fa-solid fa-credit-card text-slate-400"></i>
                         </div>
 
-                        <div class="space-y-3">
-                            <div class="flex justify-between items-center pb-2 border-b border-gray-200">
-                                <span class="text-gray-600">Kode Kamar</span>
-                                <span class="font-semibold">{{ auth()->user()->kamar->kode_kamar }}</span>
-                            </div>
-                            <div class="flex justify-between items-center pb-2 border-b border-gray-200">
-                                <span class="text-gray-600">Tipe</span>
-                                <span class="font-semibold">{{ auth()->user()->kamar->tipe }}</span>
-                            </div>
-                            <div class="flex justify-between items-center pb-2 border-b border-gray-200">
-                                <span class="text-gray-600">Harga/Bulan</span>
-                                <span class="text-lg font-bold text-blue-600">Rp {{ number_format(auth()->user()->kamar->harga, 0, ',', '.') }}</span>
-                            </div>
-                            @if (auth()->user()->kamar->detailKamar)
-                                <div class="flex justify-between items-start">
-                                    <span class="text-gray-600">Fasilitas</span>
-                                    <div class="flex flex-wrap gap-1">
-                                        @foreach (auth()->user()->kamar->detailKamar->take(3) as $detail)
-                                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">{{ $detail->fasilitas }}</span>
-                                        @endforeach
-                                        @if (auth()->user()->kamar->detailKamar->count() > 3)
-                                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
-                                                +{{ auth()->user()->kamar->detailKamar->count() - 3 }}
-                                            </span>
-                                        @endif
+                        <div class="p-6">
+                            @if (!$dataTransaksi && !$transaksiPending)
+                                <div class="text-center py-12">
+                                    <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <i class="fa-solid fa-calendar-check text-2xl text-slate-400"></i>
                                     </div>
+                                    <h4 class="text-lg font-bold text-slate-900">Semua Tagihan Lunas</h4>
+                                    <p class="text-sm text-slate-500 mt-1">{{ $message ?? 'Tidak ada tagihan yang perlu dibayar saat ini.' }}</p>
+                                </div>
+                            @else
+                                @if ($dataTransaksi)
+                                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 mb-8">
+                                        <div class="grid grid-cols-2 gap-y-3 text-sm">
+                                            <span class="text-slate-500 font-medium">Kode Transaksi</span>
+                                            <span class="text-right font-mono font-bold text-indigo-600">{{ $dataTransaksi['kode'] }}</span>
+
+                                            <span class="text-slate-500 font-medium">Periode</span>
+                                            <span class="text-right font-semibold text-slate-900">{{ $dataTransaksi['periode_mulai'] }} – {{ $dataTransaksi['periode_akhir'] }}</span>
+
+                                            <span class="text-slate-500 font-medium">Jatuh Tempo</span>
+                                            <span class="text-right font-bold text-red-500">{{ \Carbon\Carbon::parse($dataTransaksi['tanggal_jatuhtempo'])->translatedFormat('d M Y') }}</span>
+
+                                            <div class="col-span-2 border-t border-slate-200 mt-2 pt-3 flex justify-between items-center">
+                                                <span class="text-slate-900 font-bold">Total Tagihan</span>
+                                                <span class="text-xl font-black text-slate-900">Rp {{ number_format($dataTransaksi['total_bayar'], 0, ',', '.') }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                @if (!$transaksiPending)
+                                    <form method="POST" action="{{ route('penghuni.pembayaran.buat-transaksi') }}" @submit="submitting = true" class="space-y-6">
+                                        @csrf
+                                        <div class="space-y-3">
+                                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Pilih Durasi Pembayaran</label>
+                                            <div class="grid grid-cols-3 gap-3">
+                                                <template x-for="d in [1, 3, 6]">
+                                                    <button type="button" @click="durasi = d; $el.form.durasi.value = d"
+                                                        :class="durasi === d ? 'bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-100' :
+                                                            'bg-white border-slate-200 text-slate-600 hover:border-indigo-300 hover:bg-slate-50'"
+                                                        class="py-3.5 rounded-xl border-2 font-bold text-sm transition-all flex flex-col items-center">
+                                                        <span x-text="d"></span>
+                                                        <span class="text-[10px] uppercase opacity-80">Bulan</span>
+                                                    </button>
+                                                </template>
+                                                <input type="hidden" name="durasi" :value="durasi" />
+                                            </div>
+                                            @error('durasi')
+                                                <p class="text-[10px] text-red-500 font-bold uppercase">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div class="space-y-2">
+                                                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Nama Penyewa</label>
+                                                <input type="text" value="{{ auth()->user()->name }}" readonly
+                                                    class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-500 outline-none">
+                                            </div>
+                                            <div class="space-y-2">
+                                                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Email</label>
+                                                <input type="text" value="{{ auth()->user()->email }}" readonly
+                                                    class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-500 outline-none">
+                                            </div>
+                                        </div>
+
+                                        <button type="submit" :disabled="!durasi || submitting"
+                                            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-indigo-100 disabled:opacity-50 flex items-center justify-center gap-2">
+                                            <span x-show="!submitting">Buat Pesanan Pembayaran</span>
+                                            <i x-show="submitting" class="fa-solid fa-circle-notch animate-spin"></i>
+                                            <span x-show="submitting">Memproses...</span>
+                                        </button>
+                                    </form>
+                                @else
+                                    <div class="space-y-6">
+                                        <div class="flex items-start gap-4 p-4 bg-amber-50 border border-amber-100 rounded-2xl">
+                                            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-amber-600 shadow-sm flex-shrink-0">
+                                                <i class="fa-solid fa-clock-rotate-left"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs font-bold text-amber-800 uppercase tracking-wider">Transaksi Tertunda</p>
+                                                <p class="text-sm text-amber-700 mt-0.5">Selesaikan pembayaran untuk invoice <strong class="font-mono">{{ $transaksiPending->kode }}</strong> sebelum
+                                                    melanjutkan.</p>
+                                            </div>
+                                        </div>
+
+                                        <button type="button" @click="lanjutkanPembayaran()" :disabled="submitting"
+                                            class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-emerald-100 flex items-center justify-center gap-2">
+                                            <span x-show="!submitting">Lanjutkan ke Pembayaran Snap</span>
+                                            <i x-show="submitting" class="fa-solid fa-circle-notch animate-spin"></i>
+                                        </button>
+                                    </div>
+                                @endif
+                            @endif
+
+                            <div x-show="errorMessage" x-transition class="mt-4 p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 text-xs font-bold uppercase tracking-wider text-center"
+                                x-text="errorMessage"></div>
+                            @if (session('success'))
+                                <div class="mt-4 p-4 bg-emerald-50 border border-emerald-100 rounded-xl text-emerald-600 text-xs font-bold uppercase tracking-wider text-center">
+                                    {{ session('success') }}
                                 </div>
                             @endif
                         </div>
-                    @else
-                        <p class="text-gray-500 italic">Tidak ada kamar aktif.</p>
-                    @endif
+
+                        <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 text-center">
+                            <p class="text-[10px] text-slate-400 font-medium italic">
+                                Aman & Terenkripsi oleh Midtrans Payment Gateway
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5 space-y-6">
+
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                            <h3 class="font-bold text-slate-800 italic uppercase tracking-wider text-sm">Informasi Kamar</h3>
+                            <i class="fa-solid fa-door-open text-slate-400"></i>
+                        </div>
+
+                        @if (auth()->user()->kamar)
+                            <div class="relative h-48">
+                                <img src="{{ Storage::url(auth()->user()->kamar->gambar) }}" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
+                                <div class="absolute bottom-4 left-6">
+                                    <span class="bg-indigo-600 text-white text-[10px] font-bold px-2 py-1 rounded uppercase">{{ auth()->user()->kamar->tipe }}</span>
+                                    <h4 class="text-white font-bold text-lg leading-tight">{{ auth()->user()->kamar->kode_kamar }}</h4>
+                                </div>
+                            </div>
+                            <div class="p-6 space-y-4">
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-slate-500 font-medium">Harga Sewa</span>
+                                    <span class="font-bold text-indigo-600">Rp {{ number_format(auth()->user()->kamar->harga, 0, ',', '.') }} / bln</span>
+                                </div>
+
+                                @if (auth()->user()->kamar->detailKamar)
+                                    <div class="pt-4 border-t border-slate-50">
+                                        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2">Fasilitas Utama</label>
+                                        <div class="flex flex-wrap gap-2">
+                                            @foreach (auth()->user()->kamar->detailKamar->take(4) as $detail)
+                                                <span class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2.5 py-1 rounded-lg">
+                                                    {{ $detail->fasilitas }}
+                                                </span>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                        @else
+                            <div class="p-12 text-center">
+                                <p class="text-sm text-slate-400 italic font-medium">Data kamar tidak ditemukan.</p>
+                            </div>
+                        @endif
+                    </div>
+
+                    <div class="bg-indigo-900 rounded-2xl p-6 text-white shadow-lg shadow-indigo-100">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-10 h-10 bg-indigo-800 rounded-xl flex items-center justify-center">
+                                <i class="fa-solid fa-shield-halved text-indigo-300"></i>
+                            </div>
+                            <h4 class="font-bold text-sm uppercase tracking-wider text-indigo-100">Jaminan Keamanan</h4>
+                        </div>
+                        <ul class="space-y-3 text-xs text-indigo-200/80 font-medium">
+                            <li class="flex items-center gap-2">
+                                <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                                Enkripsi SSL 256-bit
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                                Verifikasi Otomatis 24/7
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                                Tanpa Biaya Admin Tersembunyi
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Midtrans Snap JS -->
     <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
 
     <script>
         function paymentApp(initialTransaksiPending, initialDurasi = null) {
             return {
                 submitting: false,
-                transaksiPending: initialTransaksiPending, // Gunakan data dari Blade
+                transaksiPending: initialTransaksiPending,
                 errorMessage: null,
                 durasi: initialDurasi,
 
-                pilihDurasi(d) {
-                    this.durasi = d;
-                    const hiddenInput = document.querySelector('input[name="durasi"]');
-                    if (hiddenInput) hiddenInput.value = d;
-                },
-
                 async lanjutkanPembayaran() {
                     if (!this.transaksiPending) return;
-
                     this.submitting = true;
                     this.errorMessage = null;
 
@@ -296,57 +240,39 @@
                         });
 
                         const data = await response.json();
-
                         if (data.success && data.snap_token) {
-                            this.openMidtrans(data.snap_token, data.transaksi_id);
+                            this.openMidtrans(data.snap_token);
                         } else {
                             this.errorMessage = data.message || 'Gagal menyiapkan pembayaran.';
                         }
                     } catch (error) {
-                        console.error('Payment prep error:', error);
-                        this.errorMessage = 'Terjadi kesalahan saat menyiapkan pembayaran.';
+                        this.errorMessage = 'Terjadi kesalahan sistem.';
                     } finally {
                         this.submitting = false;
                     }
                 },
 
-                openMidtrans(token, transaksiId) {
+                openMidtrans(token) {
                     snap.pay(token, {
-                        // onSuccess: (result) => {
-                        //     // Verifikasi setelah sukses
-                        //     window.location.href = "{{ route('penghuni.pembayaran') }}?verify_payment=1&status=success";
-                        // },
                         onSuccess: (result) => {
                             window.location.href = "{{ route('user.pembayaran.verifikasi-data') }}";
                         },
                         onPending: (result) => {
-                            // Kembali ke halaman pembayaran untuk pantau status
                             window.location.href = "{{ route('penghuni.pembayaran') }}";
                         },
                         onError: (result) => {
                             window.location.href = "{{ route('dashboard-penghuni') }}";
                         },
                         onClose: () => {
-                            window.location.href = "{{ route('penghuni.pembayaran') }}";
+                            this.submitting = false;
                         }
                     });
-                },
+                }
             };
         }
 
-        // Jalankan inisialisasi saat Alpine siap
         document.addEventListener('alpine:init', () => {
             Alpine.data('paymentApp', paymentApp);
-        });
-    </script>
-
-    <script>
-        // Tambahkan x-init untuk memanggil init
-        document.addEventListener('DOMContentLoaded', () => {
-            const root = document.querySelector('[x-cloak]');
-            if (root && !root.hasAttribute('x-init')) {
-                root.setAttribute('x-init', 'init()');
-            }
         });
     </script>
 @endsection

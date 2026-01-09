@@ -39,83 +39,124 @@
         {{-- Kolom utama --}}
         <div class="flex-1 flex flex-col lg:min-w-0">
             {{-- Top bar --}}
-            <header class="sticky top-0 z-20 bg-white/80 backdrop-blur border-b border-slate-200 h-16">
-                <div class="flex items-center gap-3 px-4 py-3">
-                    <button type="button"
-                        class="inline-flex items-center justify-center rounded-md p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 lg:hidden"
-                        @click="sidebarOpen = true" aria-label="Buka navigasi">
-                        <i class="fa-solid fa-bars text-lg"></i>
-                    </button>
+            <header class="sticky top-0 z-30 bg-white/70 backdrop-blur-xl border-b border-slate-200/50 h-20 transition-all">
+                <div class="flex items-center justify-between h-full px-4 md:px-8">
 
-                    <div class="flex-1 flex items-center gap-3">
-                        <h1 class="text-lg md:text-xl font-semibold text-slate-900 text-balance">@yield('title', 'Admin Panel')</h1>
-                        <div class="ml-auto flex items-center gap-3">
-                            <div class="relative" x-data="{ open: false }">
-                                <button @click="open = !open" class="relative p-2 rounded-md hover:bg-slate-100 text-slate-600" aria-label="Notifikasi">
-                                    <i class="fa-regular fa-bell text-lg"></i>
+                    <div class="flex items-center gap-4">
+                        <button type="button"
+                            class="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-600 hover:text-blue-600 hover:border-blue-200 hover:shadow-sm lg:hidden transition-all active:scale-95"
+                            @click="sidebarOpen = true" aria-label="Buka navigasi">
+                            <i class="fa-solid fa-bars-staggered text-lg"></i>
+                        </button>
+
+                        <div class="hidden sm:block">
+                            <h1 class="text-xl font-black text-slate-900 tracking-tight">
+                                @yield('title', 'Admin Panel')
+                            </h1>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 md:gap-4">
+
+                        <div class="relative" x-data="{ open: false }">
+                            <button @click="open = !open"
+                                class="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-white border border-slate-200 text-slate-500 transition-all hover:bg-slate-50 hover:text-blue-600 hover:border-blue-100 group"
+                                aria-label="Notifikasi">
+                                <i class="fa-regular fa-bell text-lg group-hover:rotate-12 transition-transform"></i>
+
+                                @if ($penghuniCount > 0)
+                                    <span class="absolute top-2.5 right-2.5 flex h-2.5 w-2.5">
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-600 border-2 border-white"></span>
+                                    </span>
+                                @endif
+                            </button>
+
+                            <div x-show="open" @click.outside="open = false" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                                x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-150"
+                                x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-95 translate-y-4" x-cloak
+                                class="absolute right-0 mt-4 w-80 overflow-hidden rounded-[2rem] bg-white shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-slate-200/60 z-50">
+
+                                <div class="bg-slate-50/50 px-6 py-5 border-b border-slate-100">
+                                    <div class="flex items-center justify-between">
+                                        <h3 class="text-xs font-black text-slate-900 uppercase tracking-widest">Notifikasi</h3>
+                                        <span class="bg-blue-600 text-[9px] font-black text-white px-2 py-0.5 rounded-full uppercase italic">Terbaru</span>
+                                    </div>
+                                </div>
+
+                                <div class="max-h-[350px] overflow-y-auto p-2">
                                     @if ($penghuniCount > 0)
-                                        <span class="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-blue-600"></span>
-                                    @endif
-                                </button>
-                                <div x-show="open" @click.outside="open = false" x-cloak class="absolute right-0 mt-3 w-72 bg-white rounded-xl shadow-2xl border border-slate-200/80 py-3 z-30">
-                                    <div class="px-5 py-2 text-base font-semibold text-slate-800 tracking-tight">Notifikasi</div>
-                                    @if ($penghuni ?? 0)
-                                        <div class="px-5 py-2.5 text-sm text-slate-700">
-                                            <span class="font-bold text-blue-600">{{ $penghuniCount }}</span> penghuni menunggak
-                                        </div>
-                                        <a href="{{ url('laporan/#penghuniMenunggak') }}" class="flex items-center justify-between px-5 py-2.5 text-sm text-blue-600 rounded-lg mx-2 transition">
-                                            <span class="font-medium">Ayo lihat <i class="fa-solid fa-arrow-right text-xs ml-2"></i></span>
+                                        <a href="{{ url('laporan/#penghuniMenunggak') }}" class="group flex items-start gap-4 p-4 rounded-2xl hover:bg-slate-50 transition-all">
+                                            <div class="h-10 w-10 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600 flex-shrink-0">
+                                                <i class="fa-solid fa-receipt text-sm"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-bold text-slate-800">Pembayaran Menunggak</p>
+                                                <p class="text-xs text-slate-500 mt-1">{{ $penghuniCount }} orang belum membayar.</p>
+                                            </div>
                                         </a>
                                     @else
-                                        <div class="px-5 py-2.5 text-sm text-slate-500">Tidak ada notifikasi</div>
+                                        <div class="py-10 text-center">
+                                            <i class="fa-solid fa-circle-check text-slate-200 text-3xl mb-3"></i>
+                                            <p class="text-xs font-bold text-slate-400 italic">Belum ada kabar baru</p>
+                                        </div>
                                     @endif
                                 </div>
                             </div>
+                        </div>
 
-                            {{-- Dropdown menu pengguna --}}
-                            <div class="relative" x-data="{ open: false }">
-                                <button @click="open = !open" class="flex items-center gap-2 rounded-lg p-1.5 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                                    aria-label="Menu pengguna">
+                        <div class="h-8 w-px bg-slate-200 mx-1 hidden sm:block"></div>
+
+                        <div class="relative" x-data="{ open: false }">
+                            <button @click="open = !open"
+                                class="flex items-center gap-3 pl-1 pr-3 py-1 rounded-2xl bg-white border border-slate-200 hover:border-blue-200 hover:shadow-sm transition-all group">
+                                <div class="relative">
                                     @if (auth()->check() && auth()->user()->avatar)
-                                        <img src="{{ Storage::url(auth()->user()->avatar) }}" alt="Avatar" class="h-9 w-9 rounded-full object-cover ring-1 ring-blue-200">
+                                        <img src="{{ Storage::url(auth()->user()->avatar) }}" alt="Avatar" class="h-9 w-9 rounded-xl object-cover ring-2 ring-slate-50">
                                     @else
-                                        <div class="h-9 w-9 rounded-full bg-blue-100 flex items-center justify-center ring-1 ring-blue-200">
-                                            <i class="fa-solid fa-user text-blue-600"></i>
+                                        <div
+                                            class="h-9 w-9 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-slate-500 group-hover:from-blue-600 group-hover:to-indigo-600 group-hover:text-white transition-all">
+                                            <i class="fa-solid fa-user text-xs"></i>
                                         </div>
                                     @endif
-                                    <i class="fa-solid fa-chevron-down text-xs text-slate-500"></i>
-                                </button>
-
-                                <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2"
-                                    x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
-                                    x-transition:leave-end="opacity-0 -translate-y-2" @click.outside="open = false" x-cloak
-                                    class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-200/80 py-2 z-30">
-                                    <div class="px-4 py-2">
-                                        <p class="text-sm font-semibold text-slate-800 tracking-tight">
-                                            {{ auth()->user()->name ?? 'Admin Kos' }}
-                                        </p>
-                                        <p class="text-xs text-slate-500 capitalize">
-                                            {{ auth()->user()->role ?? 'admin' }}
-                                        </p>
-                                    </div>
-                                    <div class="border-t border-slate-200 my-2"></div>
-                                    <a href="{{ route('profil-admin.index') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 rounded-lg mx-2 transition">
-                                        <i class="fa-solid fa-user text-slate-500"></i>
-                                        <span>Profil</span>
-                                    </a>
-                                    <a href="{{ route('pengaturan-admin.index') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 rounded-lg mx-2 transition">
-                                        <i class="fa-solid fa-gear text-slate-500"></i>
-                                        <span>Pengaturan</span>
-                                    </a>
-                                    <div class="border-t border-slate-200 my-2"></div>
-                                    <form method="POST" action="{{ route('logout') }}" class="mx-2">
-                                        @csrf
-                                        <button type="submit" class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-lg transition">
-                                            <i class="fa-solid fa-right-from-bracket"></i>
-                                            <span>Keluar</span>
-                                        </button>
-                                    </form>
+                                    <span class="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 bg-emerald-500 border-2 border-white rounded-full"></span>
                                 </div>
+                                <div class="hidden md:block text-left">
+                                    <p class="text-xs font-black text-slate-900 leading-none truncate w-24">
+                                        {{ auth()->user()->name ?? 'Admin' }}
+                                    </p>
+                                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter mt-1">
+                                        {{ auth()->user()->role ?? 'Superadmin' }}
+                                    </p>
+                                </div>
+                                <i class="fa-solid fa-chevron-down text-[10px] text-slate-300 group-hover:text-blue-500 transition-colors"></i>
+                            </button>
+
+                            <div x-show="open" @click.outside="open = false" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                                x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-150"
+                                x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-95 translate-y-4" x-cloak
+                                class="absolute right-0 mt-4 w-56 overflow-hidden rounded-[1.5rem] bg-white shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-slate-200/60 z-50 p-2">
+
+                                <a href="{{ route('profil-admin.index') }}"
+                                    class="group flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all">
+                                    <i class="fa-solid fa-id-badge text-slate-400 group-hover:text-blue-500"></i>
+                                    Profil Saya
+                                </a>
+                                <a href="{{ route('pengaturan-admin.index') }}"
+                                    class="group flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all">
+                                    <i class="fa-solid fa-gears text-slate-400 group-hover:text-blue-500"></i>
+                                    Pengaturan
+                                </a>
+
+                                <div class="my-2 border-t border-slate-100"></div>
+
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 transition-all">
+                                        <i class="fa-solid fa-power-off"></i>
+                                        Keluar
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>

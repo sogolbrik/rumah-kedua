@@ -25,46 +25,33 @@
             <table class="w-full text-sm">
                 <thead class="bg-gradient-to-r from-slate-50 to-white border-b border-slate-200/50">
                     <tr>
-                        <th class="text-left px-6 py-4 w-12"><span class="text-slate-500">#</span></th>
-                        <th class="text-left px-6 py-4">
-                            <span class="text-slate-700 font-medium flex items-center gap-2">
-                                <i class="fa-solid fa-hashtag text-slate-500 text-xs"></i> Kode Kamar
-                            </span>
-                        </th>
-                        <th class="text-left px-6 py-4">
-                            <span class="text-slate-700 font-medium flex items-center gap-2">
-                                <i class="fa-solid fa-tag text-green-500 text-xs"></i> Harga
-                            </span>
-                        </th>
-                        <th class="text-left px-6 py-4 w-36">
-                            <span class="text-slate-700 font-medium flex items-center gap-2">
-                                <i class="fa-solid fa-circle-info text-amber-500 text-xs"></i> Status
-                            </span>
-                        </th>
-                        <th class="text-right px-6 py-4 w-52">
-                            <span class="text-slate-700 font-medium flex items-center gap-2 justify-end">
-                                <i class="fa-solid fa-gears text-slate-500 text-xs"></i> Aksi
-                            </span>
-                        </th>
+                        <th class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest w-16 text-center">No</th>
+                        <th class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-left">Informasi Kamar</th>
+                        <th class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
+                        <th class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-right">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100/60">
                     @forelse ($kamar as $item)
                         <tr class="hover:bg-slate-50/70 transition-colors duration-200 group">
-                            <td class="px-6 py-4 font-medium text-slate-700">{{ $loop->iteration }}</td>
+                            <td class="px-6 py-4 font-medium text-slate-700 text-center">{{ $loop->iteration }}</td>
                             <td class="px-6 py-4">
-                                <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-door-closed text-slate-400 text-sm"></i>
-                                    <span class="font-semibold text-slate-900 group-hover:text-indigo-900">{{ $item->kode_kamar }}</span>
+                                <div class="flex items-center gap-4">
+                                    <div
+                                        class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-blue-100 group-hover:text-blue-600 transition-all duration-300">
+                                        <i class="fa-solid fa-door-closed text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-black text-slate-900 leading-tight mb-0.5">Unit {{ $item->kode_kamar }}</p>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs font-bold text-blue-600">Rp{{ number_format($item->harga, 0, ',', '.') }}</span>
+                                            <span class="text-slate-300 text-[10px]">•</span>
+                                            <span class="text-[11px] font-medium text-slate-500 uppercase">{{ $item->tipe }}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-money-bill-wave text-green-500 text-sm"></i>
-                                    <span class="text-slate-900 font-medium">Rp {{ number_format($item->harga, 0, ',', '.') }}</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
+                            <td class="px-6 py-4 text-center">
                                 @if ($item->status == 'Tersedia')
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
                                         <i class="fa-solid fa-circle-check text-xs"></i> Tersedia
@@ -75,8 +62,8 @@
                                     </span>
                                 @endif
                             </td>
-                            <td class="px-6 py-4">
-                                <div class="flex justify-end gap-2">
+                            <td class="px-6 py-4 text-right whitespace-nowrap">
+                                <div class="inline-flex gap-2 justify-end">
                                     <button type="button" onclick="showDetailModal({{ $item->id }})"
                                         class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 transition-all shadow-sm hover:shadow">
                                         <i class="fa-solid fa-eye text-xs"></i> Detail
