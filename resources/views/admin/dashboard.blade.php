@@ -125,7 +125,7 @@
         <div class="rounded-[2.5rem] bg-slate-900 p-8 shadow-xl relative overflow-hidden">
             <div class="relative z-10">
                 <h3 class="text-lg font-black text-white mb-1">Top Performers</h3>
-                <p class="text-xs text-slate-400 font-medium mb-6">Unit dengan ROI tertinggi tahun ini</p>
+                <p class="text-xs text-slate-400 font-medium mb-6">Unit dengan Penjualan tertinggi tahun ini</p>
 
                 <div class="space-y-4">
                     @forelse ($topKamar as $index => $kamar)
@@ -141,7 +141,23 @@
                                     <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{{ $kamar->total_transaksi }} Booking</p>
                                 </div>
                             </div>
-                            <p class="text-sm font-black text-white">Rp{{ number_format($kamar->total_pendapatan / 1000000, 1) }}M</p>
+                            @php
+                                $pendapatan = $kamar->total_pendapatan;
+                                if ($pendapatan >= 1000000) {
+                                    $nilai = round($pendapatan / 1000000, 1);
+                                    if (fmod($nilai, 1) == 0) {
+                                        $nilai = (int) $nilai;
+                                    }
+                                    $satuan = 'JT';
+                                } elseif ($pendapatan >= 1000) {
+                                    $nilai = round($pendapatan / 1000);
+                                    $satuan = 'K';
+                                } else {
+                                    $nilai = $pendapatan;
+                                    $satuan = '';
+                                }
+                            @endphp
+                            <p class="text-sm font-black text-white">Rp{{ $nilai }}{{ $satuan }}</p>
                         </div>
                     @empty
                         <p class="text-center text-slate-500 py-10 text-xs italic">Data belum tersedia</p>

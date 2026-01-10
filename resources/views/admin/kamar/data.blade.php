@@ -3,7 +3,6 @@
 @section('title', 'Kamar')
 
 @section('admin-main')
-    <!-- Header Utama -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
         <div>
             <h1 class="text-2xl font-bold text-slate-900 bg-clip-text bg-gradient-to-r from-slate-900 to-slate-700">
@@ -86,7 +85,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-slate-500">
+                            <td colspan="4" class="px-6 py-12 text-center text-slate-500">
                                 <div class="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-slate-100 text-slate-400 mb-3">
                                     <i class="fa-solid fa-door-closed text-2xl"></i>
                                 </div>
@@ -99,7 +98,6 @@
             </table>
         </div>
 
-        <!-- Pagination -->
         @if ($kamar->hasPages())
             <div class="border-t border-slate-200/30 px-6 py-4 bg-slate-50/50">
                 <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
@@ -122,7 +120,7 @@
 
                         @if ($kamar->hasMorePages())
                             <a href="{{ $kamar->nextPageUrl() }}"
-                                class="inline-flex items-center px-4 py-2 rounded-lg text-sm bg-gradient-to-r from-blue-600 to-slate-400 text-white font-medium shadow-md hover:shadow-lg hover:from-blue-700 hover:to-slate-500 transition-all">
+                                class="inline-flex items-center px-4 py-2 rounded-lg text-sm bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow-md hover:shadow-lg transition-all">
                                 Selanjutnya <i class="fa-solid fa-chevron-right ml-1 text-xs"></i>
                             </a>
                         @else
@@ -136,19 +134,18 @@
         @endif
     </div>
 
-    <!-- Modal Detail Kamar -->
-    <div id="detailModal" class="fixed inset-0 z-50 overflow-y-auto transition-all duration-300 ease-out opacity-0 pointer-events-none">
+    <div id="detailModal" class="fixed inset-0 z-[60] overflow-y-auto hidden opacity-0 transition-opacity duration-300">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <!-- Backdrop dengan blur -->
-            <div id="modalBackdrop" class="fixed inset-0 transition-all duration-300 ease-out bg-gray-900/60 backdrop-blur-sm" onclick="hideDetailModal()"></div>
+            <div id="modalBackdrop" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" onclick="hideDetailModal()"></div>
 
-            <!-- Modal Content -->
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
             <div id="modalContent"
-                class="relative inline-block w-full max-w-4xl px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all duration-300 ease-out transform scale-95 translate-y-4 bg-white rounded-2xl shadow-2xl sm:my-8 sm:align-middle sm:p-6">
-                <!-- Header Modal -->
+                class="relative inline-block w-full max-w-4xl px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-2xl shadow-2xl sm:my-8 sm:align-middle sm:p-6 scale-95 translate-y-4">
+
                 <div class="flex items-center justify-between mb-6">
                     <div class="flex items-center gap-3">
-                        <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-cyan-100 text-cyan-600">
+                        <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-100 text-blue-600">
                             <i class="fa-solid fa-door-open text-lg"></i>
                         </div>
                         <div>
@@ -161,107 +158,74 @@
                     </button>
                 </div>
 
-                <!-- Content Modal -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Gambar Kamar -->
                     <div class="space-y-4">
-                        <!-- Carousel Galeri -->
                         <div class="relative group">
-                            <div class="aspect-w-16 aspect-h-12 bg-slate-100 rounded-xl overflow-hidden border border-slate-200 shadow-sm">
-                                <img id="galeriUtama" src="" alt="Galeri Kamar" class="w-full h-64 object-cover transition-transform duration-300 hover:scale-105">
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            <div class="aspect-video bg-slate-100 rounded-xl overflow-hidden border border-slate-200">
+                                <img id="galeriUtama" src="" alt="Galeri Kamar" class="w-full h-full object-cover">
                             </div>
 
-                            <!-- Indikator Galeri -->
-                            <div id="galeriIndikator" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2"></div>
-
-                            <!-- Navigasi Carousel -->
                             <button id="prevBtn" type="button"
-                                class="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white/80 shadow-md backdrop-blur-sm text-slate-700 hover:bg-white transition-all opacity-0 group-hover:opacity-100">
+                                class="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 shadow text-slate-700 hover:bg-white transition-all hidden">
                                 <i class="fa-solid fa-chevron-left text-xs"></i>
                             </button>
                             <button id="nextBtn" type="button"
-                                class="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white/80 shadow-md backdrop-blur-sm text-slate-700 hover:bg-white transition-all opacity-0 group-hover:opacity-100">
+                                class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 shadow text-slate-700 hover:bg-white transition-all hidden">
                                 <i class="fa-solid fa-chevron-right text-xs"></i>
                             </button>
                         </div>
 
-                        <!-- Miniatur Galeri -->
-                        <div id="miniGaleri" class="flex space-x-2 overflow-x-auto pb-2 hide-scrollbar"></div>
+                        <div id="miniGaleri" class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar"></div>
 
-                        <!-- Informasi Utama -->
-                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 shadow-sm">
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
                             <h4 class="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                                <i class="fa-solid fa-info-circle text-cyan-600"></i>
-                                Informasi Utama
+                                <i class="fa-solid fa-info-circle text-blue-600"></i> Informasi Utama
                             </h4>
                             <div class="space-y-3">
-                                <div class="flex justify-between items-center">
+                                <div class="flex justify-between items-center text-sm">
                                     <span class="text-slate-600">Status:</span>
-                                    <span id="modalStatus" class="px-3 py-1 rounded-full text-xs font-medium"></span>
+                                    <span id="modalStatus"></span>
                                 </div>
-                                <div class="flex justify-between items-center">
+                                <div class="flex justify-between items-center text-sm">
                                     <span class="text-slate-600">Tipe:</span>
-                                    <span id="modalTipe" class="font-medium text-slate-900"></span>
+                                    <span id="modalTipe" class="font-bold text-slate-900 uppercase"></span>
                                 </div>
-                                <div class="flex justify-between items-center">
+                                <div class="flex justify-between items-center text-sm">
                                     <span class="text-slate-600">Luas:</span>
-                                    <span id="modalLebar" class="font-medium text-slate-900"></span>
+                                    <span id="modalLebar" class="font-bold text-slate-900"></span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Detail Informasi -->
                     <div class="space-y-6">
-                        <!-- Harga -->
-                        <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-4 border border-emerald-200 shadow-sm">
-                            <div class="flex items-center gap-3">
-                                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600">
-                                    <i class="fa-solid fa-tag"></i>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-emerald-700 font-medium">Harga per Bulan</p>
-                                    <p id="modalHarga" class="text-2xl font-bold text-emerald-900"></p>
-                                </div>
-                            </div>
+                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+                            <p class="text-xs text-blue-700 font-bold uppercase tracking-wider mb-1">Harga Sewa / Bulan</p>
+                            <p id="modalHarga" class="text-3xl font-black text-blue-900"></p>
                         </div>
 
-                        <!-- Deskripsi -->
                         <div>
-                            <h4 class="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                                <i class="fa-solid fa-file-lines text-blue-600"></i>
-                                Deskripsi Kamar
+                            <h4 class="font-semibold text-slate-900 mb-2 flex items-center gap-2 text-sm">
+                                <i class="fa-solid fa-file-lines text-slate-400"></i> Deskripsi
                             </h4>
-                            <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 shadow-sm">
-                                <p id="modalDeskripsi" class="text-slate-700 leading-relaxed"></p>
-                            </div>
+                            <p id="modalDeskripsi" class="text-sm text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-100"></p>
                         </div>
 
-                        <!-- Fasilitas -->
                         <div>
-                            <h4 class="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                                <i class="fa-solid fa-star text-amber-600"></i>
-                                Fasilitas Kamar
+                            <h4 class="font-semibold text-slate-900 mb-3 flex items-center gap-2 text-sm">
+                                <i class="fa-solid fa-star text-amber-500"></i> Fasilitas
                             </h4>
-                            <div id="modalFasilitas" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                <!-- Fasilitas akan diisi oleh JavaScript -->
-                            </div>
+                            <div id="modalFasilitas" class="grid grid-cols-2 gap-2"></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Footer Modal -->
-                <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-slate-200">
-                    <button type="button" onclick="hideDetailModal()"
-                        class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-all duration-200 hover:shadow-sm">
-                        <i class="fa-solid fa-times mr-2"></i>
+                <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-slate-100">
+                    <button type="button" onclick="hideDetailModal()" class="px-5 py-2 text-sm font-bold text-slate-600 hover:text-slate-800 transition-colors">
                         Tutup
                     </button>
-                    <a href="#" id="modalEditLink"
-                        class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all duration-200 hover:shadow-sm inline-flex items-center">
-                        <i class="fa-solid fa-pen-to-square mr-2"></i>
-                        Edit Kamar
+                    <a href="#" id="modalEditLink" class="px-5 py-2 text-sm font-bold text-white bg-blue-600 rounded-xl hover:bg-blue-700 shadow-md transition-all">
+                        Edit Data Kamar
                     </a>
                 </div>
             </div>
@@ -269,242 +233,114 @@
     </div>
 
     <script>
-        // Tambahkan class hidden jika belum ada
-        if (!document.querySelector('style').textContent.includes('.hidden')) {
-            const style = document.createElement('style');
-            style.textContent = `.hidden { display: none !important; }`;
-            document.head.appendChild(style);
-        }
-
-        // Data kamar dari server
+        // Data kamar diparsing dari PHP ke JS Object
+        const kamarData = @json($kamar->keyBy('id'));
         let currentSlide = 0;
         let galeriItems = [];
-        const kamarData = @json($kamar->keyBy('id')->toArray());
 
-        // Pasang event listener navigasi SEKALI SAJA
-        document.addEventListener('DOMContentLoaded', () => {
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
+        function showDetailModal(id) {
+            const data = kamarData[id];
+            if (!data) return;
 
-            prevBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (galeriItems.length > 1) {
-                    goToSlide(currentSlide - 1);
-                }
-            });
+            // Mapping Data
+            document.getElementById('modalKodeKamar').textContent = 'Unit ' + data.kode_kamar;
+            document.getElementById('modalHarga').textContent = 'Rp' + new Intl.NumberFormat('id-ID').format(data.harga);
+            document.getElementById('modalTipe').textContent = data.tipe;
+            document.getElementById('modalLebar').textContent = data.lebar + ' m²';
+            document.getElementById('modalDeskripsi').textContent = data.deskripsi || 'Tidak ada deskripsi untuk kamar ini.';
+            document.getElementById('modalEditLink').href = `/admin/kamar/${data.id}/edit`;
 
-            nextBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (galeriItems.length > 1) {
-                    goToSlide(currentSlide + 1);
-                }
-            });
-        });
-
-        function showDetailModal(kamarId) {
-            const kamar = kamarData[kamarId];
-            if (!kamar) return;
-
-            // Isi data ke modal
-            document.getElementById('modalKodeKamar').textContent = `Kamar ${kamar.kode_kamar}`;
-            document.getElementById('modalHarga').textContent = `Rp ${formatRupiah(kamar.harga)}`;
-            document.getElementById('modalTipe').textContent = kamar.tipe;
-            document.getElementById('modalLebar').textContent = `${kamar.lebar} m²`;
-            document.getElementById('modalDeskripsi').textContent = kamar.deskripsi || 'Tidak ada deskripsi';
-            document.getElementById('modalEditLink').href = `/kamar/${kamar.id}/edit`;
-
-            // Kumpulkan gambar unik
-            const galeriSet = new Set();
-            if (kamar.gambar) {
-                galeriSet.add(`/storage/${kamar.gambar.trim()}`);
-            }
-            if (Array.isArray(kamar.galeri)) {
-                kamar.galeri.forEach(item => {
-                    if (item && typeof item === 'object' && item.foto) {
-                        const fotoPath = item.foto.trim();
-                        if (fotoPath) {
-                            galeriSet.add(`/storage/${fotoPath}`);
-                        }
-                    }
-                });
-            }
-
-            let galeri = Array.from(galeriSet);
-            if (galeri.length === 0) {
-                galeri.push('/images/default-room.jpg');
-            }
-
-            initGaleriCarousel(galeri);
-
-            // Set status
-            const statusEl = document.getElementById('modalStatus');
-            if (kamar.status === 'Tersedia') {
-                statusEl.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Tersedia';
-                statusEl.className = 'px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200';
+            // Status Badge
+            const statusTarget = document.getElementById('modalStatus');
+            if (data.status === 'Tersedia') {
+                statusTarget.className = "px-3 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 border border-emerald-200";
+                statusTarget.innerHTML = "TERSEDIA";
             } else {
-                statusEl.innerHTML = '<i class="fa-solid fa-bed mr-1"></i> Terisi';
-                statusEl.className = 'px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200';
+                statusTarget.className = "px-3 py-1 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700 border border-blue-200";
+                statusTarget.innerHTML = "TERISI";
             }
 
-            // Isi fasilitas
-            const fasilitasContainer = document.getElementById('modalFasilitas');
-            fasilitasContainer.innerHTML = '';
-            if (kamar.detail_kamar?.length > 0) {
-                kamar.detail_kamar.forEach(fasilitas => {
-                    const el = document.createElement('div');
-                    el.className = 'flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-lg transition-all duration-200 hover:bg-slate-50 hover:border-slate-300';
-                    el.innerHTML = `<i class="fa-solid fa-check text-emerald-500 text-xs"></i><span class="text-sm text-slate-700">${fasilitas.fasilitas}</span>`;
-                    fasilitasContainer.appendChild(el);
+            // Fasilitas
+            const fasilContainer = document.getElementById('modalFasilitas');
+            fasilContainer.innerHTML = '';
+            if (data.detail_kamar && data.detail_kamar.length > 0) {
+                data.detail_kamar.forEach(f => {
+                    fasilContainer.innerHTML += `
+                        <div class="flex items-center gap-2 p-2 rounded-lg border border-slate-100 bg-white text-xs text-slate-700 font-medium">
+                            <i class="fa-solid fa-check-circle text-emerald-500"></i> ${f.fasilitas}
+                        </div>`;
                 });
             } else {
-                fasilitasContainer.innerHTML = `
-                <div class="col-span-2 text-center py-4 text-slate-500">
-                    <i class="fa-solid fa-info-circle mb-2 text-lg"></i>
-                    <p>Tidak ada fasilitas tersedia</p>
-                </div>
-            `;
+                fasilContainer.innerHTML = '<p class="text-xs text-slate-400 italic col-span-2">Belum ada fasilitas terdaftar</p>';
             }
 
-            // Tampilkan modal
+            // Galeri Logic
+            galeriItems = [];
+            if (data.gambar) galeriItems.push(`/storage/${data.gambar}`);
+            if (data.galeri) {
+                data.galeri.forEach(g => {
+                    if (g.foto) galeriItems.push(`/storage/${g.foto}`);
+                });
+            }
+            if (galeriItems.length === 0) galeriItems.push('https://via.placeholder.com/800x600?text=No+Image');
+
+            currentSlide = 0;
+            updateGalleryUI();
+
+            // Show Modal with Animation
             const modal = document.getElementById('detailModal');
-            const backdrop = document.getElementById('modalBackdrop');
-            const content = document.getElementById('modalContent');
-
-            modal.classList.remove('pointer-events-none');
-            modal.classList.add('pointer-events-auto');
-            document.body.classList.add('overflow-hidden');
-
-            // Trigger reflow
-            void modal.offsetWidth;
-
+            modal.classList.remove('hidden');
             setTimeout(() => {
-                modal.classList.remove('opacity-0');
                 modal.classList.add('opacity-100');
-                backdrop.classList.remove('bg-gray-900/60');
-                backdrop.classList.add('bg-gray-900/70');
-                content.classList.remove('scale-95', 'translate-y-4');
-                content.classList.add('scale-100', 'translate-y-0');
+                document.getElementById('modalContent').classList.remove('scale-95', 'translate-y-4');
+                document.getElementById('modalContent').classList.add('scale-100', 'translate-y-0');
             }, 10);
+            document.body.style.overflow = 'hidden';
         }
 
-        function initGaleriCarousel(images) {
-            galeriItems = images;
-            currentSlide = 0;
+        function updateGalleryUI() {
+            const mainImg = document.getElementById('galeriUtama');
+            const mini = document.getElementById('miniGaleri');
+            const pBtn = document.getElementById('prevBtn');
+            const nBtn = document.getElementById('nextBtn');
 
-            // Update gambar utama
-            document.getElementById('galeriUtama').src = galeriItems[0];
-            document.getElementById('galeriUtama').alt = `Foto 1 dari ${galeriItems.length}`;
-
-            const indikatorContainer = document.getElementById('galeriIndikator');
-            const miniContainer = document.getElementById('miniGaleri');
-
-            indikatorContainer.innerHTML = '';
-            miniContainer.innerHTML = '';
+            mainImg.src = galeriItems[currentSlide];
+            mini.innerHTML = '';
 
             if (galeriItems.length > 1) {
-                // Buat indikator
-                galeriItems.forEach((_, i) => {
-                    const dot = document.createElement('button');
-                    dot.className = `w-2 h-2 rounded-full ${i === 0 ? 'bg-white' : 'bg-white/50'} transition-colors`;
-                    dot.setAttribute('aria-label', `Lihat foto ${i + 1}`);
-                    dot.addEventListener('click', () => goToSlide(i));
-                    indikatorContainer.appendChild(dot);
+                pBtn.classList.remove('hidden');
+                nBtn.classList.remove('hidden');
+                galeriItems.forEach((src, idx) => {
+                    mini.innerHTML += `
+                        <div onclick="currentSlide=${idx}; updateGalleryUI()" 
+                             class="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 cursor-pointer transition-all ${currentSlide === idx ? 'border-blue-500 ring-2 ring-blue-100' : 'border-slate-200 opacity-60 hover:opacity-100'}">
+                            <img src="${src}" class="w-full h-full object-cover">
+                        </div>`;
                 });
-
-                // Buat miniatur
-                galeriItems.forEach((img, i) => {
-                    const mini = document.createElement('div');
-                    mini.className = `mini-galeri-item ${i === 0 ? 'active' : ''}`;
-                    mini.innerHTML = `<img src="${img}" alt="Mini ${i + 1}" loading="lazy">`;
-                    mini.addEventListener('click', () => goToSlide(i));
-                    miniContainer.appendChild(mini);
-                });
-
-                // Tampilkan elemen
-                miniContainer.classList.remove('hidden');
-                indikatorContainer.classList.remove('hidden');
-                document.getElementById('prevBtn').classList.remove('hidden');
-                document.getElementById('nextBtn').classList.remove('hidden');
             } else {
-                // Sembunyikan semua
-                miniContainer.classList.add('hidden');
-                indikatorContainer.classList.add('hidden');
-                document.getElementById('prevBtn').classList.add('hidden');
-                document.getElementById('nextBtn').classList.add('hidden');
+                pBtn.classList.add('hidden');
+                nBtn.classList.add('hidden');
             }
         }
 
-        function goToSlide(index) {
-            if (galeriItems.length <= 1) return;
+        document.getElementById('prevBtn').onclick = () => {
+            currentSlide = currentSlide > 0 ? currentSlide - 1 : galeriItems.length - 1;
+            updateGalleryUI();
+        };
 
-            if (index >= galeriItems.length) index = 0;
-            if (index < 0) index = galeriItems.length - 1;
-
-            currentSlide = index;
-
-            // Update gambar utama
-            document.getElementById('galeriUtama').src = galeriItems[currentSlide];
-            document.getElementById('galeriUtama').alt = `Foto ${currentSlide + 1} dari ${galeriItems.length}`;
-
-            // Update indikator
-            document.querySelectorAll('#galeriIndikator button').forEach((dot, i) => {
-                dot.className = `w-2 h-2 rounded-full ${i === currentSlide ? 'bg-white' : 'bg-white/50'} transition-colors`;
-            });
-
-            // Update miniatur aktif
-            document.querySelectorAll('.mini-galeri-item').forEach((item, i) => {
-                if (i === currentSlide) {
-                    item.classList.add('active');
-                } else {
-                    item.classList.remove('active');
-                }
-            });
-
-            // Scroll ke miniatur aktif
-            const activeMini = document.querySelector('.mini-galeri-item.active');
-            if (activeMini) {
-                activeMini.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'nearest',
-                    inline: 'center'
-                });
-            }
-        }
-
-        // Navigasi keyboard
-        document.addEventListener('keydown', function(event) {
-            if (document.getElementById('detailModal').classList.contains('pointer-events-auto')) {
-                if (event.key === 'ArrowLeft' && galeriItems.length > 1) {
-                    goToSlide(currentSlide - 1);
-                } else if (event.key === 'ArrowRight' && galeriItems.length > 1) {
-                    goToSlide(currentSlide + 1);
-                } else if (event.key === 'Escape') {
-                    hideDetailModal();
-                }
-            }
-        });
+        document.getElementById('nextBtn').onclick = () => {
+            currentSlide = currentSlide < galeriItems.length - 1 ? currentSlide + 1 : 0;
+            updateGalleryUI();
+        };
 
         function hideDetailModal() {
             const modal = document.getElementById('detailModal');
-            const backdrop = document.getElementById('modalBackdrop');
-            const content = document.getElementById('modalContent');
-
             modal.classList.remove('opacity-100');
-            modal.classList.add('opacity-0');
-            backdrop.classList.remove('bg-gray-900/70');
-            backdrop.classList.add('bg-gray-900/60');
-            content.classList.remove('scale-100', 'translate-y-0');
-            content.classList.add('scale-95', 'translate-y-4');
-
+            document.getElementById('modalContent').classList.add('scale-95', 'translate-y-4');
             setTimeout(() => {
-                modal.classList.remove('pointer-events-auto');
-                modal.classList.add('pointer-events-none');
-                document.body.classList.remove('overflow-hidden');
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
             }, 300);
-        }
-
-        function formatRupiah(angka) {
-            return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
 
         function konfirmasiHapusKamar(id, kodeKamar) {
@@ -538,52 +374,6 @@
     </script>
 
     <style>
-        .aspect-w-16 {
-            position: relative;
-        }
-
-        .aspect-w-16::before {
-            content: "";
-            display: block;
-            padding-bottom: 75%;
-            /* 4:3 Aspect Ratio */
-        }
-
-        .aspect-w-16>* {
-            position: absolute;
-            height: 100%;
-            width: 100%;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-        }
-
-        /* Smooth transitions for all interactive elements */
-        .transition-all {
-            transition-property: all;
-        }
-
-        /* Custom scrollbar for modal */
-        #detailModal ::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        #detailModal ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 3px;
-        }
-
-        #detailModal ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 3px;
-        }
-
-        #detailModal ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-
-        /* Sembunyikan scrollbar horizontal */
         .hide-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -593,77 +383,8 @@
             scrollbar-width: none;
         }
 
-        /* Styling miniatur galeri */
-        .mini-galeri-item {
-            @apply flex-shrink-0 w-16 h-16 rounded-lg border-2 border-slate-200 overflow-hidden transition-all duration-200 cursor-pointer;
-        }
-
-        .mini-galeri-item.active {
-            @apply border-cyan-500 ring-2 ring-cyan-200;
-        }
-
-        .mini-galeri-item img {
-            @apply w-full h-full object-cover;
-        }
-
-        /* Sesuaikan aspect ratio */
-        .aspect-w-16::before {
-            padding-bottom: 75%;
-        }
-
-        .aspect-w-16>* {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Smooth modal */
-        #detailModal ::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        #detailModal ::-webkit-scrollbar-track {
-            background: #f8fafc;
-            border-radius: 3px;
-        }
-
-        #detailModal ::-webkit-scrollbar-thumb {
-            background: #e2e8f0;
-            border-radius: 3px;
-        }
-
-        #detailModal ::-webkit-scrollbar-thumb:hover {
-            background: #cbd5e1;
-        }
-
-        /* Sembunyikan scrollbar horizontal */
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        /* Styling miniatur galeri */
-        .mini-galeri-item {
-            @apply flex-shrink-0 w-16 h-16 rounded-lg border-2 border-slate-200 overflow-hidden transition-all duration-200 cursor-pointer;
-        }
-
-        .mini-galeri-item.active {
-            @apply border-cyan-500 ring-2 ring-cyan-200;
-        }
-
-        .mini-galeri-item img {
-            @apply w-full h-full object-cover;
-        }
-
-        /* Custom backdrop blur for modal */
-        #modalBackdrop {
-            backdrop-filter: blur(4px);
+        #modalContent {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
     </style>
 @endsection
