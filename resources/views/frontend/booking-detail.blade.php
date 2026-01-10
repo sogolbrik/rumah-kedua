@@ -38,7 +38,7 @@
     </style>
 
     <!-- Main Container -->
-    <div class="min-h-screen py-15 px-4 sm:px-6 lg:px-8 mt-10">
+    <div class="min-h-screen py-15 px-4 sm:px-6 lg:px-8 mt-12">
         <div class="max-w-6xl mx-auto">
             <!-- Breadcrumb Navigation -->
             <nav class="mb-8 flex items-center gap-2 text-sm">

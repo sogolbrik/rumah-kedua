@@ -1,88 +1,83 @@
-<!-- 1. NAVBAR -->
-<nav x-data="{ mobileOpen: false }"
-    class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-5xl 
-            bg-white/90 backdrop-blur-md rounded-4xl shadow-lg border border-white/80 
-            transition-all duration-300">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-            <!-- Logo -->
-            <a href="{{ route('landing-page') }}" class="flex items-center gap-2.5 group" aria-label="Kembali ke beranda RumahKedua">
-                <div class="w-9 h-9 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
-                    <i class="fas fa-home text-white text-sm"></i>
+<nav x-data="{
+    mobileOpen: false,
+    isScrolled: false,
+    atTop: true
+}" x-init="window.addEventListener('scroll', () => {
+    isScrolled = window.scrollY > 20;
+    atTop = window.scrollY < 10;
+})" :class="atTop ? 'top-6' : 'top-4'"
+    class="fixed left-1/2 -translate-x-1/2 z-[100] w-[calc(100%-1.5rem)] max-w-6xl transition-all duration-500 ease-in-out">
+
+    <div :class="isScrolled ? 'bg-white/80 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.08)] border-slate-200/50 py-2' : 'bg-white/40 backdrop-blur-sm border-white/20 py-4'"
+        class="relative px-5 md:px-8 rounded-[1.5rem] md:rounded-[2rem] border transition-all duration-500 overflow-hidden">
+
+        <div class="absolute inset-0 bg-gradient-to-r from-white/20 via-transparent to-white/20 pointer-events-none"></div>
+
+        <div class="relative flex justify-between items-center h-12">
+            <a href="{{ route('landing-page') }}" class="flex items-center gap-3 group">
+                <div class="relative w-10 h-10 flex items-center justify-center">
+                    <div class="absolute inset-0 bg-slate-900 rounded-2xl rotate-6 group-hover:rotate-0 group-hover:bg-blue-600 transition-all duration-500"></div>
+                    <i class="fas fa-home text-white text-sm relative z-10"></i>
                 </div>
-                <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-900 to-cyan-700">
-                    {{ $pengaturan->nama_kos ?? 'RumahKedua' }}
-                </span>
+                <div class="flex flex-col">
+                    <span class="text-lg font-black tracking-tight text-slate-900 leading-none">
+                        RUMAH<span class="text-blue-600">KEDUA</span>
+                    </span>
+                    <span class="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-500">Premium Living</span>
+                </div>
             </a>
 
-            <!-- Desktop Menu -->
-            <div class="hidden md:flex items-center gap-6">
+            <div class="hidden md:flex items-center gap-8">
                 @foreach ([['label' => 'Fasilitas', 'id' => 'fasilitas'], ['label' => 'Kamar', 'id' => 'kamar'], ['label' => 'Lokasi', 'id' => 'lokasi'], ['label' => 'Galeri', 'route' => 'galeri-kamar'], ['label' => 'FAQ', 'id' => 'faq']] as $item)
-                    @if (isset($item['route']))
-                        <a href="{{ route($item['route']) }}" class="text-gray-700 hover:text-cyan-600 font-medium relative group transition-colors duration-200">
-                            {{ $item['label'] }}
-                            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-500 group-hover:w-full transition-all duration-300"></span>
-                        </a>
-                    @else
-                        <a href="{{ url('/#' . $item['id']) }}" class="text-gray-700 hover:text-cyan-600 font-medium relative group transition-colors duration-200">
-                            {{ $item['label'] }}
-                            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-500 group-hover:w-full transition-all duration-300"></span>
-                        </a>
-                    @endif
+                    <a href="{{ isset($item['route']) ? route($item['route']) : url('/#' . $item['id']) }}"
+                        class="text-[13px] font-bold uppercase tracking-widest text-slate-600 hover:text-blue-600 transition-colors duration-300 relative group">
+                        {{ $item['label'] }}
+                        <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-blue-600 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300"></span>
+                    </a>
                 @endforeach
             </div>
 
-            <!-- CTA Button Desktop -->
-            <div class="hidden md:flex items-center gap-3">
-                <a href="{{ route('login') }}"
-                    class="relative overflow-hidden rounded-lg border-2 border-cyan-500 px-5 py-2 font-medium text-cyan-600 transition-all duration-300 hover:bg-cyan-50 hover:text-cyan-700">
+            <div class="hidden md:flex items-center gap-4">
+                <a href="{{ route('login') }}" class="text-[13px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors">
                     Login
                 </a>
                 <a href="{{ route('booking') }}"
-                    class="relative overflow-hidden rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-2 font-medium text-white shadow-md hover:shadow-lg transition-all duration-300 hover:from-cyan-600 hover:to-blue-700">
-                    <span class="relative z-10 flex items-center gap-1.5">
-                        <i class="fas fa-calendar-check text-xs"></i>
-                        Booking Sekarang
-                    </span>
+                    class="group relative inline-flex items-center gap-3 bg-slate-900 text-white px-7 py-3 rounded-2xl overflow-hidden transition-all duration-300 hover:bg-blue-600 hover:shadow-[0_12px_24px_rgba(37,99,235,0.2)]">
+                    <span class="relative z-10 text-[11px] font-black uppercase tracking-widest">Reserve Room</span>
+                    <i class="fas fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
                 </a>
             </div>
 
-            <!-- Mobile Menu Button -->
-            <button @click="mobileOpen = !mobileOpen" class="md:hidden text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition-colors" :aria-expanded="mobileOpen" aria-controls="mobile-menu"
-                aria-label="Toggle navigation menu">
-                <i :class="mobileOpen ? 'fas fa-times' : 'fas fa-bars'" class="text-2xl"></i>
+            <button @click="mobileOpen = !mobileOpen" class="md:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 focus:outline-none">
+                <span class="w-6 h-0.5 bg-slate-900 transition-all duration-300" :class="mobileOpen ? 'rotate-45 translate-y-2' : ''"></span>
+                <span class="w-6 h-0.5 bg-slate-900 transition-all duration-300" :class="mobileOpen ? 'opacity-0' : ''"></span>
+                <span class="w-6 h-0.5 bg-slate-900 transition-all duration-300" :class="mobileOpen ? '-rotate-45 -translate-y-2' : ''"></span>
             </button>
         </div>
+    </div>
 
-        <!-- Mobile Menu -->
-        <div x-show="mobileOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4" id="mobile-menu"
-            class="md:hidden pb-4 pt-3 space-y-2 bg-white/95 backdrop-blur-sm rounded-b-2xl border-t border-gray-100">
+    <div x-show="mobileOpen" x-transition:enter="transition ease-out duration-400" x-transition:enter-start="opacity-0 -translate-y-8 scale-95"
+        x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+        x-transition:leave-end="opacity-0 -translate-y-8 scale-95"
+        class="absolute top-full left-0 right-0 mt-4 bg-white/95 backdrop-blur-xl rounded-[2rem] border border-slate-200/60 shadow-2xl p-6 md:hidden">
 
+        <div class="flex flex-col gap-1">
             @foreach ([['label' => 'Fasilitas', 'id' => 'fasilitas'], ['label' => 'Kamar', 'id' => 'kamar'], ['label' => 'Lokasi', 'id' => 'lokasi'], ['label' => 'Galeri', 'route' => 'galeri-kamar'], ['label' => 'FAQ', 'id' => 'faq']] as $item)
-                @if (isset($item['route']))
-                    <a href="{{ route($item['route']) }}" @click="mobileOpen = false" class="block px-4 py-2.5 text-gray-700 hover:bg-cyan-50 rounded-xl transition-colors font-medium">
-                        {{ $item['label'] }}
-                    </a>
-                @else
-                    <a href="{{ url('/#' . $item['id']) }}" @click="mobileOpen = false" class="block px-4 py-2.5 text-gray-700 hover:bg-cyan-50 rounded-xl transition-colors font-medium">
-                        {{ $item['label'] }}
-                    </a>
-                @endif
+                <a href="{{ isset($item['route']) ? route($item['route']) : url('/#' . $item['id']) }}" @click="mobileOpen = false"
+                    class="flex items-center justify-between p-4 rounded-2xl hover:bg-slate-50 transition-colors group">
+                    <span class="text-sm font-bold uppercase tracking-widest text-slate-600 group-hover:text-blue-600">{{ $item['label'] }}</span>
+                    <i class="fas fa-chevron-right text-[10px] text-slate-300 group-hover:text-blue-600"></i>
+                </a>
             @endforeach
+        </div>
 
-            <div class="flex flex-col gap-2 px-4 pt-2">
-                <a href="{{ route('login') }}" @click="mobileOpen = false" class="w-full">
-                    <button class="w-full bg-white border-2 border-cyan-500 text-cyan-600 px-4 py-2.5 rounded-xl font-medium transition-colors hover:bg-cyan-50">
-                        Login
-                    </button>
-                </a>
-                <a href="{{ route('booking') }}" @click="mobileOpen = false" class="w-full">
-                    <button class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-4 py-2.5 rounded-xl font-medium shadow-sm hover:shadow transition-all">
-                        Booking Sekarang
-                    </button>
-                </a>
-            </div>
+        <div class="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-slate-100">
+            <a href="{{ route('login') }}" class="flex items-center justify-center py-4 rounded-2xl border border-slate-200 text-xs font-black uppercase tracking-widest text-slate-600">
+                Login
+            </a>
+            <a href="{{ route('booking') }}" class="flex items-center justify-center py-4 rounded-2xl bg-blue-600 text-white text-xs font-black uppercase tracking-widest shadow-lg shadow-blue-200">
+                Booking
+            </a>
         </div>
     </div>
 </nav>

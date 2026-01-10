@@ -4,7 +4,7 @@
 @section('frontend-main')
 
     {{-- 1. HERO SECTION: Premium Mesh Gradient & Noise --}}
-    <header class="relative min-h-[90vh] flex items-center pt-20 overflow-hidden bg-slate-50">
+    <header class="relative min-h-[90vh] flex items-center pt-25 overflow-hidden bg-slate-50">
         <div class="absolute inset-0 z-0">
             <div class="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-cyan-200/40 rounded-full blur-[120px] animate-pulse"></div>
             <div class="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-blue-200/30 rounded-full blur-[120px]"></div>

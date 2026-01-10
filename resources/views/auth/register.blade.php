@@ -5,20 +5,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>RumahKedua - Register</title>
+    <title>RumahKedua - Create Account</title>
 
-    {{-- Favicon --}}
     <link rel="icon" href="{{ asset('assets/image/favicon/logo.svg') }}" type="image/svg+xml">
-
     <link rel="stylesheet" href="{{ asset('assets/vendor/fontawesome/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vendor/sweetalert/sweetalert.min.css') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
-        @keyframes slideInUp {
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .layered-surface {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow:
+                0 4px 6px -1px rgba(0, 0, 0, 0.05),
+                0 20px 40px -10px rgba(0, 0, 0, 0.08),
+                inset 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .input-inset {
+            background: rgba(248, 250, 252, 0.8);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .input-inset:focus-within {
+            background: #fff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.01);
+        }
+
+        @keyframes slideUp {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(20px);
             }
 
             to {
@@ -27,144 +54,140 @@
             }
         }
 
-        .animate-slide-up {
-            animation: slideInUp 0.6s ease-out forwards;
-        }
-
-        .input-focus {
-            @apply transition-all duration-300 border-b-2 border-transparent focus:border-b-blue-600 outline-none;
+        .animate-up {
+            animation: slideUp 0.6s ease-out forwards;
         }
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-blue-50 to-blue-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-[#f1f5f9] min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
 
-    <div class="w-full max-w-md opacity-0" style="animation: slideInUp 0.6s ease-out forwards">
-        <!-- Card -->
-        <div class="bg-white rounded-2xl shadow-2xl p-8">
-            <!-- Logo -->
+    <div class="absolute top-[-5%] right-[-5%] w-[35%] h-[35%] bg-blue-200/40 rounded-full blur-[100px] pointer-events-none"></div>
+    <div class="absolute bottom-[-5%] left-[-5%] w-[35%] h-[35%] bg-indigo-200/30 rounded-full blur-[100px] pointer-events-none"></div>
+
+    <div class="w-full max-w-[520px] relative z-10 animate-up">
+
+        <div class="layered-surface rounded-[2.5rem] p-8 md:p-10 relative overflow-hidden">
+
             <div class="text-center mb-8">
-                <div class="inline-block bg-blue-600 text-white p-3 rounded-full mb-4">
-                    <i class="fas fa-home text-2xl"></i>
+                <div class="inline-flex relative mb-4">
+                    <div class="absolute inset-0 bg-blue-600 rounded-[1rem] rotate-6 opacity-20"></div>
+                    <div class="bg-slate-900 text-white w-12 h-12 rounded-[1rem] flex items-center justify-center relative z-10 shadow-lg">
+                        <i class="fas fa-user-plus text-lg"></i>
+                    </div>
                 </div>
-                <h1 class="text-3xl font-bold text-gray-900">RumahKedua</h1>
-                <p class="text-gray-600 text-sm mt-1">Buat akun baru</p>
+                <h1 class="text-xl font-black tracking-tight text-slate-900 uppercase">
+                    Join <span class="text-blue-600">RumahKedua</span>
+                </h1>
+                <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-400 mt-2">Create Your Member Account</p>
             </div>
 
-            <!-- Form -->
-            <form method="POST" action="{{ route('register.store') }}">
+            <form method="POST" action="{{ route('register.store') }}" class="space-y-4">
                 @csrf
 
-                <!-- Name -->
-                <div class="mb-5" style="animation: slideInUp 0.6s ease-out 0.1s both">
-                    <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">Nama Lengkap</label>
-                    <input type="text" name="name" id="name" value="{{ old('name') }}"
-                        class="input-focus w-full px-4 py-3 bg-gray-50 border-b-2 border-gray-300 rounded-lg focus:bg-white @error('name') border-b-red-600 @enderror" placeholder="Nama Anda" required>
-                    @error('name')
-                        <p class="text-red-600 text-sm mt-2"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}
-                        </p>
-                    @enderror
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Full Name</label>
+                        <div class="input-inset flex items-center px-4 rounded-xl group">
+                            <input type="text" name="name" value="{{ old('name') }}"
+                                class="w-full py-3 bg-transparent text-sm font-semibold text-slate-700 outline-none placeholder:text-slate-400" placeholder="Jhon Doe" required>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Phone Number</label>
+                        <div class="input-inset flex items-center px-4 rounded-xl group">
+                            <input type="tel" name="telepon" value="{{ old('telepon') }}"
+                                class="w-full py-3 bg-transparent text-sm font-semibold text-slate-700 outline-none placeholder:text-slate-400" placeholder="6281..." required>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Email -->
-                <div class="mb-5" style="animation: slideInUp 0.6s ease-out 0.2s both">
-                    <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
-                    <input type="email" name="email" id="email" value="{{ old('email') }}"
-                        class="input-focus w-full px-4 py-3 bg-gray-50 border-b-2 border-gray-300 rounded-lg focus:bg-white @error('email') border-b-red-600 @enderror" placeholder="nama@example.com"
-                        required>
-                    @error('email')
-                        <p class="text-red-600 text-sm mt-2"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}
-                        </p>
-                    @enderror
+                <div class="space-y-1.5">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Email Address</label>
+                    <div class="input-inset flex items-center px-4 rounded-xl group">
+                        <input type="email" name="email" value="{{ old('email') }}" class="w-full py-3 bg-transparent text-sm font-semibold text-slate-700 outline-none placeholder:text-slate-400"
+                            placeholder="name@example.com" required>
+                    </div>
                 </div>
 
-                <!-- Phone -->
-                <div class="mb-5" style="animation: slideInUp 0.6s ease-out 0.3s both">
-                    <label for="telepon" class="block text-sm font-semibold text-gray-700 mb-2">Nomor Telepon</label>
-                    <input type="tel" name="telepon" id="telepon" value="{{ old('telepon') }}"
-                        class="input-focus w-full px-4 py-3 bg-gray-50 border-b-2 border-gray-300 rounded-lg focus:bg-white @error('telepon') border-b-red-600 @enderror" placeholder="6281234567890"
-                        required>
-                    @error('telepon')
-                        <p class="text-red-600 text-sm mt-2"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}
-                        </p>
-                    @enderror
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Password</label>
+                        <div class="input-inset flex items-center px-4 rounded-xl group">
+                            <input type="password" name="password" class="w-full py-3 bg-transparent text-sm font-semibold text-slate-700 outline-none placeholder:text-slate-400"
+                                placeholder="••••••••" required>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Confirm</label>
+                        <div class="input-inset flex items-center px-4 rounded-xl group">
+                            <input type="password" name="password_confirmation" class="w-full py-3 bg-transparent text-sm font-semibold text-slate-700 outline-none placeholder:text-slate-400"
+                                placeholder="••••••••" required>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Password -->
-                <div class="mb-5" style="animation: slideInUp 0.6s ease-out 0.4s both">
-                    <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
-                    <input type="password" name="password" id="password"
-                        class="input-focus w-full px-4 py-3 bg-gray-50 border-b-2 border-gray-300 rounded-lg focus:bg-white @error('password') border-b-red-600 @enderror" placeholder="••••••••"
-                        required>
-                    @error('password')
-                        <p class="text-red-600 text-sm mt-2"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}
-                        </p>
-                    @enderror
-                </div>
+                @if ($errors->any())
+                    <div class="bg-red-50 border border-red-100 rounded-xl p-3">
+                        @foreach ($errors->all() as $error)
+                            <p class="text-[10px] font-bold text-red-500 flex items-center gap-2">
+                                <i class="fas fa-circle-exclamation"></i> {{ $error }}
+                            </p>
+                        @endforeach
+                    </div>
+                @endif
 
-                <!-- Confirm Password -->
-                <div class="mb-6" style="animation: slideInUp 0.6s ease-out 0.5s both">
-                    <label for="password_confirmation" class="block text-sm font-semibold text-gray-700 mb-2">Konfirmasi
-                        Password</label>
-                    <input type="password" name="password_confirmation" id="password_confirmation" class="input-focus w-full px-4 py-3 bg-gray-50 border-b-2 border-gray-300 rounded-lg focus:bg-white"
-                        placeholder="••••••••" required>
-                </div>
-
-                <!-- Terms Checkbox -->
-                <div class="flex items-start mb-6" style="animation: slideInUp 0.6s ease-out 0.6s both">
-                    <input type="checkbox" name="terms" id="terms" class="w-4 h-4 text-blue-600 rounded mt-1" required>
-                    <label for="terms" class="ml-2 text-sm text-gray-600">
-                        Saya setuju dengan <a href="#" class="text-blue-600 hover:text-blue-700">Syarat & Ketentuan</a>
-                        dan <a href="#" class="text-blue-600 hover:text-blue-700">Kebijakan Privasi</a>
+                <div class="px-1 py-2">
+                    <label class="flex items-start gap-3 cursor-pointer group">
+                        <div class="relative flex items-center mt-0.5">
+                            <input type="checkbox" name="terms" id="terms" class="peer hidden" required>
+                            <div class="w-5 h-5 rounded-md border-2 border-slate-200 peer-checked:bg-blue-600 peer-checked:border-blue-600 transition-all flex items-center justify-center">
+                                <i class="fas fa-check text-[10px] text-white opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                            </div>
+                        </div>
+                        <span class="text-[11px] leading-relaxed font-bold text-slate-500 group-hover:text-slate-700 transition-colors">
+                            Saya menyetujui <a href="#" class="text-blue-600 underline">Syarat Ketentuan</a> dan <a href="#" class="text-blue-600 underline">Kebijakan Privasi</a>.
+                        </span>
                     </label>
                 </div>
 
-                <!-- Submit Button -->
-                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition duration-300 mb-4"
-                    style="animation: slideInUp 0.6s ease-out 0.7s both">
-                    <i class="fas fa-user-plus mr-2"></i>Daftar Sekarang
+                <button type="submit"
+                    class="w-full group relative bg-slate-900 text-white font-black uppercase tracking-widest text-[11px] py-4 rounded-2xl overflow-hidden transition-all duration-300 hover:bg-blue-600 hover:shadow-[0_20px_40px_-10px_rgba(37,99,235,0.4)] hover:-translate-y-1">
+                    <span class="relative z-10 flex items-center justify-center gap-2">
+                        Daftar Sekarang <i class="fas fa-paper-plane text-[10px] group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i>
+                    </span>
                 </button>
             </form>
 
-            <!-- Divider -->
-            <div class="relative mb-6" style="animation: slideInUp 0.6s ease-out 0.8s both">
-                <div class="absolute inset-0 flex items-center">
-                    <div class="w-full border-t border-gray-300"></div>
-                </div>
-                <div class="relative flex justify-center text-sm">
-                    <span class="px-2 bg-white text-gray-500">Atau</span>
-                </div>
-            </div>
-
-            <!-- Login Link -->
-            <div class="text-center" style="animation: slideInUp 0.6s ease-out 0.9s both">
-                <p class="text-gray-600 text-sm">
+            <div class="mt-8 pt-6 border-t border-slate-200/60 text-center space-y-4">
+                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
                     Sudah punya akun?
-                    <a href="{{ route('login') }}" class="text-blue-600 font-semibold hover:text-blue-700">
-                        Masuk sekarang
-                    </a>
+                    <a href="{{ route('login') }}" class="text-blue-600 hover:text-slate-900 transition-colors ml-1">Login Disini</a>
                 </p>
-            </div>
 
-            <!-- Back to Home -->
-            <div class="text-center mt-6" style="animation: slideInUp 0.6s ease-out 1s both">
-                <a href="/" class="inline-flex items-center text-gray-600 hover:text-blue-600 transition text-sm">
-                    <i class="fas fa-arrow-left mr-2"></i>Kembali ke beranda
+                <a href="/" class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-slate-900 transition-all">
+                    <i class="fas fa-chevron-left"></i> Kembali Ke Beranda
                 </a>
             </div>
         </div>
 
-        <!-- Info Card -->
-        <div class="mt-6 bg-white bg-opacity-80 rounded-xl p-4 text-center text-gray-600 text-sm" style="animation: slideInUp 0.6s ease-out 1.1s both">
-            <i class="fas fa-shield-alt text-blue-600 mr-2"></i>Privasi Anda dijaga dengan enkripsi tingkat enterprise.
+        <div class="mt-8 flex items-center justify-center gap-6 opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-shield-halved text-slate-500"></i>
+                <span class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500">Enterprise Security</span>
+            </div>
+            <div class="w-[1px] h-3 bg-slate-300"></div>
+            <div class="flex items-center gap-2">
+                <i class="fas fa-user-shield text-slate-500"></i>
+                <span class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500">Privacy First</span>
+            </div>
         </div>
     </div>
 
     <script src="{{ asset('assets/vendor/fontawesome/all.min.js') }}"></script>
-
-    {{-- Sweetalert --}}
     <script src="{{ asset('assets/vendor/sweetalert/sweetalert.min.js') }}"></script>
-
     <x-alert-loader :success="session('success') ?? ''" :error="session('error') ?? ''" :info="session('info') ?? ''" />
 </body>
 

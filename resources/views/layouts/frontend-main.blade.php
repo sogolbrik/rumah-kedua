@@ -82,11 +82,11 @@
                     <h4 class="text-white font-bold mb-8 uppercase tracking-widest text-xs">Eksplorasi</h4>
                     <ul class="space-y-4">
                         @foreach ([
-        'Fasilitas' => '#fasilitas',
-        'Pilihan Kamar' => '#kamar',
-        'Lokasi' => '#lokasi',
-        'FAQ' => '#faq',
-    ] as $title => $url)
+                            'Fasilitas'     => '#fasilitas',
+                            'Pilihan Kamar' => '#kamar',
+                            'Lokasi'        => '#lokasi',
+                            'FAQ'           => '#faq',
+                        ] as $title => $url)
                             <li>
                                 <a href="{{ url($url) }}" class="group flex items-center text-slate-400 hover:text-cyan-400 transition-colors">
                                     <span class="h-px w-0 bg-cyan-400 mr-0 group-hover:w-4 group-hover:mr-3 transition-all duration-300"></span>
