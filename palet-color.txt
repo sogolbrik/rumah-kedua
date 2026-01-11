@@ -1,0 +1,16 @@
+Ubah Warnanya Menjadi:
+Elements {
+    Background: #fffffe
+    Headline: #094067
+    Paragraph: #5f6c7b
+    Button: #3da9fc
+    Button Text: #fffffe
+}
+
+Illustration {
+    Stroke: #094067
+    Main: #fffffe
+    Highlight: #3da9fc
+    Secondary: #90b4ce
+    Tertiary: #ef4565
+}

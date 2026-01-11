@@ -6,23 +6,22 @@
         openContact: false,
         openProfile: false,
         detailModal: false
-    }" class="min-h-screen pt-28 pb-20 relative bg-[#f8fafc]">
-
+    }" class="min-h-screen pt-28 pb-20 relative bg-[#fffffe]">
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
-            <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-100/40 rounded-full blur-[120px] -mr-48 -mt-48"></div>
-            <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-cyan-100/30 rounded-full blur-[100px] -ml-24 -mb-24"></div>
+            <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-[#3da9fc]/10 rounded-full blur-[120px] -mr-48 -mt-48"></div>
+            <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#90b4ce]/10 rounded-full blur-[100px] -ml-24 -mb-24"></div>
         </div>
 
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
 
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <nav class="flex items-center gap-2 text-sm font-medium" aria-label="Breadcrumb">
-                    <a href="{{ route('dashboard-penghuni') }}" class="text-slate-400 hover:text-blue-600 transition-colors">Workspace</a>
-                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
-                    <span class="text-slate-900 font-bold tracking-tight">Resident Dashboard</span>
+                    <a href="{{ route('dashboard-penghuni') }}" class="text-[#5f6c7b] hover:text-[#3da9fc] transition-colors">Workspace</a>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-[#90b4ce]"></i>
+                    <span class="text-[#094067] font-bold tracking-tight">Resident Dashboard</span>
                 </nav>
-                <div class="flex items-center gap-3 text-xs font-mono text-slate-400 bg-white px-3 py-1.5 rounded-full border border-slate-200 shadow-sm">
-                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                <div class="flex items-center gap-3 text-xs font-mono text-[#5f6c7b] bg-white px-3 py-1.5 rounded-full border border-[#90b4ce] shadow-sm">
+                    <span class="w-2 h-2 bg-[#3da9fc] rounded-full animate-pulse"></span>
                     LAST SYNC: {{ now()->format('H:i') }} WIB
                 </div>
             </div>
@@ -30,29 +29,29 @@
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-12 animate-fade-in-up">
                 <div class="flex items-center gap-6">
                     <div class="relative group">
-                        <div class="absolute -inset-1 bg-gradient-to-tr from-blue-600 to-cyan-400 rounded-[2rem] blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+                        <div class="absolute -inset-1 bg-gradient-to-tr from-[#094067] to-[#3da9fc] rounded-[2rem] blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
                         @if ($user->avatar)
                             <img src="{{ Storage::url($user->avatar) }}" alt="{{ $user->name }}" class="relative w-20 h-20 rounded-[1.8rem] object-cover border-4 border-white shadow-xl">
                         @else
-                            <div class="relative w-20 h-20 rounded-[1.8rem] bg-slate-900 flex items-center justify-center text-white font-black text-2xl border-4 border-white shadow-xl">
+                            <div class="relative w-20 h-20 rounded-[1.8rem] bg-[#094067] flex items-center justify-center text-[#fffffe] font-black text-2xl border-4 border-white shadow-xl">
                                 {{ substr($user->name, 0, 2) }}
                             </div>
                         @endif
-                        <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 border-4 border-[#f8fafc] rounded-full"></div>
+                        <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-[#3da9fc] border-4 border-[#fffffe] rounded-full"></div>
                     </div>
                     <div>
-                        <h1 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tighter">
-                            Selamat Datang, <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">{{ explode(' ', $user->name)[0] }}</span>!
+                        <h1 class="text-3xl md:text-4xl font-black text-[#094067] tracking-tighter">
+                            Selamat Datang, <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#094067] to-[#3da9fc]">{{ explode(' ', $user->name)[0] }}</span>!
                         </h1>
-                        <p class="text-slate-500 font-medium mt-1">Kelola hunian dan pantau transaksi Anda dengan mudah.</p>
+                        <p class="text-[#5f6c7b] font-medium mt-1">Kelola hunian dan pantau transaksi Anda dengan mudah.</p>
                     </div>
                 </div>
 
                 <div class="flex flex-wrap gap-3">
                     <div class="relative">
                         <button @click="openProfile = !openProfile"
-                            class="flex items-center gap-3 px-6 py-3 bg-white border border-slate-200 text-slate-700 rounded-2xl hover:border-blue-300 hover:shadow-lg transition-all duration-300 font-bold text-sm">
-                            <i class="fa-solid fa-user-gear text-blue-500"></i>
+                            class="flex items-center gap-3 px-6 py-3 bg-[#fffffe] border border-[#90b4ce] text-[#094067] rounded-2xl hover:border-[#3da9fc] hover:shadow-lg transition-all duration-300 font-bold text-sm">
+                            <i class="fa-solid fa-user-gear text-[#3da9fc]"></i>
                             Settings
                             <i class="fa-solid fa-chevron-down text-[10px] transition-transform" :class="openProfile ? 'rotate-180' : ''"></i>
                         </button>
@@ -61,28 +60,27 @@
                                 x-transition:enter-start="opacity-0 scale-95 translate-y-2" x-transition:enter-end="opacity-100 scale-100 translate-y-0"
                                 x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
                                 class="fixed top-[120px] right-[calc((100vw-1280px)/2+1rem)] 
-                                w-56 bg-white rounded-2xl shadow-2xl border border-slate-100 
+                                w-56 bg-white rounded-2xl shadow-2xl border border-[#90b4ce]/30 
                                 py-2 z-[9999] overflow-hidden origin-top-right">
-                                <a href="{{ route('profil-penghuni.index') }}" class="flex items-center gap-3 px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition-colors">
-                                    <i class="fa-solid fa-circle-user opacity-50"></i> Edit Profile
+                                <a href="{{ route('profil-penghuni.index') }}"
+                                    class="flex items-center gap-3 px-4 py-3 text-sm text-[#5f6c7b] hover:bg-[#3da9fc]/10 hover:text-[#094067] transition-colors">
+                                    <i class="fa-solid fa-circle-user opacity-50 text-[#3da9fc]"></i> Edit Profile
                                 </a>
 
-                                <div class="h-px bg-slate-100 my-1 mx-4"></div>
+                                <div class="h-px bg-[#90b4ce]/20 my-1 mx-4"></div>
 
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
-                                    <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 text-sm text-rose-500 hover:bg-rose-50 transition-colors">
+                                    <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#ef4565] hover:bg-[#ef4565]/10 transition-colors">
                                         <i class="fa-solid fa-power-off opacity-50"></i> Secure Logout
                                     </button>
                                 </form>
                             </div>
                         </template>
-
-
                     </div>
 
                     <button @click="openContact = true"
-                        class="group flex items-center gap-3 px-6 py-3 bg-slate-900 text-white rounded-2xl shadow-xl shadow-slate-200 hover:bg-blue-600 hover:-translate-y-1 transition-all duration-300 font-bold text-sm">
+                        class="group flex items-center gap-3 px-6 py-3 bg-[#3da9fc] text-[#fffffe] rounded-2xl shadow-xl shadow-[#3da9fc]/20 hover:bg-[#094067] hover:-translate-y-1 transition-all duration-300 font-bold text-sm">
                         <i class="fa-solid fa-headset group-hover:rotate-12 transition-transform"></i>
                         Support Center
                     </button>
@@ -93,47 +91,47 @@
 
                 <div class="lg:col-span-8 group">
                     <div
-                        class="relative bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden h-full flex flex-col md:flex-row transition-all duration-500 hover:shadow-2xl hover:border-blue-100">
+                        class="relative bg-[#fffffe] rounded-[2.5rem] border border-[#90b4ce] shadow-sm overflow-hidden h-full flex flex-col md:flex-row transition-all duration-500 hover:shadow-2xl hover:border-[#3da9fc]">
                         @if ($user->kamar)
                             <div class="md:w-2/5 relative overflow-hidden">
                                 <img src="{{ Storage::url($user->kamar->gambar) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
+                                <div class="absolute inset-0 bg-gradient-to-t from-[#094067]/80 via-transparent to-transparent"></div>
                                 <div class="absolute bottom-6 left-6">
-                                    <span class="px-4 py-1.5 bg-blue-500 text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg">
+                                    <span class="px-4 py-1.5 bg-[#3da9fc] text-[#fffffe] text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg">
                                         {{ $user->kamar->tipe }}
                                     </span>
                                 </div>
                             </div>
                             <div class="md:w-3/5 p-8 md:p-10 flex flex-col justify-center">
                                 <div class="flex justify-between items-start mb-4">
-                                    <h2 class="text-4xl font-black text-slate-900 tracking-tighter">{{ $user->kamar->kode_kamar }}</h2>
-                                    <div class="px-4 py-1.5 bg-emerald-50 text-emerald-600 rounded-full text-xs font-bold border border-emerald-100 flex items-center gap-2">
-                                        <span class="w-2 h-2 bg-emerald-500 rounded-full"></span> Active Unit
+                                    <h2 class="text-4xl font-black text-[#094067] tracking-tighter">{{ $user->kamar->kode_kamar }}</h2>
+                                    <div class="px-4 py-1.5 bg-[#3da9fc]/10 text-[#3da9fc] rounded-full text-xs font-bold border border-[#3da9fc]/20 flex items-center gap-2">
+                                        <span class="w-2 h-2 bg-[#3da9fc] rounded-full"></span> Active Unit
                                     </div>
                                 </div>
-                                <p class="text-slate-500 leading-relaxed text-sm mb-8 italic">"{{ Str::limit($user->kamar->deskripsi, 140) }}"</p>
+                                <p class="text-[#5f6c7b] leading-relaxed text-sm mb-8 italic">"{{ Str::limit($user->kamar->deskripsi, 140) }}"</p>
 
-                                <div class="grid grid-cols-2 gap-6 pt-6 border-t border-slate-100">
+                                <div class="grid grid-cols-2 gap-6 pt-6 border-t border-[#90b4ce]/20">
                                     <div>
-                                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Monthly Rent</p>
-                                        <p class="text-xl font-black text-slate-900">Rp {{ number_format($user->kamar->harga, 0, ',', '.') }}</p>
+                                        <p class="text-[10px] font-black text-[#90b4ce] uppercase tracking-widest mb-1">Monthly Rent</p>
+                                        <p class="text-xl font-black text-[#094067]">Rp {{ number_format($user->kamar->harga, 0, ',', '.') }}</p>
                                     </div>
                                     <div class="text-right">
-                                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Billing Cycle</p>
-                                        <p class="text-sm font-bold text-slate-700">Setiap Jatuh Tempo Anda</p>
+                                        <p class="text-[10px] font-black text-[#90b4ce] uppercase tracking-widest mb-1">Billing Cycle</p>
+                                        <p class="text-sm font-bold text-[#5f6c7b]">Setiap Jatuh Tempo</p>
                                     </div>
                                 </div>
                             </div>
                         @else
                             <div class="w-full py-16 text-center space-y-6">
-                                <div class="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center mx-auto border border-slate-100">
-                                    <i class="fa-solid fa-door-open text-3xl text-slate-300"></i>
+                                <div class="w-20 h-20 bg-[#fffffe] rounded-[2rem] flex items-center justify-center mx-auto border border-[#90b4ce]">
+                                    <i class="fa-solid fa-door-open text-3xl text-[#90b4ce]"></i>
                                 </div>
                                 <div>
-                                    <h3 class="text-xl font-bold text-slate-900">Unit Belum Terdaftar</h3>
-                                    <p class="text-slate-500 max-w-xs mx-auto mt-2">Segera pilih unit kamar impian Anda untuk menikmati fasilitas premium kami.</p>
+                                    <h3 class="text-xl font-bold text-[#094067]">Unit Belum Terdaftar</h3>
+                                    <p class="text-[#5f6c7b] max-w-xs mx-auto mt-2">Segera pilih unit kamar impian Anda untuk menikmati fasilitas premium kami.</p>
                                 </div>
-                                <a href="{{ route('booking') }}" class="inline-flex items-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-2xl font-bold hover:bg-slate-900 transition-all">
+                                <a href="{{ route('booking') }}" class="inline-flex items-center gap-2 px-8 py-3 bg-[#3da9fc] text-[#fffffe] rounded-2xl font-bold hover:bg-[#094067] transition-all">
                                     Eksplorasi Unit <i class="fa-solid fa-arrow-right text-xs"></i>
                                 </a>
                             </div>
@@ -142,71 +140,71 @@
                 </div>
 
                 <div class="lg:col-span-4 grid grid-cols-1 gap-6">
-                    <div class="bg-slate-900 rounded-[2rem] p-8 relative overflow-hidden group">
-                        <div class="absolute -right-4 -top-4 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all"></div>
-                        <i class="fa-solid fa-wallet text-blue-400 text-xl mb-4"></i>
-                        <h4 class="text-slate-400 text-xs font-black uppercase tracking-widest mb-1">Total Investasi Hunian</h4>
-                        <p class="text-2xl font-black text-white tracking-tight">Rp {{ number_format($totalBayar, 0, ',', '.') }}</p>
+                    <div class="bg-[#094067] rounded-[2rem] p-8 relative overflow-hidden group">
+                        <div class="absolute -right-4 -top-4 w-24 h-24 bg-[#3da9fc]/20 rounded-full blur-2xl group-hover:bg-[#3da9fc]/30 transition-all"></div>
+                        <i class="fa-solid fa-wallet text-[#3da9fc] text-xl mb-4"></i>
+                        <h4 class="text-[#90b4ce] text-xs font-black uppercase tracking-widest mb-1">Total Investasi</h4>
+                        <p class="text-2xl font-black text-[#fffffe] tracking-tight">Rp {{ number_format($totalBayar, 0, ',', '.') }}</p>
                         <div class="mt-4 flex items-center gap-2">
-                            <span class="text-[10px] text-emerald-400 font-bold bg-emerald-400/10 px-2 py-0.5 rounded-md">
+                            <span class="text-[10px] text-[#3da9fc] font-bold bg-[#3da9fc]/10 px-2 py-0.5 rounded-md">
                                 <i class="fa-solid fa-check-double mr-1"></i> Verified
                             </span>
                         </div>
                     </div>
 
-                    <div class="bg-white rounded-[2rem] p-8 border border-slate-200 shadow-sm hover:shadow-xl transition-all">
+                    <div class="bg-[#fffffe] rounded-[2rem] p-8 border border-[#90b4ce] shadow-sm hover:shadow-xl transition-all">
                         <div class="flex justify-between items-start mb-4">
-                            <div class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-900 border border-slate-100">
+                            <div class="w-12 h-12 bg-[#fffffe] rounded-2xl flex items-center justify-center text-[#094067] border border-[#90b4ce]">
                                 <i class="fa-solid fa-calendar-check"></i>
                             </div>
                             <span
-                                class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter {{ $menunggak ? 'bg-rose-50 text-rose-600 border border-rose-100' : 'bg-emerald-50 text-emerald-600 border border-emerald-100' }}">
+                                class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter {{ $menunggak ? 'bg-[#ef4565]/10 text-[#ef4565] border border-[#ef4565]/20' : 'bg-[#3da9fc]/10 text-[#3da9fc] border border-[#3da9fc]/20' }}">
                                 {{ $menunggak ? 'Outstanding' : 'Cleared' }}
                             </span>
                         </div>
-                        <h4 class="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Status Pembayaran</h4>
-                        <p class="text-xl font-black text-slate-900">{{ $menunggak ? 'Ada Tunggakan' : 'Lunas & Aman' }}</p>
-                        <p class="text-xs text-slate-400 mt-2 italic">Update terakhir: {{ $terakhirBayar?->translatedFormat('d M Y') ?? 'N/A' }}</p>
+                        <h4 class="text-[#5f6c7b] text-[10px] font-black uppercase tracking-widest mb-1">Status Pembayaran</h4>
+                        <p class="text-xl font-black text-[#094067]">{{ $menunggak ? 'Ada Tunggakan' : 'Lunas & Aman' }}</p>
+                        <p class="text-xs text-[#5f6c7b] mt-2 italic">Update: {{ $terakhirBayar?->translatedFormat('d M Y') ?? 'N/A' }}</p>
                     </div>
                 </div>
             </div>
 
             @if ($menunggak)
                 <div class="mb-12 relative group animate-bounce-slow">
-                    <div class="absolute -inset-1 bg-gradient-to-r from-rose-500 to-orange-500 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
-                    <div class="relative bg-white border border-rose-100 p-6 md:p-8 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-[#ef4565] to-[#ef4565]/50 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+                    <div class="relative bg-white border border-[#ef4565]/30 p-6 md:p-8 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-6">
                         <div class="flex items-center gap-6">
-                            <div class="w-16 h-16 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-500 text-2xl shadow-inner">
+                            <div class="w-16 h-16 bg-[#ef4565]/10 rounded-2xl flex items-center justify-center text-[#ef4565] text-2xl shadow-inner">
                                 <i class="fa-solid fa-triangle-exclamation animate-pulse"></i>
                             </div>
                             <div>
-                                <h3 class="text-xl font-black text-slate-900 tracking-tight">Perhatian: Tagihan Tertunggak</h3>
-                                <p class="text-slate-500 text-sm">Selesaikan pembayaran sebelum tanggal jatuh tempo untuk menghindari denda administratif.</p>
+                                <h3 class="text-xl font-black text-[#094067] tracking-tight">Perhatian: Tagihan Tertunggak</h3>
+                                <p class="text-[#5f6c7b] text-sm">Selesaikan pembayaran sebelum tanggal jatuh tempo untuk menghindari denda administratif.</p>
                             </div>
                         </div>
                         <a href="{{ route('penghuni.pembayaran') }}"
-                            class="w-full md:w-auto px-10 py-4 bg-rose-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-rose-200 hover:bg-slate-900 hover:-translate-y-1 transition-all">
+                            class="w-full md:w-auto px-10 py-4 bg-[#ef4565] text-[#fffffe] rounded-2xl font-black text-sm shadow-xl shadow-[#ef4565]/20 hover:bg-[#094067] hover:-translate-y-1 transition-all">
                             Bayar Sekarang
                         </a>
                     </div>
                 </div>
             @endif
 
-            <div class="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden">
-                <div class="px-10 py-8 border-b border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-50/50">
+            <div class="bg-white rounded-[2.5rem] border border-[#90b4ce] shadow-sm overflow-hidden">
+                <div class="px-10 py-8 border-b border-[#90b4ce]/10 flex flex-col md:flex-row justify-between items-center gap-4 bg-[#90b4ce]/5">
                     <div>
-                        <h3 class="text-xl font-black text-slate-900 tracking-tight">Ledger Transaksi</h3>
-                        <p class="text-slate-500 text-xs font-medium mt-1 uppercase tracking-widest">Transaction History & Invoices</p>
+                        <h3 class="text-xl font-black text-[#094067] tracking-tight">Ledger Transaksi</h3>
+                        <p class="text-[#5f6c7b] text-xs font-medium mt-1 uppercase tracking-widest">Transaction History & Invoices</p>
                     </div>
                     <div class="flex items-center gap-2">
-                        <span class="text-xs font-bold text-slate-400">Total: {{ $totalTransaksi }} Records</span>
+                        <span class="text-xs font-bold text-[#5f6c7b]">Total: {{ $totalTransaksi }} Records</span>
                     </div>
                 </div>
 
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
                         <thead>
-                            <tr class="bg-white text-slate-400 border-b border-slate-100">
+                            <tr class="bg-white text-[#5f6c7b] border-b border-[#90b4ce]/10">
                                 <th class="px-8 py-5 text-left font-black uppercase tracking-widest text-[10px]">Reference</th>
                                 <th class="px-8 py-5 text-left font-black uppercase tracking-widest text-[10px]">Issued Date</th>
                                 <th class="px-8 py-5 text-left font-black uppercase tracking-widest text-[10px]">Method</th>
@@ -215,50 +213,42 @@
                                 <th class="px-8 py-5 text-center font-black uppercase tracking-widest text-[10px]">Action</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-50">
+                        <tbody class="divide-y divide-[#90b4ce]/10">
                             @forelse($transaksis as $trx)
-                                <tr class="hover:bg-blue-50/30 transition-colors group">
+                                <tr class="hover:bg-[#3da9fc]/5 transition-colors group">
                                     <td class="px-8 py-6">
-                                        <span class="font-mono font-bold text-blue-600">#{{ $trx->kode }}</span>
+                                        <span class="font-mono font-bold text-[#3da9fc]">#{{ $trx->kode }}</span>
                                     </td>
-                                    <td class="px-8 py-6 text-slate-600 font-medium">
+                                    <td class="px-8 py-6 text-[#5f6c7b] font-medium">
                                         {{ $trx->tanggal_pembayaran?->format('d M, Y') ?? '—' }}
                                     </td>
                                     <td class="px-8 py-6">
                                         <div class="flex items-center gap-2">
-                                            <div class="w-2 h-2 bg-slate-300 rounded-full"></div>
-                                            <span class="capitalize text-slate-700 font-bold tracking-tight text-xs">{{ $trx->midtrans_payment_type ?? 'Cash' }}</span>
+                                            <div class="w-2 h-2 bg-[#90b4ce] rounded-full"></div>
+                                            <span class="capitalize text-[#094067] font-bold tracking-tight text-xs">{{ $trx->midtrans_payment_type ?? 'Cash' }}</span>
                                         </div>
                                     </td>
                                     <td class="px-8 py-6">
                                         @php
                                             $statusClasses = [
-                                                'paid' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
-                                                'pending' => 'bg-amber-50 text-amber-600 border-amber-100',
-                                                'failed' => 'bg-rose-50 text-rose-600 border-rose-100',
-                                                'cancelled' => 'bg-slate-50 text-slate-600 border-slate-200',
-                                                'expired' => 'bg-orange-50 text-orange-600 border-orange-200',
+                                                'paid' => 'bg-[#3da9fc]/10 text-[#3da9fc] border-[#3da9fc]/20',
+                                                'pending' => 'bg-[#90b4ce]/10 text-[#094067] border-[#90b4ce]/20',
+                                                'failed' => 'bg-[#ef4565]/10 text-[#ef4565] border-[#ef4565]/20',
+                                                'cancelled' => 'bg-[#5f6c7b]/10 text-[#5f6c7b] border-[#5f6c7b]/20',
+                                                'expired' => 'bg-[#ef4565]/10 text-[#ef4565] border-[#ef4565]/20',
                                             ];
-                                            $currentClass = $statusClasses[$trx->status_pembayaran] ?? 'bg-gray-50 text-gray-600 border-gray-200';
-                                            $labelMap = [
-                                                'paid' => 'Settled',
-                                                'pending' => 'Pending',
-                                                'failed' => 'Failed',
-                                                'cancelled' => 'Cancelled',
-                                                'expired' => 'Expired',
-                                            ];
-                                            $displayLabel = $labelMap[$trx->status_pembayaran] ?? ucfirst($trx->status_pembayaran);
+                                            $currentClass = $statusClasses[$trx->status_pembayaran] ?? 'bg-[#90b4ce]/10 text-[#5f6c7b] border-[#90b4ce]/20';
                                         @endphp
                                         <span class="inline-flex items-center px-3 py-1 rounded-lg border {{ $currentClass }} font-black text-[10px] uppercase">
-                                            {{ $displayLabel }}
+                                            {{ $trx->status_pembayaran }}
                                         </span>
                                     </td>
                                     <td class="px-8 py-6 text-right">
-                                        <span class="font-black text-slate-900">Rp {{ number_format($trx->total_bayar, 0, ',', '.') }}</span>
+                                        <span class="font-black text-[#094067]">Rp {{ number_format($trx->total_bayar, 0, ',', '.') }}</span>
                                     </td>
                                     <td class="px-8 py-6 text-center">
                                         <a href="{{ route('user.pembayaran.invoice', $trx->id) }}"
-                                            class="inline-flex items-center justify-center w-10 h-10 bg-white border border-slate-200 text-slate-400 rounded-xl hover:text-blue-600 hover:border-blue-200 hover:shadow-md transition-all">
+                                            class="inline-flex items-center justify-center w-10 h-10 bg-white border border-[#90b4ce] text-[#90b4ce] rounded-xl hover:text-[#3da9fc] hover:border-[#3da9fc] hover:shadow-md transition-all">
                                             <i class="fa-solid fa-file-invoice text-sm"></i>
                                         </a>
                                     </td>
@@ -266,15 +256,15 @@
                             @empty
                                 <tr>
                                     <td colspan="6" class="px-8 py-20 text-center">
-                                        <div class="text-slate-300 mb-4 text-4xl"><i class="fa-solid fa-box-open"></i></div>
-                                        <p class="text-slate-500 font-bold">Belum ada riwayat transaksi tercatat.</p>
+                                        <div class="text-[#90b4ce] mb-4 text-4xl"><i class="fa-solid fa-box-open"></i></div>
+                                        <p class="text-[#5f6c7b] font-bold">Belum ada riwayat transaksi tercatat.</p>
                                     </td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
-                <div class="px-10 py-6 bg-slate-50/50 border-t border-slate-100">
+                <div class="px-10 py-6 bg-[#90b4ce]/5 border-t border-[#90b4ce]/10">
                     {{ $transaksis->links() }}
                 </div>
             </div>
@@ -282,29 +272,29 @@
 
         <div x-show="openContact" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <div x-show="openContact" @click="openContact = false" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                class="absolute inset-0 bg-slate-900/40 backdrop-blur-md"></div>
+                class="absolute inset-0 bg-[#094067]/40 backdrop-blur-md"></div>
 
             <div x-show="openContact" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-8"
-                x-transition:enter-end="opacity-100 scale-100 translate-y-0" class="relative bg-white rounded-[3rem] shadow-2xl max-w-lg w-full overflow-hidden border border-white/20">
-                <div class="bg-slate-900 p-10 text-white relative">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl"></div>
+                x-transition:enter-end="opacity-100 scale-100 translate-y-0" class="relative bg-[#fffffe] rounded-[3rem] shadow-2xl max-w-lg w-full overflow-hidden border border-[#90b4ce]/20">
+                <div class="bg-[#094067] p-10 text-[#fffffe] relative">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-[#3da9fc]/20 rounded-full blur-3xl"></div>
                     <h3 class="text-3xl font-black tracking-tight mb-2">Concierge Support</h3>
-                    <p class="text-slate-400 text-sm">Tim kami siap membantu kendala teknis maupun administratif Anda.</p>
+                    <p class="text-[#90b4ce] text-sm">Tim kami siap membantu kendala teknis maupun administratif Anda.</p>
                 </div>
                 <div class="p-10 space-y-4">
-                    @foreach ([['icon' => 'fa-brands fa-whatsapp', 'color' => 'text-emerald-500', 'bg' => 'bg-emerald-50', 'label' => 'WhatsApp Support', 'value' => '+62 858-7032-7957', 'link' => 'https://wa.me/6285870327957'], ['icon' => 'fa-envelope', 'color' => 'text-blue-500', 'bg' => 'bg-blue-50', 'label' => 'Official Email', 'value' => 'care@rumahkedua.id', 'link' => 'mailto:rumahkedua@gmail.com'], ['icon' => 'fa-clock', 'color' => 'text-amber-500', 'bg' => 'bg-amber-50', 'label' => 'Service Hours', 'value' => 'Mon - Sat, 08:00 - 20:00', 'link' => '#']] as $item)
-                        <a href="{{ $item['link'] }}" class="flex items-center gap-5 p-4 rounded-2xl border border-slate-100 hover:border-blue-200 hover:bg-blue-50/30 transition-all group">
+                    @foreach ([['icon' => 'fa-brands fa-whatsapp', 'color' => 'text-[#3da9fc]', 'bg' => 'bg-[#3da9fc]/10', 'label' => 'WhatsApp Support', 'value' => '+62 858-7032-7957', 'link' => 'https://wa.me/6285870327957'], ['icon' => 'fa-envelope', 'color' => 'text-[#3da9fc]', 'bg' => 'bg-[#3da9fc]/10', 'label' => 'Official Email', 'value' => 'care@rumahkedua.id', 'link' => 'mailto:rumahkedua@gmail.com']] as $item)
+                        <a href="{{ $item['link'] }}" class="flex items-center gap-5 p-4 rounded-2xl border border-[#90b4ce]/20 hover:border-[#3da9fc] hover:bg-[#3da9fc]/5 transition-all group">
                             <div class="w-12 h-12 {{ $item['bg'] }} {{ $item['color'] }} rounded-xl flex items-center justify-center text-xl shadow-sm">
-                                <i class="fa {{ $item['icon'] }} {{ strpos($item['icon'], 'fa-') === 0 ? '' : 'fa-solid' }}"></i>
+                                <i class="fa {{ $item['icon'] }}"></i>
                             </div>
                             <div>
-                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ $item['label'] }}</p>
-                                <p class="text-slate-900 font-bold">{{ $item['value'] }}</p>
+                                <p class="text-[10px] font-black text-[#90b4ce] uppercase tracking-widest">{{ $item['label'] }}</p>
+                                <p class="text-[#094067] font-bold">{{ $item['value'] }}</p>
                             </div>
-                            <i class="fa-solid fa-chevron-right ml-auto text-slate-300 group-hover:text-blue-500 transition-colors"></i>
+                            <i class="fa-solid fa-chevron-right ml-auto text-[#90b4ce] group-hover:text-[#3da9fc] transition-colors"></i>
                         </a>
                     @endforeach
-                    <button @click="openContact = false" class="w-full mt-6 py-4 bg-slate-100 text-slate-600 rounded-2xl font-black text-sm hover:bg-slate-200 transition-colors">
+                    <button @click="openContact = false" class="w-full mt-6 py-4 bg-[#90b4ce]/10 text-[#094067] rounded-2xl font-black text-sm hover:bg-[#90b4ce]/20 transition-colors">
                         Dismiss
                     </button>
                 </div>
@@ -318,6 +308,7 @@
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #5f6c7b;
         }
 
         [x-cloak] {

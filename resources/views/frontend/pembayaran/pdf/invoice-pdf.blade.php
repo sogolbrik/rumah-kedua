@@ -5,296 +5,309 @@
     <meta charset="utf-8">
     <title>Invoice Pembayaran - {{ $transaksi->kode }}</title>
     <style>
+        /* Base Background & Text */
         body {
             font-family: Arial, Helvetica, sans-serif;
             font-size: 12px;
-            color: #333;
+            color: #5f6c7b;
+            /* Paragraph Color */
             line-height: 1.6;
             margin: 0;
             padding: 24px;
-            background-color: #fff;
+            background-color: #fffffe;
+            /* Background Color */
         }
 
         .invoice-container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 24px;
-            border: 1px solid #e2e8f0;
+            padding: 30px;
+            border: 1px solid #90b4ce;
+            /* Secondary Color for stroke */
             border-radius: 12px;
-            background: linear-gradient(to bottom right, #f0f9ff, #f0fdfa);
+            background: #fffffe;
+            position: relative;
         }
 
         /* Header */
         .invoice-header {
             text-align: center;
-            margin-bottom: 24px;
-        }
-
-        .invoice-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background-color: #dbeafe;
-            color: #2563eb;
-            border-radius: 50%;
-            margin-bottom: 12px;
-            font-size: 18px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #094067;
+            /* Stroke Color */
+            padding-bottom: 20px;
         }
 
         .invoice-title {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: bold;
-            color: #1e293b;
+            color: #094067;
+            /* Headline Color */
             margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .invoice-number {
-            font-size: 12px;
-            color: #475569;
-            margin-top: 4px;
+            font-size: 13px;
+            color: #5f6c7b;
+            /* Paragraph Color */
+            margin-top: 6px;
             font-family: monospace;
         }
 
         /* Status Badge */
         .status-badge {
             display: inline-block;
-            padding: 6px 14px;
-            border-radius: 9999px;
+            padding: 8px 20px;
+            border-radius: 6px;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: bold;
             text-align: center;
-            margin: 12px 0 20px;
+            margin-bottom: 25px;
+            text-transform: uppercase;
         }
 
+        /* Status: Paid (Highlight) */
         .status-paid {
-            background-color: #dcfce7;
-            color: #166534;
+            background-color: #3da9fc;
+            /* Highlight/Button Color */
+            color: #fffffe;
+            /* Button Text Color */
         }
 
-        .status-pending {
-            background-color: #fef3c7;
-            color: #92400e;
-        }
-
+        /* Status: Pending/Expired/Failed (Tertiary) */
+        .status-pending,
         .status-failed,
-        .status-cancelled {
-            background-color: #fee2e2;
-            colored: #b91c1c;
-            color: #b91c1c;
-        }
-
+        .status-cancelled,
         .status-expired {
-            background-color: #ffedd5;
-            color: #c2410c;
-        }
-
-        .status-challenge {
-            background-color: #ede9fe;
-            color: #6d28d9;
+            background-color: #ef4565;
+            /* Tertiary Color */
+            color: #fffffe;
         }
 
         .status-default {
-            background-color: #f1f5f9;
-            color: #334155;
+            background-color: #90b4ce;
+            /* Secondary Color */
+            color: #fffffe;
         }
 
         /* Section */
         .section {
-            background-color: #ffffff;
-            padding: 14px;
+            background-color: #fffffe;
+            padding: 16px;
             border-radius: 8px;
-            border: 1px solid #e2e8f0;
-            margin-bottom: 18px;
+            border: 1px solid #90b4ce;
+            /* Secondary Color */
+            margin-bottom: 20px;
         }
 
         .section-title {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
-            color: #475569;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .section-title i {
-            width: 16px;
-            text-align: center;
-            color: #2563eb;
+            color: #094067;
+            /* Headline Color */
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #90b4ce;
+            padding-bottom: 5px;
         }
 
         .section-content {
             font-size: 13px;
-            color: #1e293b;
+            color: #5f6c7b;
+            /* Paragraph Color */
         }
 
         .section-content .label {
             font-weight: bold;
-            color: #334155;
+            color: #094067;
+            /* Headline for sub-labels */
         }
 
         .section-content .value {
-            color: #1e293b;
+            color: #5f6c7b;
         }
 
-        /* Two-column grid (for Penghuni & Kamar) */
+        /* Grid Layout */
         .grid {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 18px;
+            width: 100%;
+            margin-bottom: 10px;
         }
 
-        .grid-item {
-            flex: 1;
+        .grid td {
+            width: 50%;
+            vertical-align: top;
+            padding-right: 10px;
         }
 
-        /* Payment Summary */
+        /* Payment Summary Table */
+        .payment-summary {
+            width: 100%;
+        }
+
         .payment-summary .row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 6px;
+            clear: both;
+            padding: 5px 0;
         }
 
         .payment-summary .label {
-            color: #64748b;
+            float: left;
+            color: #5f6c7b;
         }
 
         .payment-summary .value {
+            float: right;
             font-weight: bold;
-            color: #1e293b;
+            color: #094067;
         }
 
-        .payment-summary .total-value {
-            font-size: 16px;
-            color: #0f172a;
-            font-weight: bold;
+        .total-row {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #3da9fc;
+            /* Highlight color for emphasis */
         }
 
-        /* Midtrans ID */
+        .total-value {
+            font-size: 18px;
+            color: #3da9fc;
+            /* Highlight Color for Total */
+            font-weight: 800;
+        }
+
+        /* Midtrans ID Note */
         .midtrans-note {
-            background-color: #eff6ff;
-            border: 1px dashed #93c5fd;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 11px;
-            margin: 16px 0;
+            background-color: #f2f7fb;
+            /* Light Secondary mix */
+            border-left: 4px solid #094067;
+            /* Stroke */
+            padding: 12px;
+            border-radius: 4px;
+            margin: 20px 0;
         }
 
         .midtrans-note .label {
             font-weight: bold;
-            color: #1d4ed8;
-            margin-bottom: 4px;
+            color: #094067;
+            font-size: 10px;
+            text-transform: uppercase;
         }
 
         .midtrans-note .value {
             font-family: monospace;
-            color: #1e40af;
+            color: #5f6c7b;
+            font-size: 12px;
         }
 
         /* Footer */
         .invoice-footer {
             text-align: center;
             font-size: 10px;
-            color: #64748b;
-            margin-top: 30px;
-            padding-top: 16px;
-            border-top: 1px solid #e2e8f0;
+            color: #90b4ce;
+            /* Secondary color */
+            margin-top: 40px;
+            padding-top: 15px;
+            border-top: 1px solid #90b4ce;
         }
     </style>
 </head>
 
 <body>
     <div class="invoice-container">
-        <!-- Header -->
         <div class="invoice-header">
             <h1 class="invoice-title">Invoice Pembayaran</h1>
-            <p class="invoice-number">Nomor: {{ $transaksi->kode }}</p>
+            <p class="invoice-number">Ref: {{ $transaksi->kode }}</p>
         </div>
 
-        <!-- Status Badge -->
-        @php
-            $statusMap = [
-                'paid' => ['class' => 'status-paid', 'label' => 'Lunas'],
-                'pending' => ['class' => 'status-pending', 'label' => 'Menunggu Pembayaran'],
-                'failed' => ['class' => 'status-failed', 'label' => 'Gagal'],
-                'cancelled' => ['class' => 'status-cancelled', 'label' => 'Dibatalkan'],
-                'expired' => ['class' => 'status-expired', 'label' => 'Kadaluarsa'],
-                'challenge' => ['class' => 'status-challenge', 'label' => 'Dalam Tantangan'],
-            ];
+        <center>
+            @php
+                $statusMap = [
+                    'paid' => ['class' => 'status-paid', 'label' => 'LUNAS - TERIMA KASIH'],
+                    'pending' => ['class' => 'status-pending', 'label' => 'MENUNGGU PEMBAYARAN'],
+                    'failed' => ['class' => 'status-failed', 'label' => 'PEMBAYARAN GAGAL'],
+                    'cancelled' => ['class' => 'status-cancelled', 'label' => 'DIBATALKAN'],
+                    'expired' => ['class' => 'status-expired', 'label' => 'KADALUARSA'],
+                ];
 
-            $status = $statusMap[$transaksi->status_pembayaran ?? ''] ?? [
-                'class' => 'status-default',
-                'label' => ucfirst($transaksi->status_pembayaran ?: 'Tidak Diketahui'),
-            ];
-        @endphp
-        <div class="status-badge {{ $status['class'] }}">{{ $status['label'] }}</div>
+                $status = $statusMap[$transaksi->status_pembayaran ?? ''] ?? [
+                    'class' => 'status-default',
+                    'label' => strtoupper($transaksi->status_pembayaran ?: 'PROSES'),
+                ];
+            @endphp
+            <div class="status-badge {{ $status['class'] }}">{{ $status['label'] }}</div>
+        </center>
 
-        <!-- Penghuni & Kamar -->
-        <div class="grid">
-            <div class="grid-item">
-                <div class="section">
-                    <div class="section-title">Penghuni</div>
-                    <div class="section-content">
-                        <p><span class="value">{{ $transaksi->user->name ?? '—' }}</span></p>
-                        <p><span class="label">Email:</span> <span class="value">{{ $transaksi->user->email ?? '—' }}</span></p>
-                        <p><span class="label">Telepon:</span> <span class="value">{{ $transaksi->user->telepon ?? '—' }}</span></p>
+        <table class="grid" cellpadding="0" cellspacing="0">
+            <tr>
+                <td>
+                    <div class="section">
+                        <div class="section-title">Informasi Penghuni</div>
+                        <div class="section-content">
+                            <p class="label" style="font-size: 15px; margin-bottom: 5px;">{{ $transaksi->user->name ?? '—' }}</p>
+                            <p><span class="label">ID:</span> {{ $transaksi->user->email ?? '—' }}</p>
+                            <p><span class="label">Telp:</span> {{ $transaksi->user->telepon ?? '—' }}</p>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="grid-item">
-                <div class="section">
-                    <div class="section-title">Detail Kamar</div>
-                    <div class="section-content">
-                        <p><span class="label">Kode:</span> <span class="value">{{ $transaksi->kamar->kode_kamar }}</span></p>
-                        <p><span class="label">Tipe:</span> <span class="value">{{ $transaksi->kamar->tipe }}</span></p>
-                        <p><span class="label">Durasi:</span> <span class="value">{{ $transaksi->durasi }} bulan</span></p>
+                </td>
+                <td>
+                    <div class="section">
+                        <div class="section-title">Detail Unit Kamar</div>
+                        <div class="section-content">
+                            <p><span class="label">Kode Unit:</span> <span class="value">{{ $transaksi->kamar->kode_kamar }}</span></p>
+                            <p><span class="label">Tipe:</span> <span class="value">{{ $transaksi->kamar->tipe }}</span></p>
+                            <p><span class="label">Masa Sewa:</span> <span class="value">{{ $transaksi->durasi }} Bulan</span></p>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </div>
+                </td>
+            </tr>
+        </table>
 
-        <!-- Tanggal & Pembayaran -->
         <div class="section">
+            <div class="section-title">Rincian Transaksi</div>
             <div class="payment-summary">
                 <div class="row">
-                    <span class="label">Tanggal Bayar</span>
+                    <span class="label">Tanggal Tagihan</span>
+                    <span class="value">{{ $transaksi->created_at->translatedFormat('d F Y') }}</span>
+                </div>
+                <div style="clear: both;"></div>
+                <div class="row">
+                    <span class="label">Tanggal Pembayaran</span>
                     <span class="value">{{ $transaksi->tanggal_pembayaran ? \Carbon\Carbon::parse($transaksi->tanggal_pembayaran)->translatedFormat('d F Y') : '—' }}</span>
                 </div>
+                <div style="clear: both;"></div>
                 <div class="row">
-                    <span class="label">Jatuh Tempo</span>
-                    <span class="value">{{ $transaksi->tanggal_jatuhtempo ? \Carbon\Carbon::parse($transaksi->tanggal_jatuhtempo)->translatedFormat('d F Y') : '—' }}</span>
-                </div>
-                <div class="row">
-                    <span class="label">Metode Pembayaran</span>
+                    <span class="label">Metode</span>
                     <span class="value">
                         @if ($transaksi->metode_pembayaran === 'midtrans')
-                            Midtrans ({{ $transaksi->midtrans_payment_type ?? '—' }})
+                            Online ({{ $transaksi->midtrans_payment_type ?? 'Midtrans' }})
                         @else
-                            Cash
+                            Tunai (Cash)
                         @endif
                     </span>
                 </div>
-                <div class="row" style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed #cbd5e1;">
-                    <span class="label">Total Bayar</span>
+                <div style="clear: both;"></div>
+
+                <div class="total-row">
+                    <span class="label" style="font-weight: bold; color: #094067; font-size: 14px;">TOTAL PEMBAYARAN</span>
                     <span class="value total-value">Rp{{ number_format($transaksi->total_bayar, 0, ',', '.') }}</span>
                 </div>
+                <div style="clear: both;"></div>
             </div>
         </div>
 
-        <!-- Midtrans ID (jika ada) -->
         @if ($transaksi->midtrans_transaction_id)
             <div class="midtrans-note">
-                <div class="label">ID Transaksi Midtrans</div>
+                <div class="label">Midtrans Transaction ID</div>
                 <div class="value">{{ $transaksi->midtrans_transaction_id }}</div>
             </div>
         @endif
 
-        <!-- Footer -->
         <div class="invoice-footer">
-            Invoice ini dibuat secara otomatis oleh sistem RumahKedua • {{ now()->translatedFormat('d F Y H:i') }}
+            <p><strong>RumahKedua Digital Invoice</strong></p>
+            <p>Dihasilkan secara otomatis pada {{ now()->translatedFormat('d F Y, H:i') }}</p>
+            <p>Simpan invoice ini sebagai bukti transaksi yang sah.</p>
         </div>
     </div>
 </body>

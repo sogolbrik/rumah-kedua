@@ -4,21 +4,30 @@
 @section('frontend-main')
     <style>
         :root {
-            --color-primary: #2563eb;
-            --color-primary-light: #3b82f6;
-            --color-primary-dark: #1e40af;
-            --color-accent: #0891b2;
-            --color-neutral-50: #f9fafb;
-            --color-neutral-100: #f3f4f6;
-            --color-neutral-200: #e5e7eb;
-            --color-neutral-600: #4b5563;
-            --color-neutral-900: #111827;
-            --color-success: #10b981;
+            /* Elements Palette */
+            --color-bg: #fffffe;
+            --color-headline: #094067;
+            --color-paragraph: #5f6c7b;
+            --color-button: #3da9fc;
+            --color-button-text: #fffffe;
+
+            /* Illustration Palette */
+            --color-stroke: #094067;
+            --color-highlight: #3da9fc;
+            --color-secondary: #90b4ce;
+            --color-tertiary: #ef4565;
+
+            /* Mapping to existing logic */
+            --color-primary: var(--color-button);
+            --color-neutral-50: var(--color-bg);
+            --color-neutral-600: var(--color-paragraph);
+            --color-neutral-900: var(--color-headline);
         }
 
         body {
             scroll-behavior: smooth;
-            background-color: var(--color-neutral-50);
+            background-color: var(--color-bg);
+            color: var(--color-paragraph);
         }
 
         .transition-smooth {
@@ -28,227 +37,198 @@
         .glass-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(229, 231, 235, 0.5);
+            border: 1px solid var(--color-secondary);
+            border-opacity: 0.3;
         }
 
         .section-divider {
             height: 1px;
-            background: linear-gradient(to right, transparent, rgba(37, 99, 235, 0.2), transparent);
+            background: linear-gradient(to right, transparent, var(--color-secondary), transparent);
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: var(--color-headline);
+        }
+
+        .text-primary {
+            color: var(--color-highlight) !important;
+        }
+
+        /* Override for Breadcrumb and active links */
+        .text-blue-600 {
+            color: var(--color-highlight) !important;
         }
     </style>
 
-    <!-- Main Container -->
     <div class="min-h-screen py-15 px-4 sm:px-6 lg:px-8 mt-12">
         <div class="max-w-6xl mx-auto">
-            <!-- Breadcrumb Navigation -->
             <nav class="mb-8 flex items-center gap-2 text-sm">
-                <a href="{{ Route('landing-page') }}" class="text-neutral-600 hover:text-primary transition-smooth">Home</a>
-                <span class="text-neutral-300">/</span>
-                <a href="{{ Route('booking') }}" class="text-neutral-600 hover:text-primary transition-smooth">Kamar</a>
-                <span class="text-neutral-300">/</span>
-                <span class="text-primary font-semibold text-blue-600">{{ $kamar->tipe }}</span>
+                <a href="{{ Route('landing-page') }}" class="text-[#5f6c7b] hover:text-[#3da9fc] transition-smooth font-medium">Home</a>
+                <span class="text-[#90b4ce]">/</span>
+                <a href="{{ Route('booking') }}" class="text-[#5f6c7b] hover:text-[#3da9fc] transition-smooth font-medium">Kamar</a>
+                <span class="text-[#90b4ce]">/</span>
+                <span class="text-[#3da9fc] font-bold">{{ $kamar->tipe }}</span>
             </nav>
 
-            <!-- Hero Section: Image Gallery -->
             <div class="mb-12" x-data="{ activeTab: 0, isZoomed: false }">
-                <!-- Main Image with Zoom -->
-                <div class="relative rounded-2xl overflow-hidden shadow-lg mb-4 bg-neutral-200 transition-smooth">
+                <div class="relative rounded-2xl overflow-hidden shadow-lg mb-4 bg-[#90b4ce20] border-2 border-[#09406710] transition-smooth">
                     <img src="{{ Storage::url($kamar->gambar) }}" alt="{{ $kamar->tipe }}" class="w-full h-96 sm:h-[500px] object-cover cursor-zoom-in transition-smooth hover:scale-105"
                         @click="isZoomed = true">
 
-                    <!-- Zoom Modal -->
-                    <div x-cloak class="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4 cursor-zoom-out" x-show="isZoomed" x-transition.opacity @click.self="isZoomed = false">
-                        <img src="{{ Storage::url($kamar->gambar) }}" alt="{{ $kamar->tipe }}" class="max-w-4xl max-h-screen object-contain">
-                        <button @click="isZoomed = false" class="absolute top-4 right-4 text-white text-4xl font-light hover:opacity-70 transition-smooth">
+                    <div x-cloak class="fixed inset-0 bg-[#094067]/95 z-50 flex items-center justify-center p-4 cursor-zoom-out" x-show="isZoomed" x-transition.opacity @click.self="isZoomed = false">
+                        <img src="{{ Storage::url($kamar->gambar) }}" alt="{{ $kamar->tipe }}" class="max-w-4xl max-h-screen object-contain border-4 border-[#fffffe]">
+                        <button @click="isZoomed = false" class="absolute top-4 right-4 text-[#fffffe] text-4xl font-light hover:text-[#ef4565] transition-smooth">
                             &times;
                         </button>
                     </div>
 
-                    <!-- Badge Status -->
                     <div class="absolute top-4 left-4 flex items-center gap-2">
-                        <span class="px-4 py-2 bg-success/90 text-white rounded-full text-xs font-semibold backdrop-blur-sm">
+                        <span class="px-4 py-2 bg-[#3da9fc] text-[#fffffe] rounded-full text-xs font-black tracking-widest uppercase shadow-md backdrop-blur-sm">
                             ✓ Tersedia
                         </span>
                     </div>
                 </div>
 
-                <!-- Carousel Galeri Horizontal -->
                 @if ($kamar->galeri && count($kamar->galeri) > 0)
                     <div class="space-y-4">
-                        <!-- Header Carousel -->
                         <div class="flex items-center justify-between">
-                            <h3 class="text-lg font-semibold text-slate-900 flex items-center gap-2">
-                                <i class="fa-solid fa-images text-cyan-600"></i>
+                            <h3 class="text-lg font-black uppercase tracking-tight flex items-center gap-2">
+                                <i class="fa-solid fa-images text-[#3da9fc]"></i>
                                 Galeri Kamar
                             </h3>
                             <div class="flex items-center gap-2">
                                 <button type="button" id="prevBtn"
-                                    class="w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm disabled:opacity-30 disabled:cursor-not-allowed"
-                                    onclick="scrollGaleri(-1)" aria-label="Geser ke kiri">
+                                    class="w-8 h-8 rounded-full bg-[#fffffe] border border-[#90b4ce] text-[#094067] hover:bg-[#3da9fc] hover:text-[#fffffe] transition-all shadow-sm disabled:opacity-30"
+                                    onclick="scrollGaleri(-1)">
                                     <i class="fa-solid fa-chevron-left text-xs"></i>
                                 </button>
                                 <button type="button" id="nextBtn"
-                                    class="w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm disabled:opacity-30 disabled:cursor-not-allowed"
-                                    onclick="scrollGaleri(1)" aria-label="Geser ke kanan">
+                                    class="w-8 h-8 rounded-full bg-[#fffffe] border border-[#90b4ce] text-[#094067] hover:bg-[#3da9fc] hover:text-[#fffffe] transition-all shadow-sm disabled:opacity-30"
+                                    onclick="scrollGaleri(1)">
                                     <i class="fa-solid fa-chevron-right text-xs"></i>
                                 </button>
+
+                                <script>
+                                    function scrollGaleri(direction) {
+                                        const container = document.getElementById('galeriContainer');
+                                        if (!container) return;
+
+                                        const scrollAmount = 200;
+                                        container.scrollBy({
+                                            left: direction * scrollAmount,
+                                            behavior: 'smooth'
+                                        });
+                                    }
+                                </script>
                             </div>
                         </div>
 
-                        <!-- Container Galeri -->
                         <div class="relative">
-                            <div id="galeriContainer" class="flex overflow-x-hidden snap-x snap-mandatory scrollbar-hide">
+                            <div id="galeriContainer" class="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-4 pb-4">
                                 @foreach ($kamar->galeri as $gambar)
-                                    <div class="flex-shrink-0 w-48 snap-start px-2">
-                                        <div class="group aspect-square bg-slate-100 rounded-xl overflow-hidden border border-slate-200 shadow-sm transition-all hover:shadow-md">
+                                    <div class="flex-shrink-0 w-48 snap-start">
+                                        <div
+                                            class="group aspect-square bg-[#90b4ce]/10 rounded-xl overflow-hidden border border-[#90b4ce]/40 shadow-sm transition-all hover:border-[#3da9fc] hover:shadow-md">
                                             <img src="{{ asset('storage/' . $gambar->foto) }}" alt="Foto {{ $loop->index + 1 }}"
-                                                class="w-full h-full object-cover cursor-zoom-in transition-transform duration-300 group-hover:scale-105"
+                                                class="w-full h-full object-cover cursor-zoom-in transition-transform duration-500 group-hover:scale-110"
                                                 onclick="openZoomModal('{{ asset('storage/' . $gambar->foto) }}')">
-                                            <div class="absolute bottom-2 left-2 bg-black/60 text-white text-xs px-2 py-1 rounded">
-                                                {{ $loop->index + 1 }}/{{ count($kamar->galeri) }}
-                                            </div>
                                         </div>
                                     </div>
                                 @endforeach
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Modal Zoom -->
-                    <div id="zoomModal" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-sm items-center justify-center p-4 pt-20">
-                        <div class="relative max-w-3xl w-full flex items-center justify-center"></div>
-                        <img id="zoomImage" src="" alt="Zoom Image" class="w-full max-h-[80vh] object-contain rounded-lg">
-                        <button type="button" onclick="closeZoomModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 text-white hover:bg-white/30 transition-colors">
-                            <i class="fa-solid fa-times text-xl"></i>
-                        </button>
-                    </div>
+                        <div id="zoomModal" class="fixed inset-0 z-[999] hidden flex-col items-center justify-center p-4 md:p-10" role="dialog" aria-modal="true">
 
-                    <script>
-                        // Inisialisasi scroll galeri
-                        document.addEventListener('DOMContentLoaded', () => {
-                            updateNavButtons();
-                        });
+                            <div class="fixed inset-0 bg-[#094067]/95 backdrop-blur-md" onclick="closeZoomModal()"></div>
 
-                        // Scroll galeri
-                        function scrollGaleri(direction) {
-                            const container = document.getElementById('galeriContainer');
-                            const cardWidth = 192; // w-48 = 192px
-                            const scrollAmount = cardWidth * direction;
-                            container.scrollBy({
-                                left: scrollAmount,
-                                behavior: 'smooth'
-                            });
+                            <div class="relative z-[1000] max-w-5xl w-full h-full flex items-center justify-center">
+                                <button onclick="closeZoomModal()" class="absolute top-10 right-0 md:-right-12 text-white hover:text-blue-400 transition-colors text-4xl">
+                                    &times;
+                                </button>
+                                <img id="zoomedImage" src="" class="max-w-full max-h-full object-contain rounded-xl shadow-2xl">
+                            </div>
+                        </div>
+                        <script>
+                            function openZoomModal(imageSrc) {
+                                const modal = document.getElementById('zoomModal');
+                                const zoomedImg = document.getElementById('zoomedImage');
 
-                            // Update status tombol setelah scroll
-                            setTimeout(updateNavButtons, 300);
-                        }
+                                // Set sumber gambar
+                                zoomedImg.src = imageSrc;
 
-                        // Update status tombol navigasi
-                        function updateNavButtons() {
-                            const container = document.getElementById('galeriContainer');
-                            const prevBtn = document.getElementById('prevBtn');
-                            const nextBtn = document.getElementById('nextBtn');
+                                // Tampilkan modal
+                                modal.classList.remove('hidden');
+                                modal.classList.add('flex');
 
-                            // Hitung maksimal scroll
-                            const maxScroll = container.scrollWidth - container.clientWidth;
-
-                            // Nonaktifkan tombol jika di awal/akhir
-                            prevBtn.disabled = container.scrollLeft <= 0;
-                            nextBtn.disabled = container.scrollLeft >= maxScroll - 10; // Toleransi 10px
-                        }
-
-                        // Event scroll untuk update tombol
-                        document.getElementById('galeriContainer').addEventListener('scroll', updateNavButtons);
-
-                        // Zoom modal
-                        function openZoomModal(imageUrl) {
-                            // Validasi URL
-                            if (!imageUrl) {
-                                console.error('URL gambar tidak valid');
-                                return;
+                                // Kunci scroll body
+                                document.body.style.overflow = 'hidden';
                             }
 
-                            document.getElementById('zoomImage').src = imageUrl;
-                            document.getElementById('zoomModal').classList.remove('hidden');
-                            document.body.classList.add('overflow-hidden');
-                        }
+                            function closeZoomModal() {
+                                const modal = document.getElementById('zoomModal');
 
-                        function closeZoomModal() {
-                            document.getElementById('zoomModal').classList.add('hidden');
-                            document.body.classList.remove('overflow-hidden');
-                        }
+                                // Sembunyikan modal
+                                modal.classList.add('hidden');
+                                modal.classList.remove('flex');
 
-                        // Tutup modal dengan ESC
-                        document.addEventListener('keydown', (e) => {
-                            if (e.key === 'Escape') closeZoomModal();
-                        });
-                    </script>
+                                // Kembalikan scroll body
+                                document.body.style.overflow = 'auto';
+                            }
 
-                    <style>
-                        /* Sembunyikan scrollbar */
-                        .scrollbar-hide::-webkit-scrollbar {
-                            display: none;
-                        }
+                            // Menutup modal dengan tombol ESC
+                            document.addEventListener('keydown', function(e) {
+                                if (e.key === "Escape") {
+                                    closeZoomModal();
+                                }
+                            });
+                        </script>
 
-                        .scrollbar-hide {
-                            -ms-overflow-style: none;
-                            scrollbar-width: none;
-                        }
-                    </style>
+                    </div>
                 @endif
             </div>
 
-            <!-- Content Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Left Column: Main Content -->
                 <div class="lg:col-span-2">
-                    <!-- Room Header -->
                     <div class="mb-10">
-                        <div class="flex items-start justify-between mb-4">
-                            <div>
-                                <span class="inline-block px-3 py-1 bg-blue-500 text-white rounded-full text-xs font-semibold mb-3">
-                                    {{ $kamar->tipe }}
-                                </span>
-                                <h1 class="text-4xl font-bold text-neutral-900 mb-2">
-                                    {{ $kamar->kode_kamar }}
-                                </h1>
-                                <p class="text-neutral-600">Kamar eksklusif dengan desain modern dan fasilitas lengkap</p>
-                            </div>
-                        </div>
+                        <span class="inline-block px-3 py-1 bg-[#90b4ce20] text-[#3da9fc] rounded-full text-xs font-black uppercase tracking-widest mb-3">
+                            {{ $kamar->tipe }}
+                        </span>
+                        <h1 class="text-4xl font-black mb-2 tracking-tight">{{ $kamar->kode_kamar }}</h1>
+                        <p class="text-[#5f6c7b] font-medium">Kamar eksklusif dengan desain modern dan fasilitas lengkap</p>
                     </div>
 
-                    <!-- Quick Info Cards -->
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-12">
-                        <div class="glass-card rounded-xl p-4 text-center">
-                            <div class="text-2xl font-bold text-primary mb-1">{{ $kamar->lebar }} m²</div>
-                            <div class="text-xs text-neutral-600">Luas Ruangan</div>
+                        <div class="glass-card rounded-2xl p-6 text-center border-b-4 border-b-[#3da9fc]">
+                            <div class="text-2xl font-black text-[#3da9fc] mb-1">{{ $kamar->lebar }} m²</div>
+                            <div class="text-[10px] font-black uppercase tracking-widest text-[#90b4ce]">Luas Ruangan</div>
                         </div>
-                        <div class="glass-card rounded-xl p-4 text-center">
-                            <div class="text-2xl font-bold text-primary mb-1">
+                        <div class="glass-card rounded-2xl p-6 text-center border-b-4 border-b-[#3da9fc]">
+                            <div class="text-2xl font-black text-[#3da9fc] mb-1">
                                 Rp{{ $kamar->harga >= 1000000 ? number_format($kamar->harga / 1000000, 1, ',', '.') . 'jt' : number_format($kamar->harga / 1000, 0, ',', '.') . 'K' }}
                             </div>
-                            <div class="text-xs text-neutral-600">Per Bulan</div>
+                            <div class="text-[10px] font-black uppercase tracking-widest text-[#90b4ce]">Per Bulan</div>
                         </div>
-                        <div class="glass-card rounded-xl p-4 text-center">
-                            <div class="text-2xl font-bold text-primary mb-1">✓</div>
-                            <div class="text-xs text-neutral-600">Tersedia</div>
+                        <div class="glass-card rounded-2xl p-6 text-center border-b-4 border-b-[#3da9fc]">
+                            <div class="text-2xl font-black text-[#3da9fc] mb-1">✓</div>
+                            <div class="text-[10px] font-black uppercase tracking-widest text-[#90b4ce]">Tersedia</div>
                         </div>
                     </div>
 
-                    <!-- Added new comprehensive sections -->
-                    <!-- Deskripsi Kamar -->
                     <section class="mb-12">
-                        <h2 class="text-2xl font-bold text-neutral-900 mb-4">Tentang Kamar Ini</h2>
-                        <p class="text-neutral-600 leading-relaxed">
+                        <h2 class="text-2xl font-black mb-4 uppercase tracking-tight">Tentang Kamar Ini</h2>
+                        <p class="text-[#5f6c7b] leading-relaxed font-medium">
                             {{ $kamar->deskripsi }}
                         </p>
                     </section>
 
                     <div class="section-divider mb-12"></div>
 
-                    <!-- Keunggulan Section -->
                     <section class="mb-12">
-                        <h2 class="text-2xl font-bold text-neutral-900 mb-6">Keunggulan Kamar</h2>
+                        <h2 class="text-2xl font-black mb-6 uppercase tracking-tight">Keunggulan Kamar</h2>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="flex items-start gap-3">
                                 <svg class="w-6 h-6 text-primary flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
@@ -256,7 +236,7 @@
                                         clip-rule="evenodd" />
                                 </svg>
                                 <div>
-                                    <h3 class="font-semibold text-neutral-900">Desain Modern & Elegan</h3>
+                                    <h3 class="text-[#5f6c7b] leading-relaxed font-medium">Desain Modern & Elegan</h3>
                                     <p class="text-sm text-neutral-600">Dilengkapi dengan interior terkini dan aesthetic
                                         yang menawan</p>
                                 </div>
@@ -267,7 +247,7 @@
                                         clip-rule="evenodd" />
                                 </svg>
                                 <div>
-                                    <h3 class="font-semibold text-neutral-900">Privasi Terjamin</h3>
+                                    <h3 class="text-[#5f6c7b] leading-relaxed font-medium">Privasi Terjamin</h3>
                                     <p class="text-sm text-neutral-600">Lokasi strategis dengan akses mudah ke berbagai
                                         fasilitas utama</p>
                                 </div>
@@ -278,7 +258,7 @@
                                         clip-rule="evenodd" />
                                 </svg>
                                 <div>
-                                    <h3 class="font-semibold text-neutral-900">Fasilitas Lengkap</h3>
+                                    <h3 class="text-[#5f6c7b] leading-relaxed font-medium">Fasilitas Lengkap</h3>
                                     <p class="text-sm text-neutral-600">Semua kebutuhan Anda tersedia dengan standar premium
                                     </p>
                                 </div>
@@ -289,7 +269,7 @@
                                         clip-rule="evenodd" />
                                 </svg>
                                 <div>
-                                    <h3 class="font-semibold text-neutral-900">Harga Kompetitif</h3>
+                                    <h3 class="text-[#5f6c7b] leading-relaxed font-medium">Harga Kompetitif</h3>
                                     <p class="text-sm text-neutral-600">Kualitas terbaik dengan harga yang terjangkau dan
                                         fleksibel</p>
                                 </div>
@@ -297,263 +277,95 @@
                         </div>
                     </section>
 
-                    <div class="section-divider mb-12"></div>
-
-                    <!-- Spesifikasi Kamar Section -->
                     <section class="mb-12">
-                        <h2 class="text-2xl font-bold text-neutral-900 mb-6">Spesifikasi Kamar</h2>
-                        <div class="glass-card rounded-xl p-6 space-y-4">
-                            <div class="flex justify-between py-3 border-b border-neutral-200">
-                                <span class="text-neutral-600 font-medium">Tipe Kamar</span>
-                                <span class="text-neutral-900 font-semibold">{{ $kamar->tipe }}</span>
+                        <h2 class="text-2xl font-black mb-6 uppercase tracking-tight">Spesifikasi Kamar</h2>
+                        <div class="glass-card rounded-2xl p-8 space-y-4">
+                            <div class="flex justify-between py-3 border-b border-[#90b4ce20]">
+                                <span class="text-[#5f6c7b] font-bold uppercase text-xs tracking-widest">Tipe Kamar</span>
+                                <span class="text-[#094067] font-black">{{ $kamar->tipe }}</span>
                             </div>
-                            <div class="flex justify-between py-3 border-b border-neutral-200">
-                                <span class="text-neutral-600 font-medium">Kode Kamar</span>
-                                <span class="text-neutral-900 font-semibold">{{ $kamar->kode_kamar }}</span>
-                            </div>
-                            <div class="flex justify-between py-3 border-b border-neutral-200">
-                                <span class="text-neutral-600 font-medium">Luas Ruangan</span>
-                                <span class="text-neutral-900 font-semibold">{{ $kamar->lebar }} m²</span>
-                            </div>
-                            <div class="flex justify-between py-3 border-b border-neutral-200">
-                                <span class="text-neutral-600 font-medium">Harga Per Bulan</span>
-                                <span class="text-primary font-bold text-lg">Rp{{ number_format($kamar->harga, 0, ',', '.') }}</span>
+                            <div class="flex justify-between py-3 border-b border-[#90b4ce20]">
+                                <span class="text-[#5f6c7b] font-bold uppercase text-xs tracking-widest">Kode Kamar</span>
+                                <span class="text-[#094067] font-black">{{ $kamar->kode_kamar }}</span>
                             </div>
                             <div class="flex justify-between py-3">
-                                <span class="text-neutral-600 font-medium">Status</span>
-                                <span class="px-3 py-1 bg-success/10 text-success rounded-full text-xs font-semibold">Tersedia</span>
+                                <span class="text-[#5f6c7b] font-bold uppercase text-xs tracking-widest">Harga Per Bulan</span>
+                                <span class="text-[#3da9fc] font-black text-xl">Rp{{ number_format($kamar->harga, 0, ',', '.') }}</span>
                             </div>
                         </div>
                     </section>
 
-                    <div class="section-divider mb-12"></div>
-
-                    <!-- Seluruh Fasilitas Kamar Section -->
                     <section class="mb-12">
-                        <h2 class="text-2xl font-bold text-neutral-900 mb-6">Seluruh Fasilitas Kamar</h2>
+                        <h2 class="text-2xl font-black mb-6 uppercase tracking-tight">Fasilitas Kamar</h2>
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
                             @foreach ($kamar->detailKamar as $item)
-                                <div class="glass-card rounded-lg p-4 flex items-center gap-3 hover:shadow-md transition-smooth">
-                                    <div class="flex-shrink-0">
-                                        @switch($item->fasilitas)
-                                            @case('Kasur & Bantal')
-                                                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9v12h18V9a3 3 0 00-3-3H6a3 3 0 00-3 3zm9 3H6m12 0h-6m-6 4h12" />
-                                                </svg>
-                                            @break
-
-                                            @case('Lemari')
-                                                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm0 6h16v8a2 2 0 01-2 2H6a2 2 0 01-2-2v-8z" />
-                                                </svg>
-                                            @break
-
-                                            @case('Meja dan Kursi')
-                                                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9h18v2H3V9zm2 4h2v6H5v-6zm12 0h2v6h-2v-6zM7 9v6m10-6v6" />
-                                                </svg>
-                                            @break
-
-                                            @case('K. Mandi Dalam')
-                                                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v18h14V3H5zm2 2h10v2H7V5zm0 4h10v8H7V9z" />
-                                                </svg>
-                                            @break
-
-                                            @case('Kaca')
-                                                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6z" />
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v8m-4-4h8" />
-                                                </svg>
-                                            @break
-
-                                            @case('TV')
-                                                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                                </svg>
-                                            @break
-
-                                            @case('Dapur Pribadi')
-                                                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18M3 12h18M3 18h18M5 6v12M19 6v12" />
-                                                </svg>
-                                            @break
-
-                                            @case('WI-FI')
-                                                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M5.636 9.636a9 9 0 0112.728 0" />
-                                                </svg>
-                                            @break
-
-                                            @case('Tempat Sampah')
-                                                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                </svg>
-                                            @break
-
-                                            @case('Listrik')
-                                                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                                </svg>
-                                            @break
-
-                                            @case('Jendela dan Tirai')
-                                                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 22V12h6v10" />
-                                                </svg>
-                                            @break
-
-                                            @case('Stopkontak')
-                                                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M12 18v-3m0 0v-3m0 3H9m3 0h3M6 12h12a2 2 0 002-2V8a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z" />
-                                                </svg>
-                                            @break
-
-                                            @case('Rak Sepatu')
-                                                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18M3 12h18M3 18h18M5 6v12M19 6v12" />
-                                                </svg>
-                                            @break
-
-                                            @case('AC')
-                                                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M12 3v2m0 14v2M3 12h2m14 0h2M5.64 5.64l1.42 1.42m9.9 9.9l1.42 1.42M5.64 18.36l1.42-1.42m9.9-9.9l1.42-1.42" />
-                                                </svg>
-                                            @break
-
-                                            @case('Kipas Angin')
-                                                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M12 3v2m0 14v2M3 12h2m14 0h2M5.64 5.64l1.42 1.42m9.9 9.9l1.42 1.42M5.64 18.36l1.42-1.42m9.9-9.9l1.42-1.42" />
-                                                </svg>
-                                            @break
-
-                                            @default
-                                                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                                </svg>
-                                        @endswitch
+                                <div class="glass-card rounded-xl p-4 flex items-center gap-3 hover:border-[#3da9fc] transition-smooth group">
+                                    <div class="w-10 h-10 rounded-lg bg-[#3da9fc10] flex items-center justify-center text-[#3da9fc] group-hover:bg-[#3da9fc] group-hover:text-[#fffffe] transition-all">
+                                        <i class="fa-solid fa-check-circle"></i>
                                     </div>
-                                    <span class="text-sm font-medium text-neutral-900">{{ $item->fasilitas }}</span>
+                                    <span class="text-sm font-bold text-[#094067]">{{ $item->fasilitas }}</span>
                                 </div>
                             @endforeach
                         </div>
                     </section>
 
-                    <div class="section-divider mb-12"></div>
-
-                    <!-- Peraturan Khusus Section -->
                     <section class="mb-12">
-                        <h2 class="text-2xl font-bold text-neutral-900 mb-6">Peraturan & Kebijakan Khusus</h2>
+                        <h2 class="text-2xl font-black mb-6 uppercase tracking-tight">Peraturan & Kebijakan Khusus</h2>
                         <div class="space-y-4">
-                            <div class="glass-card rounded-lg p-4 border-l-4 border-primary">
-                                <h3 class="font-semibold text-neutral-900 mb-2">Jam Check-In & Check-Out</h3>
-                                <p class="text-sm text-neutral-600">Check-in mulai pukul 14:00 dan check-out maksimal pukul
-                                    12:00. Early check-in atau late check-out dapat diatur sesuai ketersediaan.</p>
-                            </div>
-                            <div class="glass-card rounded-lg p-4 border-l-4 border-accent">
-                                <h3 class="font-semibold text-neutral-900 mb-2">Hewan Peliharaan</h3>
-                                <p class="text-sm text-neutral-600">Hewan peliharaan tidak diperbolehkan di kamar ini untuk
-                                    menjaga kebersihan dan kenyamanan tamu lainnya.</p>
-                            </div>
-                            <div class="glass-card rounded-lg p-4 border-l-4 border-primary">
-                                <h3 class="font-semibold text-neutral-900 mb-2">Penggunaan Fasilitas</h3>
-                                <p class="text-sm text-neutral-600">Semua tamu wajib menjaga kebersihan dan kelestarian
-                                    fasilitas kamar. Kerusakan yang disengaja akan dikenakan biaya tambahan.</p>
-                            </div>
-                            <div class="glass-card rounded-lg p-4 border-l-4 border-accent">
-                                <h3 class="font-semibold text-neutral-900 mb-2">Kebijakan Pembatalan</h3>
-                                <p class="text-sm text-neutral-600">Pembatalan gratis hingga 48 jam sebelum check-in.
-                                    Pembatalan di bawah 48 jam akan dikenakan biaya 50% dari total pemesanan.</p>
-                            </div>
-                            <div class="glass-card rounded-lg p-4 border-l-4 border-primary">
-                                <h3 class="font-semibold text-neutral-900 mb-2">Kesunyian</h3>
-                                <p class="text-sm text-neutral-600">Harap menjaga kesunyian kamar terutama setelah pukul
-                                    22:00 untuk menghormati tamu lain. Suara yang mengganggu akan ditegur.</p>
-                            </div>
+                            @php
+                                $kebijakan = [
+                                    [
+                                        'title' => 'Hewan Peliharaan',
+                                        'description' => 'Hewan peliharaan tidak diperbolehkan di kamar ini untuk menjaga kebersihan dan kenyamanan tamu lainnya.',
+                                    ],
+                                    [
+                                        'title' => 'Penggunaan Fasilitas',
+                                        'description' => 'Semua tamu wajib menjaga kebersihan dan kelestarian fasilitas kamar. Kerusakan yang disengaja akan dikenakan biaya tambahan.',
+                                    ],
+                                    [
+                                        'title' => 'Kebijakan Pembatalan',
+                                        'description' => 'Pembatalan gratis hingga 48 jam sebelum check-in. Pembatalan di bawah 48 jam akan dikenakan biaya 50% dari total pemesanan.',
+                                    ],
+                                    [
+                                        'title' => 'Kesunyian',
+                                        'description' => 'Harap menjaga kesunyian kamar terutama setelah pukul 22:00 untuk menghormati tamu lain. Suara yang mengganggu akan ditegur.',
+                                    ],
+                                ];
+                            @endphp
+                            @foreach ($kebijakan as $item)
+                                <div class="glass-card rounded-xl p-5 border-l-4 border-l-[#3da9fc]">
+                                    <h3 class="font-black text-[#094067] uppercase text-sm tracking-widest mb-2">{{ $item['title'] }}</h3>
+                                    <p class="text-sm text-[#5f6c7b] font-medium">{{ $item['description'] }}</p>
+                                </div>
+                            @endforeach
                         </div>
                     </section>
                 </div>
 
-                <!-- Right Column: Sidebar Info -->
                 <div class="lg:col-span-1 sticky top-25 h-max">
-                    <div class="glass-card rounded-2xl p-8 sticky top-8">
-                        <!-- Price Card -->
-                        <div class="mb-8 pb-8 border-b border-neutral-200">
-                            <p class="text-sm text-neutral-600 mb-2 font-medium">HARGA PER BULAN</p>
-                            <p class="text-4xl font-bold text-primary mb-1">
+                    <div class="glass-card rounded-[2rem] p-8 sticky top-8 border-2 border-[#09406710] shadow-2xl shadow-[#09406705]">
+                        <div class="mb-8 pb-8 border-b border-[#90b4ce20]">
+                            <p class="text-[10px] font-black text-[#90b4ce] uppercase tracking-[0.2em] mb-2">Total Harga</p>
+                            <p class="text-4xl font-black text-[#3da9fc] mb-1">
                                 Rp{{ number_format($kamar->harga, 0, ',', '.') }}
                             </p>
-                            <p class="text-xs text-neutral-500">Termasuk pajak</p>
+                            <p class="text-xs text-[#5f6c7b] font-medium">Sudah termasuk biaya maintenance</p>
                         </div>
 
-                        <div class="mb-8 pb-8 border-b border-neutral-200">
+                        <div class="mb-8">
                             @auth
-                                @if (auth()->user()->id_kamar)
-                                    <div x-data="{ showWarning: false }">
-                                        <button @click="showWarning = true"
-                                            class="cursor-pointer w-full flex items-center justify-center gap-2 
-                                            bg-blue-500 text-white font-semibold px-6 py-3 rounded-lg
-                                            border-blue-600 border-b-[4px]
-                                            transition-all
-                                            hover:brightness-110 hover:-translate-y-[2px] hover:border-b-[6px]
-                                            active:border-b-[2px] active:brightness-90 active:translate-y-[2px] shadow-md mb-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                <path fill-rule="evenodd"
-                                                    d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
-                                            Pesan Sekarang
-                                        </button>
-
-                                        <div class="flex justify-center" x-show="showWarning" x-cloak x-transition:enter="transition ease-out duration-300"
-                                            x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
-                                            <small class="text-xs text-red-500">Anda sudah memiliki kamar!</small>
-                                        </div>
-                                    </div>
-                                @elseif(auth()->user()->role == 'admin')
-                                    <div x-data="{ showWarning: false }">
-                                        <button @click="showWarning = true"
-                                            class="cursor-pointer w-full flex items-center justify-center gap-2 
-                                            bg-blue-500 text-white font-semibold px-6 py-3 rounded-lg
-                                            border-blue-600 border-b-[4px]
-                                            transition-all
-                                            hover:brightness-110 hover:-translate-y-[2px] hover:border-b-[6px]
-                                            active:border-b-[2px] active:brightness-90 active:translate-y-[2px] shadow-md mb-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                <path fill-rule="evenodd"
-                                                    d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
-                                            Pesan Sekarang
-                                        </button>
-
-                                        <div class="flex justify-center" x-show="showWarning" x-cloak x-transition:enter="transition ease-out duration-300"
-                                            x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
-                                            <small class="text-xs text-red-500">Anda adalah admin!</small>
-                                        </div>
-                                    </div>
+                                @php $user = auth()->user(); @endphp
+                                @if ($user->id_kamar || $user->role == 'admin')
+                                    <button class="w-full bg-[#90b4ce] text-[#fffffe] font-black uppercase tracking-widest px-6 py-4 rounded-2xl cursor-not-allowed opacity-60">
+                                        Pesan Sekarang
+                                    </button>
+                                    <p class="text-center mt-3 text-[#ef4565] text-[10px] font-bold uppercase tracking-widest">
+                                        {{ $user->role == 'admin' ? 'Akses Admin Terdeteksi' : 'Anda Sudah Memiliki Kamar' }}
+                                    </p>
                                 @else
                                     <a href="{{ route('user.pembayaran.booking', $kamar->id) }}">
                                         <button
-                                            class="cursor-pointer w-full flex items-center justify-center gap-2 
-                                    bg-blue-500 text-white font-semibold px-6 py-3 rounded-lg
-                                    border-blue-600 border-b-[4px]
-                                    transition-all
-                                    hover:brightness-110 hover:-translate-y-[2px] hover:border-b-[6px]
-                                    active:border-b-[2px] active:brightness-90 active:translate-y-[2px] shadow-md">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                <path fill-rule="evenodd"
-                                                    d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
+                                            class="w-full bg-[#3da9fc] text-[#fffffe] font-black uppercase tracking-widest px-6 py-4 rounded-2xl border-b-4 border-[#094067] hover:brightness-110 active:border-b-0 active:translate-y-1 transition-all shadow-xl shadow-[#3da9fc30]">
                                             Pesan Sekarang
                                         </button>
                                     </a>
@@ -561,45 +373,28 @@
                             @else
                                 <a href="{{ route('user.pembayaran.booking', $kamar->id) }}">
                                     <button
-                                        class="cursor-pointer w-full flex items-center justify-center gap-2 
-                                bg-blue-500 text-white font-semibold px-6 py-3 rounded-lg
-                                border-blue-600 border-b-[4px]
-                                transition-all
-                                hover:brightness-110 hover:-translate-y-[2px] hover:border-b-[6px]
-                                active:border-b-[2px] active:brightness-90 active:translate-y-[2px] shadow-md">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z"
-                                                clip-rule="evenodd" />
-                                        </svg>
+                                        class="w-full bg-[#3da9fc] text-[#fffffe] font-black uppercase tracking-widest px-6 py-4 rounded-2xl border-b-4 border-[#094067] hover:brightness-110 active:border-b-0 active:translate-y-1 transition-all shadow-xl shadow-[#3da9fc30]">
                                         Pesan Sekarang
                                     </button>
                                 </a>
                             @endauth
                         </div>
 
-                        <!-- Quick Facts -->
                         <div class="space-y-4">
-                            <div>
-                                <p class="text-xs text-neutral-500 uppercase font-semibold mb-1">Luas Kamar</p>
-                                <p class="text-lg font-semibold text-neutral-900">{{ $kamar->lebar }} m²</p>
+                            <div class="flex items-center gap-3 text-[#5f6c7b]">
+                                <i class="fas fa-shield-alt text-[#3da9fc]"></i>
+                                <span class="text-xs font-bold uppercase tracking-wider">Pembayaran Aman</span>
                             </div>
-                            <div>
-                                <p class="text-xs text-neutral-500 uppercase font-semibold mb-1">Tipe Kamar</p>
-                                <p class="text-lg font-semibold text-neutral-900">{{ $kamar->tipe }}</p>
-                            </div>
-                            <div>
-                                <p class="text-xs text-neutral-500 uppercase font-semibold mb-1">Nomor Kamar</p>
-                                <p class="text-lg font-semibold text-neutral-900">{{ $kamar->kode_kamar }}</p>
+                            <div class="flex items-center gap-3 text-[#5f6c7b]">
+                                <i class="fas fa-bolt text-[#3da9fc]"></i>
+                                <span class="text-xs font-bold uppercase tracking-wider">Konfirmasi Instan</span>
                             </div>
                         </div>
 
-                        <!-- Info Box -->
-                        <div class="mt-8 pt-8 border-t border-neutral-200">
-                            <div class="bg-primary/5 rounded-lg p-4">
-                                <p class="text-xs text-neutral-600 leading-relaxed">
-                                    <span class="font-semibold text-primary">Informasi Penting:</span> Untuk pertanyaan
-                                    lebih lanjut atau kebutuhan khusus, silakan hubungi tim customer service kami yang
-                                    siap membantu 24/7.
+                        <div class="mt-8 pt-8 border-t border-[#90b4ce20]">
+                            <div class="bg-[#3da9fc05] rounded-xl p-4 border border-[#3da9fc10]">
+                                <p class="text-[10px] text-[#5f6c7b] leading-relaxed font-bold uppercase tracking-wider">
+                                    <span class="text-[#3da9fc]">Butuh bantuan?</span> CS kami siap melayani Anda 24/7 melalui WhatsApp.
                                 </p>
                             </div>
                         </div>
@@ -608,5 +403,4 @@
             </div>
         </div>
     </div>
-
 @endsection
