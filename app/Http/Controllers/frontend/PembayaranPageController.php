@@ -152,7 +152,8 @@ class PembayaranPageController extends Controller
         ]);
         $transaksi->save();
 
-        return back()->with('success', 'Transaksi berhasil dibuat. Silakan lanjutkan pembayaran.');
+        return redirect()->route('user.pembayaran.booking', $kamar)
+            ->with('success', 'Transaksi berhasil dibuat. Silakan lanjutkan pembayaran.');
     }
 
     /**
@@ -162,7 +163,8 @@ class PembayaranPageController extends Controller
     {
         $user = Auth::user();
 
-        $transaksi = Transaksi::where('id_user', $user->id)
+        $transaksi = Transaksi::with('kamar')
+            ->where('id_user', $user->id)
             ->where('status_pembayaran', 'pending')
             ->latest()
             ->first();
@@ -181,67 +183,30 @@ class PembayaranPageController extends Controller
             ], 400);
         }
 
+        if (!$transaksi->kamar) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data kamar tidak valid. Silakan hubungi admin.'
+            ], 400);
+        }
+
         $midtransData = $transaksi->midtrans_response;
         $tokenExistsAndIsValid = false;
 
         if (is_array($midtransData) && isset($midtransData['snap_token']) && isset($midtransData['expired_at'])) {
-            $tokenExpiredAt = Carbon::parse($midtransData['expired_at']);
-            $tokenExistsAndIsValid = now()->lt($tokenExpiredAt);
+            try {
+                $tokenExpiredAt = Carbon::parse($midtransData['expired_at']);
+                $tokenExistsAndIsValid = now()->lt($tokenExpiredAt);
+            } catch (\Exception $e) {
+                $tokenExistsAndIsValid = false;
+            }
         }
 
         if (!$tokenExistsAndIsValid) {
-            try {
-                $transactionDetails = [
-                    'transaction_details' => [
-                        'order_id' => $transaksi->midtrans_order_id,
-                        'gross_amount' => (int) $transaksi->total_bayar,
-                    ],
-                    'customer_details' => [
-                        'first_name' => $user->name,
-                        'email' => $user->email,
-                        'phone' => $user->phone ?? '081234567890',
-                    ],
-                    'item_details' => [
-                        [
-                            'id' => $transaksi->id_kamar,
-                            'price' => (int) $transaksi->total_bayar,
-                            'quantity' => 1,
-                            'name' => "Pembayaran Kos {$transaksi->kamar->kode_kamar} ({$transaksi->durasi} Bulan)",
-                            'category' => 'Kost'
-                        ]
-                    ],
-                    'expiry' => [
-                        'start_time' => now()->format('Y-m-d H:i:s O'),
-                        'unit' => 'hour',
-                        'duration' => 24
-                    ]
-                ];
-
-                $midtransResponse = $this->midtransService->createTransaction($transactionDetails);
-
-                if (!$midtransResponse['success']) {
-                    throw new \Exception($midtransResponse['message'] ?? 'Gagal membuat token Midtrans');
-                }
-
-                $transaksi->midtrans_response = [
-                    'snap_token' => $midtransResponse['snap_token'],
-                    'expired_at' => now()->addHours(24)->toDateTimeString(),
-                    'created_at' => now()->toDateTimeString(),
-                ];
-                $transaksi->save();
-
-                return response()->json([
-                    'success' => true,
-                    'snap_token' => $midtransResponse['snap_token'],
-                    'transaksi_id' => $transaksi->id
-                ]);
-
-            } catch (\Exception $e) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Gagal menyiapkan pembayaran: ' . $e->getMessage()
-                ], 500);
-            }
+            return response()->json([
+                'success' => false,
+                'message' => 'Token pembayaran sudah kadaluarsa. Silakan pilih kamar dan transaksi ulang.'
+            ], 400);
         }
 
         return response()->json([

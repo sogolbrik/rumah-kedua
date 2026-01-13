@@ -18,25 +18,34 @@ class KamarSeeder extends Seeder
             // Standard Rooms
             [
                 'kode_kamar' => 'A-101',
-                'harga' => 1500000,
+                'harga' => 600000,
                 'tipe' => 'Standard',
-                'lebar' => 12.5,
+                'lebar' => 12.0,
                 'deskripsi' => 'Kamar Standard nyaman dengan luas 12.5m², cocok untuk penghuni tunggal dengan fasilitas lengkap untuk kebutuhan sehari-hari.',
                 'gambar' => 'kamar/standard.jpg',
                 'status' => 'Terisi'
             ],
             [
                 'kode_kamar' => 'A-102',
-                'harga' => 1450000,
+                'harga' => 650000,
                 'tipe' => 'Standard',
-                'lebar' => 12.0,
+                'lebar' => 12.5,
                 'deskripsi' => 'Kamar Standard dengan desain minimalis, luas 12m² dilengkapi dengan fasilitas standar yang memadai.',
                 'gambar' => 'kamar/standard.jpg',
                 'status' => 'Terisi'
             ],
             [
                 'kode_kamar' => 'A-103',
-                'harga' => 1550000,
+                'harga' => 700000,
+                'tipe' => 'Standard',
+                'lebar' => 13.0,
+                'deskripsi' => 'Kamar Standard luas 13m² dengan ventilasi yang baik, cocok untuk kenyamanan maksimal.',
+                'gambar' => 'kamar/standard.jpg',
+                'status' => 'Tersedia'
+            ],
+            [
+                'kode_kamar' => 'A-104',
+                'harga' => 750000,
                 'tipe' => 'Standard',
                 'lebar' => 13.0,
                 'deskripsi' => 'Kamar Standard luas 13m² dengan ventilasi yang baik, cocok untuk kenyamanan maksimal.',
@@ -47,34 +56,34 @@ class KamarSeeder extends Seeder
             // Medium Rooms
             [
                 'kode_kamar' => 'B-201',
-                'harga' => 2200000,
+                'harga' => 900000,
                 'tipe' => 'Medium',
-                'lebar' => 18.0,
+                'lebar' => 17.5,
                 'deskripsi' => 'Kamar Medium dengan luas 18m², dilengkapi fasilitas tambahan untuk kenyamanan lebih.',
                 'gambar' => 'kamar/medium.jpg',
                 'status' => 'Tersedia'
             ],
             [
                 'kode_kamar' => 'B-202',
-                'harga' => 2300000,
+                'harga' => 950000,
                 'tipe' => 'Medium',
-                'lebar' => 19.5,
+                'lebar' => 18.0,
                 'deskripsi' => 'Kamar Medium nyaman dengan luas 19.5m², memiliki ruang yang lebih luas dan fasilitas lengkap.',
                 'gambar' => 'kamar/medium.jpg',
                 'status' => 'Tersedia'
             ],
             [
                 'kode_kamar' => 'B-203',
-                'harga' => 2100000,
+                'harga' => 1000000,
                 'tipe' => 'Medium',
-                'lebar' => 17.5,
+                'lebar' => 19.0,
                 'deskripsi' => 'Kamar Medium dengan desain modern, luas 17.5m² cocok untuk profesional muda.',
                 'gambar' => 'kamar/medium.jpg',
                 'status' => 'Tersedia'
             ],
             [
                 'kode_kamar' => 'B-204',
-                'harga' => 2400000,
+                'harga' => 1200000,
                 'tipe' => 'Medium',
                 'lebar' => 20.0,
                 'deskripsi' => 'Kamar Medium premium dengan luas 20m², view yang bagus dan fasilitas terbaik di kelasnya.',
@@ -85,7 +94,7 @@ class KamarSeeder extends Seeder
             // Exclusive Rooms
             [
                 'kode_kamar' => 'C-301',
-                'harga' => 3500000,
+                'harga' => 1250000,
                 'tipe' => 'Exclusive',
                 'lebar' => 25.0,
                 'deskripsi' => 'Kamar Exclusive mewah dengan luas 25m², dilengkapi dengan fasilitas premium dan furniture berkualitas tinggi.',
@@ -94,18 +103,27 @@ class KamarSeeder extends Seeder
             ],
             [
                 'kode_kamar' => 'C-302',
-                'harga' => 3800000,
+                'harga' => 1300000,
                 'tipe' => 'Exclusive',
-                'lebar' => 28.0,
+                'lebar' => 26.0,
                 'deskripsi' => 'Kamar Exclusive suite dengan luas 28m², memiliki ruang living area terpisah dan kamar mandi mewah.',
                 'gambar' => 'kamar/exclusive.jpg',
                 'status' => 'Tersedia'
             ],
             [
                 'kode_kamar' => 'C-303',
-                'harga' => 3200000,
+                'harga' => 1350000,
                 'tipe' => 'Exclusive',
-                'lebar' => 24.0,
+                'lebar' => 26.5,
+                'deskripsi' => 'Kamar Exclusive dengan desain elegan, luas 24m² menawarkan kenyamanan maksimal dengan privacy terjamin.',
+                'gambar' => 'kamar/exclusive.jpg',
+                'status' => 'Tersedia'
+            ],
+            [
+                'kode_kamar' => 'C-304',
+                'harga' => 1350000,
+                'tipe' => 'Exclusive',
+                'lebar' => 27.0,
                 'deskripsi' => 'Kamar Exclusive dengan desain elegan, luas 24m² menawarkan kenyamanan maksimal dengan privacy terjamin.',
                 'gambar' => 'kamar/exclusive.jpg',
                 'status' => 'Tersedia'

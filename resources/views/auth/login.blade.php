@@ -55,7 +55,7 @@
     </style>
 </head>
 
-<body class="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+<body class="min-h-screen flex items-center justify-center p-6 relative [&::-webkit-scrollbar]:hidden">
 
     <div class="absolute top-[-10%] left-[-10%] w-[45%] h-[45%] bg-[#90b4ce]/20 rounded-full blur-[120px] pointer-events-none"></div>
     <div class="absolute bottom-[-10%] right-[-10%] w-[45%] h-[45%] bg-[#3da9fc]/10 rounded-full blur-[120px] pointer-events-none"></div>
@@ -89,7 +89,7 @@
                     <div class="input-inset flex items-center px-4 rounded-2xl group">
                         <i class="fas fa-envelope text-[#90b4ce] text-xs mr-3 transition-colors group-focus-within:text-[#3da9fc]"></i>
                         <input type="email" name="email" id="email" value="{{ old('email') }}"
-                            class="w-full py-4 bg-transparent text-sm font-semibold text-[#094067] outline-none placeholder:text-[#90b4ce]" placeholder="mail@rumahkedua.com" required>
+                            class="w-full py-4 bg-transparent text-sm font-semibold text-[#094067] outline-none placeholder:text-[#90b4ce]" placeholder="mail@rumahkedua.com">
                     </div>
                     @error('email')
                         <p class="text-[10px] font-bold text-[#ef4565] mt-1 ml-1 flex items-center gap-1">
@@ -103,8 +103,13 @@
                     <div class="input-inset flex items-center px-4 rounded-2xl group">
                         <i class="fas fa-lock text-[#90b4ce] text-xs mr-3 transition-colors group-focus-within:text-[#3da9fc]"></i>
                         <input type="password" name="password" id="password" class="w-full py-4 bg-transparent text-sm font-semibold text-[#094067] outline-none placeholder:text-[#90b4ce]"
-                            placeholder="••••••••" required>
+                            placeholder="••••••••">
                     </div>
+                    @error('password')
+                        <p class="text-[10px] font-bold text-[#ef4565] mt-1 ml-1 flex items-center gap-1">
+                            <i class="fas fa-circle-exclamation"></i> {{ $message }}
+                        </p>
+                    @enderror
                 </div>
 
                 <div class="flex items-center justify-between px-1 pt-1">

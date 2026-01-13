@@ -43,6 +43,7 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8|confirmed',
             'telepon' => 'required',
+            'terms' => 'required|accepted'
         ], [
             'name.required' => 'Nama harus diisi.',
             'email.required' => 'Email harus diisi.',
@@ -52,6 +53,7 @@ class AuthController extends Controller
             'password.min' => 'Password minimal 8 karakter.',
             'password.confirmed' => 'Password dan konfirmasi password tidak cocok.',
             'telepon.required' => 'Telepon harus diisi.',
+            'terms.required' => 'Anda harus menyetujui syarat dan ketentuan.',
         ]);
 
         try {
@@ -84,6 +86,11 @@ class AuthController extends Controller
         $validation = $request->validate([
             'email' => 'required|email',
             'password' => 'required|min:8',
+        ], [
+            'email.required' => 'Email harus diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'password.required' => 'Password harus diisi.',
+            'password.min' => 'Password minimal 8 karakter.',
         ]);
 
         $remember = $request->boolean('remember');

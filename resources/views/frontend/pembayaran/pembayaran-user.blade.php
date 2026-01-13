@@ -111,12 +111,20 @@
                                 </div>
                             </div>
 
-                            <button @click="lanjutkanPembayaran()" :disabled="isProcessing"
-                                class="w-full text-white font-black uppercase tracking-widest py-4 px-6 rounded-2xl transition-all shadow-xl active:translate-y-1"
-                                style="background-color: var(--button-color); border-bottom: 4px solid var(--stroke-color)">
-                                <span x-show="!isProcessing">Bayar Sekarang</span>
-                                <div x-show="isProcessing" class="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent mx-auto"></div>
-                            </button>
+                            @if (\Carbon\Carbon::parse($transaksiPending->midtrans_response['expired_at'])->isPast())
+                                <button
+                                    class="w-full text-white font-black uppercase tracking-widest py-4 px-6 rounded-2xl transition-all shadow-xl"
+                                    style="background-color: #9ca3af; border-bottom: 4px solid #6b7280; cursor: not-allowed;" disabled >
+                                    <span>Bayar Sekarang</span>
+                                </button>
+                            @else
+                                <button @click="lanjutkanPembayaran()" :disabled="isProcessing"
+                                    class="w-full text-white font-black uppercase tracking-widest py-4 px-6 rounded-2xl transition-all shadow-xl active:translate-y-1"
+                                    style="background-color: var(--button-color); border-bottom: 4px solid var(--stroke-color)">
+                                    <span x-show="!isProcessing">Bayar Sekarang</span>
+                                    <div x-show="isProcessing" class="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent mx-auto"></div>
+                                </button>
+                            @endif
                         @else
                             <form method="POST" action="{{ route('user.pembayaran.buat-transaksi') }}" @submit="submitting = true">
                                 @csrf
@@ -246,13 +254,28 @@
                             </div>
                         </div>
 
-                        <div x-show="errorMessage" x-transition class="border-l-4 p-4 rounded-2xl text-sm flex gap-3"
+                        <div x-show="$store.globalError.shown" x-transition class="border-l-4 p-4 rounded-2xl text-sm flex gap-3"
                             style="background-color: rgba(239, 69, 101, 0.1); border-color: var(--tertiary-color); color: var(--tertiary-color)">
                             <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
                             </svg>
-                            <span class="font-bold" x-text="errorMessage"></span>
+                            <span class="font-bold" x-text="$store.globalError.message"></span>
                         </div>
+
+                        @php
+                            $data = $transaksiPending->midtrans_response;
+                        @endphp
+
+                        @if (\Carbon\Carbon::parse($data['expired_at'])->isPast())
+                            <div class="border-l-4 p-4 rounded-2xl text-sm flex gap-3"
+                                style="background-color: rgba(239, 69, 101, 0.1); border-color: var(--tertiary-color); color: var(--tertiary-color)">
+                                <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                </svg>
+                                <span class="font-bold">Token pembayaran sudah kadaluarsa. Silakan pilih kamar dan transaksi ulang</span>
+                            </div>
+                        @endif
+
                     </div>
                 </div>
             </div>
@@ -285,8 +308,14 @@
                                 'Accept': 'application/json'
                             }
                         });
-                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                        const data = await response.json();
+
+                        let data;
+                        try {
+                            data = await response.json();
+                        } catch (parseError) {
+                            throw new Error('Terjadi kesalahan server. Silakan coba lagi.');
+                        }
+
                         if (data.success && data.snap_token) {
                             this.bayarSekarang(data.snap_token);
                         } else {
@@ -294,7 +323,7 @@
                             this.isProcessing = false;
                         }
                     } catch (error) {
-                        this.errorMessage = 'Terjadi kesalahan koneksi. Silakan coba lagi.';
+                        this.errorMessage = error.message || 'Terjadi kesalahan koneksi. Silakan coba lagi.';
                         this.isProcessing = false;
                     }
                 },
@@ -337,4 +366,15 @@
             Alpine.data('paymentApp', paymentApp);
         });
     </script>
+
+    @if ($errors->any())
+        <script>
+            document.addEventListener('alpine:init', () => {
+                Alpine.store('globalError', {
+                    message: "{{ $errors->first() }}",
+                    shown: true
+                });
+            });
+        </script>
+    @endif
 @endsection

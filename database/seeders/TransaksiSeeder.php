@@ -38,7 +38,7 @@ class TransaksiSeeder extends Seeder
             'tanggal_jatuhtempo' => $now->addMonth(),
             'masuk_kamar'        => $now,
             'durasi'             => '1',
-            'total_bayar'        => 750000,
+            'total_bayar'        => 600000,
             'metode_pembayaran'  => 'midtrans',
             'status_pembayaran'  => $status,
             'midtrans_order_id'  => $midOrd,
@@ -79,7 +79,7 @@ class TransaksiSeeder extends Seeder
             'updated_at'              => $lastMonth,
 
             'durasi'                  => '1',
-            'total_bayar'             => 750000,
+            'total_bayar'             => 650000,
             'metode_pembayaran'       => 'midtrans',
             'status_pembayaran'       => 'paid',
 
