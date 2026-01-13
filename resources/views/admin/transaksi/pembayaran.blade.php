@@ -127,7 +127,7 @@
                                             Selesaikan pembayaran sebelum:
                                         </p>
                                         <p class="text-lg font-bold text-amber-900">
-                                            {{ $transaksi->expired_at->format('d M Y H:i') }}
+                                            {{ \Carbon\Carbon::parse($transaksi->midtrans_response['expired_at'])->translatedFormat('d M Y H:i') }}
                                         </p>
                                     </div>
                                     <div class="mt-2">

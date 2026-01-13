@@ -155,7 +155,6 @@ class PembayaranPenghuniController extends Controller
             'midtrans_transaction_id' => null,
             'midtrans_payment_type' => null,
             'midtrans_response' => null, // <-- Tetap null dulu
-            'expired_at' => now()->addDay()->toDateTimeString(), // Expired 1 hari dari sekarang
         ]);
 
         // --- Bagian Pembuatan Token Midtrans ---

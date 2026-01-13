@@ -49,7 +49,6 @@ class TransaksiSeeder extends Seeder
                 : ($status == 'expired'
                     ? json_encode(['status' => 'expire'])
                     : null),
-            'expired_at' => $status == 'expired' ? $now->subDay() : $now->addDay(),
             'created_at' => $now,
             'updated_at' => $now,
         ];
@@ -87,8 +86,6 @@ class TransaksiSeeder extends Seeder
             'midtrans_transaction_id' => $midTrx,
             'midtrans_payment_type'   => 'bank_transfer',
             'midtrans_response'       => json_encode(['status' => 'settlement', 'bank' => 'bca']),
-
-            'expired_at'              => $lastMonth->copy()->subDay(), // 1 bulan lalu - 1 hari
         ];
     }
 

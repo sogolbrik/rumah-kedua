@@ -38,7 +38,6 @@ return new class extends Migration {
             $table->string('midtrans_transaction_id')->nullable();
             $table->string('midtrans_payment_type')->nullable(); // bank_transfer, gopay, qris, dll
             $table->json('midtrans_response')->nullable(); // simpan response JSON dari Midtrans
-            $table->datetime('expired_at')->nullable();
             $table->timestamps();
         });
     }

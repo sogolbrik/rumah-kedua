@@ -82,7 +82,6 @@ class TransaksiController extends Controller
 
         $midtransOrderId = $this->midtransService->generateOrderId($kode);
         $transaksiData['midtrans_order_id'] = $midtransOrderId;
-        $transaksiData['expired_at'] = Carbon::now()->addHours(24);
 
         $user = User::find($request->id_user);
         $kamar = Kamar::find($request->id_kamar);
@@ -140,6 +139,7 @@ class TransaksiController extends Controller
         $transaksiData['midtrans_response'] = json_encode([
             'snap_token' => $midtransResponse['snap_token'],
             'redirect_url' => $midtransResponse['redirect_url'] ?? null,
+            'expired_at' => now()->addDay()->toDateTimeString(),
             'created_at' => now()->toDateTimeString()
         ]);
 

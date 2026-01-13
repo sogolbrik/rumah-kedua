@@ -2,12 +2,14 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\ExpireMidtransTransaction;
 use Illuminate\Console\Command;
 use App\Models\Transaksi;
 use App\Jobs\NotifyOverdueBill;
 use App\Jobs\NotifyUpcomingDue;
 use App\Jobs\NotifyWarningBeforeBlock;
 use App\Jobs\ProcessAutoBlock;
+use Carbon\Carbon;
 
 class ScanOverdueBills extends Command
 {
@@ -73,6 +75,30 @@ class ScanOverdueBills extends Command
         foreach ($tujuhHariSebelumJatuhTempo as $t) {
             NotifyUpcomingDue::dispatch($t);
             $this->info("📅 Notif 7 hari sebelum jatuh tempo: {$t->kode}");
+        }
+
+        // 5. Expire transaksi midtrans yang sudah expired
+        $midtransExpired = Transaksi::where('status_pembayaran', 'pending')
+            ->whereNotNull('midtrans_response')
+            ->get()
+            ->filter(function ($transaksi) {
+                $midtransData = $transaksi->midtrans_response;
+
+                if (!is_array($midtransData) || empty($midtransData['expired_at'])) {
+                    return false;
+                }
+
+                try {
+                    $tokenExpiredAt = Carbon::parse($midtransData['expired_at']);
+                    return now()->gt($tokenExpiredAt);
+                } catch (\Exception $e) {
+                    return false;
+                }
+            });
+
+        foreach ($midtransExpired as $t) {
+            ExpireMidtransTransaction::dispatch($t);
+            $this->info("⏳ Expire Midtrans: {$t->kode}");
         }
     }
 }

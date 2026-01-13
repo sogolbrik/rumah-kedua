@@ -108,7 +108,6 @@ class PembayaranPageController extends Controller
             'midtrans_transaction_id' => null,
             'midtrans_payment_type' => null,
             'midtrans_response' => null,
-            'expired_at' => now()->addDay()->toDateTimeString(),
         ]);
 
         // Buat token Midtrans

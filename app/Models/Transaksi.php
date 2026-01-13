@@ -26,12 +26,10 @@ class Transaksi extends Model
         'midtrans_transaction_id',
         'midtrans_payment_type',
         'midtrans_response',
-        'expired_at',
     ];
 
     protected $casts = [
         'midtrans_response' => 'array',
-        'expired_at' => 'datetime',
         'tanggal_pembayaran' => 'date',
         'tanggal_jatuhtempo' => 'date',
         'masuk_kamar' => 'date',
