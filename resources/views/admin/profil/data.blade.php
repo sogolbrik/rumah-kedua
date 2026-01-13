@@ -76,64 +76,89 @@
             </div>
 
             <!-- Card Avatar -->
-            <div class="bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden transition-all hover:shadow-md">
-                <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-5 border-b border-slate-200/40">
-                    <div class="flex items-center gap-3">
-                        <div class="h-10 w-10 bg-green-100 rounded-xl flex items-center justify-center text-green-700">
-                            <i class="fa-solid fa-camera text-base"></i>
+            <div class="bg-white rounded-3xl border border-slate-200/70 shadow-sm overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50">
+                <div class="bg-gradient-to-r from-emerald-50 to-teal-50 p-6 border-b border-slate-100">
+                    <div class="flex items-center gap-4">
+                        <div class="h-12 w-12 bg-emerald-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-emerald-200">
+                            <i class="fa-solid fa-camera-retro text-lg"></i>
                         </div>
                         <div>
-                            <h2 class="font-semibold text-slate-900">Foto Profil</h2>
-                            <p class="text-xs text-slate-600 mt-0.5">Unggah gambar profil baru</p>
+                            <h2 class="font-bold text-slate-800 text-lg">Foto Profil</h2>
+                            <p class="text-xs text-slate-500">Perbarui identitas visual akun Anda</p>
                         </div>
                     </div>
                 </div>
-                <div class="p-6">
-                    <form action="{{ route('profil-admin.update-avatar') }}" method="POST" enctype="multipart/form-data" class="space-y-6" x-data="{ preview: null }">
+
+                <div class="p-8">
+                    <form action="{{ route('profil-admin.update-avatar') }}" method="POST" enctype="multipart/form-data" class="space-y-8" x-data="{ preview: null }">
                         @csrf
                         @method('PUT')
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-                            <!-- Preview Saat Ini -->
-                            <div class="text-center">
-                                <p class="text-sm font-medium text-slate-800 mb-3">Foto Saat Ini</p>
-                                @if (auth()->check() && auth()->user()->avatar)
-                                    <div class="w-36 h-36 mx-auto rounded-2xl overflow-hidden border-2 border-slate-200">
-                                        <img src="{{ Storage::url(auth()->user()->avatar) }}" alt="Avatar" class="w-full h-full object-cover">
+                        <div class="flex flex-col lg:flex-row items-center gap-10">
+                            <div class="relative group">
+                                <div class="absolute -inset-1 bg-gradient-to-tr from-emerald-500 to-teal-400 rounded-full blur opacity-25 group-hover:opacity-40 transition duration-300"></div>
+
+                                <div class="relative flex flex-col items-center">
+                                    <span class="absolute -top-3 px-3 py-1 bg-white border border-slate-200 rounded-full text-[10px] font-bold uppercase tracking-wider text-slate-400 shadow-sm z-10">
+                                        Profil Anda
+                                    </span>
+
+                                    <div class="w-40 h-40 rounded-full p-1.5 bg-white border border-slate-200 shadow-inner">
+                                        @if (auth()->check() && auth()->user()->avatar)
+                                            <img src="{{ Storage::url(auth()->user()->avatar) }}" alt="Avatar" class="w-full h-full rounded-full object-cover shadow-sm">
+                                        @else
+                                            <div class="w-full h-full rounded-full bg-slate-50 flex items-center justify-center text-slate-300">
+                                                <i class="fa-solid fa-user text-5xl"></i>
+                                            </div>
+                                        @endif
                                     </div>
-                                @else
-                                    <div class="w-36 h-36 mx-auto rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400">
-                                        <i class="fa-solid fa-user text-4xl"></i>
-                                    </div>
-                                @endif
+                                </div>
                             </div>
 
-                            <!-- Upload & Preview Baru -->
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-800 mb-2">Pilih Gambar Baru</label>
+                            <div class="flex-1 w-full space-y-6">
+                                <div class="p-6 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 hover:bg-white hover:border-emerald-300 transition-all duration-300">
+                                    <label class="block text-sm font-semibold text-slate-700 mb-3">Pilih File Gambar</label>
+
                                     <input type="file" name="avatar" id="avatar" accept="image/*"
-                                        class="w-full text-sm text-slate-600 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 file:transition"
+                                        class="block w-full text-sm text-slate-500
+                            file:mr-4 file:py-2.5 file:px-6
+                            file:rounded-xl file:border-0
+                            file:text-sm file:font-bold
+                            file:bg-emerald-600 file:text-white
+                            hover:file:bg-emerald-700 file:cursor-pointer
+                            file:transition-all file:duration-200"
                                         @change="preview = URL.createObjectURL($event.target.files[0])">
+
+                                    <p class="mt-3 text-[11px] text-slate-400 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-circle-info"></i>
+                                        Format yang didukung: JPG, PNG, atau WEBP. Maksimal 2MB.
+                                    </p>
                                 </div>
 
-                                <!-- Preview Baru -->
-                                <div x-show="preview" class="mt-3">
-                                    <p class="text-sm font-medium text-slate-800 mb-2">Preview Baru</p>
-                                    <div class="w-36 h-36 mx-auto rounded-2xl overflow-hidden border-2 border-dashed border-slate-300">
+                                <div x-show="preview" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                                    class="flex items-center gap-4 p-4 rounded-2xl bg-emerald-50 border border-emerald-100">
+                                    <div class="w-16 h-16 rounded-xl overflow-hidden border-2 border-white shadow-sm flex-shrink-0">
                                         <img :src="preview" alt="Preview" class="w-full h-full object-cover">
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-bold text-emerald-800">Preview Berhasil!</p>
+                                        <p class="text-xs text-emerald-600/80">Klik tombol simpan di bawah untuk menerapkan perubahan.</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <button type="submit"
-                            class="px-5 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-medium rounded-xl shadow-sm hover:shadow-md transition-all">
-                            <i class="fa-solid fa-upload mr-2"></i> Unggah Foto
-                        </button>
+                        <div class="pt-4 flex justify-end">
+                            <button type="submit"
+                                class="group flex items-center gap-2 px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                Simpan Foto Baru
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
+
         </div>
 
         <!-- Kolom Kanan: Keamanan -->
