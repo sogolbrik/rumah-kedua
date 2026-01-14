@@ -204,7 +204,7 @@ class PembayaranPageController extends Controller
         if (!$tokenExistsAndIsValid) {
             return response()->json([
                 'success' => false,
-                'message' => 'Token pembayaran sudah kadaluarsa. Silakan pilih kamar dan transaksi ulang.'
+                'message' => 'Token pembayaran sudah kadaluarsa. Silahkan klik "Buat Ulang" untuk transaksi ulang.'
             ], 400);
         }
 
@@ -237,14 +237,12 @@ class PembayaranPageController extends Controller
                 if ($response->successful()) {
                     $model = $response->json();
                     if (in_array($model['transaction_status'] ?? null, ['settlement', 'capture'])) {
-                        // Update transaksi
                         $transaksi->update([
                             'status_pembayaran' => 'paid',
                             'midtrans_transaction_id' => $model['transaction_id'] ?? null,
                             'midtrans_payment_type' => $model['payment_type'] ?? null,
                         ]);
 
-                        // Jika user belum jadi penghuni → upgrade role
                         if (!$user->kamar) {
                             $user->update([
                                 'id_kamar' => $transaksi->id_kamar,
@@ -258,13 +256,11 @@ class PembayaranPageController extends Controller
                     }
                 }
 
-                // Jika belum settlement, tunggu sebentar lalu coba lagi
                 if ($i < $maxRetries - 1) {
-                    sleep(2); // tunggu 2 detik sebelum retry
+                    sleep(2);
                 }
 
             } catch (\Exception $e) {
-                // Log error di development
                 // Log::warning("Midtrans verify attempt {$i} failed: " . $e->getMessage());
                 if ($i < $maxRetries - 1) {
                     sleep(2);
@@ -287,7 +283,6 @@ class PembayaranPageController extends Controller
             return redirect()->route('dashboard-penghuni')->with('error', 'Tidak ada transaksi menunggu.');
         }
 
-        // Coba verifikasi (dengan retry)
         $success = $this->verifyMidtransPayment($user);
 
         if ($success) {
@@ -295,7 +290,6 @@ class PembayaranPageController extends Controller
                 ->with('success', 'Pembayaran berhasil! Anda sekarang resmi menjadi penghuni.');
         }
 
-        // Jika belum sukses, tampilkan halaman loading + polling
         return view('frontend.pembayaran.verifikasi-data', [
             'orderId' => $transaksi->midtrans_order_id
         ]);
@@ -306,18 +300,19 @@ class PembayaranPageController extends Controller
         $user = Auth::user();
         $kamar = Kamar::findOrFail($idKamar);
 
-        // Pastikan kamar masih tersedia
         if ($kamar->status !== 'Tersedia') {
             return redirect()->route('booking')
                 ->with('error', 'Kamar tidak tersedia untuk dipesan.');
         }
 
-        // Cari transaksi pending yang expired untuk user dan kamar ini
         $transaksiLama = Transaksi::where('id_user', $user->id)
             ->where('id_kamar', $kamar->id)
             ->where('status_pembayaran', 'pending')
             ->latest()
             ->first();
+        $transaksiLama->update([
+            'status_pembayaran' => 'expired',
+        ]);
 
         if (!$transaksiLama) {
             return redirect()->route('user.pembayaran.booking', $kamar)
@@ -341,12 +336,10 @@ class PembayaranPageController extends Controller
                 ->with('error', 'Transaksi masih berlaku. Tidak perlu dibuat ulang.');
         }
 
-        // CAST DURASI KE INTEGER DI SINI
-        $durasi = (int) $transaksiLama->durasi; // <-- PERBAIKAN UTAMA
+        $durasi = (int) $transaksiLama->durasi;
         $totalBayar = $kamar->harga * $durasi;
         $tanggalMasuk = $transaksiLama->masuk_kamar;
 
-        // PERBAIKAN TAMBAHAN: Pastikan tanggal masuk valid
         try {
             $tanggalMasukCarbon = Carbon::parse($tanggalMasuk);
         } catch (\Exception $e) {
@@ -361,7 +354,6 @@ class PembayaranPageController extends Controller
         $kode = 'INV-' . strtoupper(Str::random(8)) . '-' . date('Ymd');
         $midtransOrderId = $this->midtransService->generateOrderId($kode);
 
-        // Buat transaksi baru
         $transaksiBaru = Transaksi::create([
             'id_user' => $user->id,
             'id_kamar' => $kamar->id,
@@ -369,7 +361,7 @@ class PembayaranPageController extends Controller
             'tanggal_pembayaran' => now(),
             'tanggal_jatuhtempo' => $tanggalJatuhTempo,
             'masuk_kamar' => $tanggalMasuk,
-            'durasi' => $durasi, // Sudah di-cast ke integer
+            'durasi' => $durasi,
             'total_bayar' => $totalBayar,
             'metode_pembayaran' => 'midtrans',
             'status_pembayaran' => 'pending',
@@ -379,7 +371,6 @@ class PembayaranPageController extends Controller
             'midtrans_response' => null,
         ]);
 
-        // Buat token Midtrans baru
         $transactionDetails = [
             'transaction_details' => [
                 'order_id' => $midtransOrderId,
@@ -413,7 +404,6 @@ class PembayaranPageController extends Controller
             return back()->withErrors(['system' => 'Gagal membuat token pembayaran. Silakan coba lagi.']);
         }
 
-        // Update transaksi baru dengan response Midtrans
         $transaksiBaru->midtrans_response = json_encode([
             'snap_token' => $midtransResponse['snap_token'],
             'created_at' => now()->toDateTimeString(),

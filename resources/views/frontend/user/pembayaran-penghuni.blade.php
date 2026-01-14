@@ -3,210 +3,296 @@
 @section('title', 'Bayar Tagihan Jatuh Tempo')
 
 @section('frontend-main')
-    <div class="min-h-screen bg-slate-50/50 pb-12" x-data="paymentApp({{ json_encode($transaksiPending) }}, {{ old('durasi') ? old('durasi') : 'null' }})" x-cloak>
+    <div class="min-h-screen bg-[#fffffe] pb-12" x-data="paymentApp({{ json_encode($transaksiPending) }}, {{ old('durasi') ? old('durasi') : 'null' }})" x-cloak>
 
-        <div class="bg-white border-b border-slate-200 mt-25 mb-8">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                <div class="flex items-center gap-4">
-                    <a href="{{ route('dashboard-penghuni') }}" class="p-2 hover:bg-slate-100 rounded-full transition-colors">
-                        <i class="fa-solid fa-arrow-left text-slate-600"></i>
-                    </a>
-                    <div>
-                        <h1 class="text-2xl font-bold text-slate-900">Pembayaran Tagihan</h1>
-                        <nav class="flex items-center gap-2 text-xs font-medium text-slate-500 uppercase tracking-wider">
-                            <a href="{{ route('dashboard-penghuni') }}" class="hover:text-indigo-600">Dashboard</a>
-                            <i class="fa-solid fa-chevron-right text-[8px]"></i>
-                            <span class="text-indigo-600 font-bold">Bayar Tagihan</span>
-                        </nav>
+        <div class="relative bg-[#094067] pt-32 pb-20 overflow-hidden">
+            <div class="absolute top-0 right-0 -translate-y-12 translate-x-12 w-64 h-64 bg-[#3da9fc] opacity-10 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 translate-y-12 -translate-x-12 w-96 h-96 bg-[#90b4ce] opacity-10 rounded-full blur-3xl"></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div class="flex items-start gap-5">
+                        <a href="{{ route('dashboard-penghuni') }}" class="mt-1 p-3 bg-white/10 hover:bg-white/20 rounded-2xl transition-all border border-white/10 backdrop-blur-sm group">
+                            <i class="fa-solid fa-arrow-left text-[#fffffe] group-hover:-translate-x-1 transition-transform"></i>
+                        </a>
+                        <div>
+                            <nav class="flex items-center gap-2 text-xs font-bold text-[#90b4ce] uppercase tracking-[0.2em] mb-2">
+                                <a href="{{ route('dashboard-penghuni') }}" class="hover:text-[#3da9fc]">Workspace</a>
+                                <i class="fa-solid fa-chevron-right text-[8px] opacity-50"></i>
+                                <span class="text-[#fffffe]">Bill Payment</span>
+                            </nav>
+                            <h1 class="text-4xl font-black text-[#fffffe] tracking-tight">Tagihan <span class="text-[#3da9fc]">Sewa</span></h1>
+                        </div>
+                    </div>
+                    <div class="hidden md:block text-right">
+                        <p class="text-[#90b4ce] text-sm font-medium mb-1 uppercase tracking-widest">Status Akun</p>
+                        <span class="px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full text-xs font-bold">Terverifikasi</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-20">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-                <div class="lg:col-span-7 space-y-6">
-
-                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                            <h3 class="font-bold text-slate-800 italic uppercase tracking-wider text-sm">Formulir Pembayaran</h3>
-                            <i class="fa-solid fa-credit-card text-slate-400"></i>
+                <div class="lg:col-span-7 space-y-8">
+                    <div class="bg-white rounded-[2.5rem] border border-[#90b4ce]/20 shadow-[0_20px_50px_rgba(9,64,103,0.05)] overflow-hidden">
+                        <div class="px-8 py-6 border-b border-[#90b4ce]/10 flex justify-between items-center bg-[#fffffe]">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-[#3da9fc]/10 rounded-xl flex items-center justify-center text-[#3da9fc]">
+                                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                                </div>
+                                <h3 class="font-bold text-[#094067] uppercase tracking-wider text-sm">Rincian Pembayaran</h3>
+                            </div>
+                            <span class="text-[10px] font-black text-[#90b4ce] uppercase">Secure 256-bit</span>
                         </div>
 
-                        <div class="p-6">
+                        <div class="p-8">
                             @if (!$dataTransaksi && !$transaksiPending)
-                                <div class="text-center py-12">
-                                    <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <i class="fa-solid fa-calendar-check text-2xl text-slate-400"></i>
+                                <div class="text-center py-16">
+                                    <div class="w-24 h-24 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-6 ring-8 ring-emerald-50/50">
+                                        <i class="fa-solid fa-check-double text-3xl text-emerald-500"></i>
                                     </div>
-                                    <h4 class="text-lg font-bold text-slate-900">Semua Tagihan Lunas</h4>
-                                    <p class="text-sm text-slate-500 mt-1">{{ $message ?? 'Tidak ada tagihan yang perlu dibayar saat ini.' }}</p>
+                                    <h4 class="text-xl font-bold text-[#094067]">Luar Biasa!</h4>
+                                    <p class="text-[#5f6c7b] mt-2">{{ $message ?? 'Semua tagihan Anda telah lunas terbayar.' }}</p>
                                 </div>
                             @else
                                 @if ($dataTransaksi)
-                                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 mb-8">
-                                        <div class="grid grid-cols-2 gap-y-3 text-sm">
-                                            <span class="text-slate-500 font-medium">Kode Transaksi</span>
-                                            <span class="text-right font-mono font-bold text-indigo-600">{{ $dataTransaksi['kode'] }}</span>
-
-                                            <span class="text-slate-500 font-medium">Periode</span>
-                                            <span class="text-right font-semibold text-slate-900">{{ $dataTransaksi['periode_mulai'] }} – {{ $dataTransaksi['periode_akhir'] }}</span>
-
-                                            <span class="text-slate-500 font-medium">Jatuh Tempo</span>
-                                            <span class="text-right font-bold text-red-500">{{ \Carbon\Carbon::parse($dataTransaksi['tanggal_jatuhtempo'])->translatedFormat('d M Y') }}</span>
-
-                                            <div class="col-span-2 border-t border-slate-200 mt-2 pt-3 flex justify-between items-center">
-                                                <span class="text-slate-900 font-bold">Total Tagihan</span>
-                                                <span class="text-xl font-black text-slate-900">Rp {{ number_format($dataTransaksi['total_bayar'], 0, ',', '.') }}</span>
+                                    <div class="relative overflow-hidden bg-gradient-to-br from-[#094067] to-[#0b5387] rounded-3xl p-8 mb-10 text-white shadow-xl shadow-blue-900/10">
+                                        <div class="absolute top-0 right-0 opacity-10 translate-x-1/4 -translate-y-1/4">
+                                            <i class="fa-solid fa-wallet text-[150px]"></i>
+                                        </div>
+                                        <div class="relative z-10">
+                                            <div class="flex justify-between items-start mb-8">
+                                                <div>
+                                                    <p class="text-[#90b4ce] text-[10px] font-bold uppercase tracking-[0.2em] mb-1">Nomor Tagihan</p>
+                                                    <h2 class="text-xl font-mono font-bold">{{ $dataTransaksi['kode'] }}</h2>
+                                                </div>
+                                                <div class="text-right">
+                                                    <p class="text-[#90b4ce] text-[10px] font-bold uppercase tracking-[0.2em] mb-1">Jatuh Tempo</p>
+                                                    <span class="px-3 py-1 bg-[#ef4565] text-white rounded-lg text-[10px] font-black italic">
+                                                        {{ \Carbon\Carbon::parse($dataTransaksi['tanggal_jatuhtempo'])->translatedFormat('d M Y') }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                                                <div>
+                                                    <p class="text-[#90b4ce] text-xs mb-1 font-medium italic">Total yang harus dibayar</p>
+                                                    <div class="text-4xl font-black">Rp {{ number_format($dataTransaksi['total_bayar'], 0, ',', '.') }}</div>
+                                                </div>
+                                                <div class="text-sm font-medium text-[#90b4ce] border-l-2 border-[#3da9fc] pl-4">
+                                                    Periode: {{ $dataTransaksi['periode_mulai'] }} <br> s/d {{ $dataTransaksi['periode_akhir'] }}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 @endif
 
                                 @if (!$transaksiPending)
-                                    <form method="POST" action="{{ route('penghuni.pembayaran.buat-transaksi') }}" @submit="submitting = true" class="space-y-6">
+                                    <form method="POST" action="{{ route('penghuni.pembayaran.buat-transaksi') }}" @submit="submitting = true" class="space-y-8">
                                         @csrf
-                                        <div class="space-y-3">
-                                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Pilih Durasi Pembayaran</label>
-                                            <div class="grid grid-cols-3 gap-3">
+                                        <div class="space-y-4">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <span class="w-8 h-px bg-[#3da9fc]"></span>
+                                                <label class="text-xs font-black text-[#094067] uppercase tracking-widest">Pilih Durasi Sewa</label>
+                                            </div>
+                                            <div class="grid grid-cols-3 gap-4">
                                                 <template x-for="d in [1, 3, 6]">
                                                     <button type="button" @click="durasi = d; $el.form.durasi.value = d"
-                                                        :class="durasi === d ? 'bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-100' :
-                                                            'bg-white border-slate-200 text-slate-600 hover:border-indigo-300 hover:bg-slate-50'"
-                                                        class="py-3.5 rounded-xl border-2 font-bold text-sm transition-all flex flex-col items-center">
-                                                        <span x-text="d"></span>
-                                                        <span class="text-[10px] uppercase opacity-80">Bulan</span>
+                                                        :class="durasi === d ? 'bg-[#3da9fc] border-[#3da9fc] text-[#fffffe] shadow-lg scale-105' :
+                                                            'bg-[#fffffe] border-[#90b4ce]/30 text-[#5f6c7b] hover:border-[#3da9fc] hover:bg-[#3da9fc]/5'"
+                                                        class="py-5 rounded-2xl border-2 font-bold transition-all duration-300 flex flex-col items-center group relative overflow-hidden">
+                                                        <span class="text-2xl mb-1" x-text="d"></span>
+                                                        <span class="text-[10px] uppercase tracking-tighter opacity-80" x-text="d > 1 ? 'Bulan' : 'Bulan'"></span>
+                                                        <div x-show="durasi === d" class="absolute -top-2 -right-2 bg-white/20 p-4 rounded-full"></div>
                                                     </button>
                                                 </template>
                                                 <input type="hidden" name="durasi" :value="durasi" />
                                             </div>
                                             @error('durasi')
-                                                <p class="text-[10px] text-red-500 font-bold uppercase">{{ $message }}</p>
+                                                <p class="text-[10px] text-[#ef4565] font-bold uppercase mt-2 flex items-center gap-1">
+                                                    <i class="fa-solid fa-circle-exclamation"></i> {{ $message }}
+                                                </p>
                                             @enderror
                                         </div>
 
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <div class="space-y-2">
-                                                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Nama Penyewa</label>
-                                                <input type="text" value="{{ auth()->user()->name }}" readonly
-                                                    class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-500 outline-none">
+                                                <label class="text-[10px] font-black text-[#094067] uppercase tracking-widest ml-1">Nama Penyewa</label>
+                                                <div class="relative">
+                                                    <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-[#90b4ce] text-xs"></i>
+                                                    <input type="text" value="{{ auth()->user()->name }}" readonly
+                                                        class="w-full bg-[#f8fafc] border border-[#90b4ce]/20 rounded-2xl pl-10 pr-4 py-4 text-sm text-[#5f6c7b] outline-none font-semibold">
+                                                </div>
                                             </div>
                                             <div class="space-y-2">
-                                                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Email</label>
-                                                <input type="text" value="{{ auth()->user()->email }}" readonly
-                                                    class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-500 outline-none">
+                                                <label class="text-[10px] font-black text-[#094067] uppercase tracking-widest ml-1">Email Terdaftar</label>
+                                                <div class="relative">
+                                                    <i class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-[#90b4ce] text-xs"></i>
+                                                    <input type="text" value="{{ auth()->user()->email }}" readonly
+                                                        class="w-full bg-[#f8fafc] border border-[#90b4ce]/20 rounded-2xl pl-10 pr-4 py-4 text-sm text-[#5f6c7b] outline-none font-semibold">
+                                                </div>
                                             </div>
                                         </div>
 
                                         <button type="submit" :disabled="!durasi || submitting"
-                                            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-indigo-100 disabled:opacity-50 flex items-center justify-center gap-2">
+                                            class="group w-full bg-[#3da9fc] hover:bg-[#094067] text-[#fffffe] font-black py-5 rounded-2xl transition-all duration-300 shadow-xl shadow-[#3da9fc]/20 disabled:opacity-50 flex items-center justify-center gap-3 text-sm uppercase tracking-widest">
                                             <span x-show="!submitting">Buat Pesanan Pembayaran</span>
+                                            <i x-show="!submitting" class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                                             <i x-show="submitting" class="fa-solid fa-circle-notch animate-spin"></i>
-                                            <span x-show="submitting">Memproses...</span>
+                                            <span x-show="submitting">Sedang Memproses...</span>
                                         </button>
                                     </form>
                                 @else
-                                    <div class="space-y-6">
-                                        <div class="flex items-start gap-4 p-4 bg-amber-50 border border-amber-100 rounded-2xl">
-                                            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-amber-600 shadow-sm flex-shrink-0">
-                                                <i class="fa-solid fa-clock-rotate-left"></i>
+                                    <div class="space-y-8 py-4">
+                                        <div class="flex items-center gap-5 p-6 bg-[#3da9fc]/5 border-2 border-dashed border-[#3da9fc]/30 rounded-[2rem]">
+                                            <div class="w-16 h-16 bg-[#fffffe] rounded-2xl flex items-center justify-center text-[#3da9fc] shadow-sm flex-shrink-0">
+                                                <i class="fa-solid fa-hourglass-half text-2xl animate-pulse"></i>
                                             </div>
                                             <div>
-                                                <p class="text-xs font-bold text-amber-800 uppercase tracking-wider">Transaksi Tertunda</p>
-                                                <p class="text-sm text-amber-700 mt-0.5">Selesaikan pembayaran untuk invoice <strong class="font-mono">{{ $transaksiPending->kode }}</strong> sebelum
-                                                    melanjutkan.</p>
+                                                <p class="text-xs font-black text-[#094067] uppercase tracking-wider">Menunggu Pembayaran</p>
+                                                <p class="text-sm text-[#5f6c7b] mt-1 leading-relaxed">Invoice <strong class="text-[#094067] font-mono">{{ $transaksiPending->kode }}</strong> masih
+                                                    tertunda. Silahkan selesaikan transaksi ini.</p>
                                             </div>
                                         </div>
 
-                                        <button type="button" @click="lanjutkanPembayaran()" :disabled="submitting"
-                                            class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-emerald-100 flex items-center justify-center gap-2">
-                                            <span x-show="!submitting">Lanjutkan ke Pembayaran Snap</span>
-                                            <i x-show="submitting" class="fa-solid fa-circle-notch animate-spin"></i>
-                                        </button>
+                                        @if (\Carbon\Carbon::parse($transaksiPending->midtrans_response['expired_at'])->isPast())
+                                            <form method="POST" action="{{ route('penghuni.pembayaran.buat-ulang', $user->id_kamar) }}">
+                                                @csrf
+                                                <button type="submit" :disabled="submitting"
+                                                    class="w-full bg-[#ef4565] hover:bg-[#d63c5a] text-[#fffffe] font-black py-5 rounded-2xl transition-all duration-300 shadow-xl shadow-[#ef4565]/20 flex items-center justify-center gap-3 text-sm uppercase tracking-widest">
+                                                    <span x-show="!submitting">Buat Ulang Token</span>
+                                                    <i x-show="!submitting" class="fa-solid fa-external-link text-xs"></i>
+                                                    <i x-show="submitting" class="fa-solid fa-circle-notch animate-spin"></i>
+                                                    <span x-show="submitting">Membuat Ulang...</span>
+                                                </button>
+                                            </form>
+                                        @else
+                                            <button type="button" @click="lanjutkanPembayaran()" :disabled="submitting"
+                                                class="w-full bg-[#3da9fc] hover:bg-[#094067] text-[#fffffe] font-black py-5 rounded-2xl transition-all duration-300 shadow-xl shadow-[#3da9fc]/20 flex items-center justify-center gap-3 text-sm uppercase tracking-widest">
+                                                <span x-show="!submitting">Bayar Sekarang</span>
+                                                <i x-show="!submitting" class="fa-solid fa-external-link text-xs"></i>
+                                                <i x-show="submitting" class="fa-solid fa-circle-notch animate-spin"></i>
+                                                <span x-show="submitting">Menghubungkan...</span>
+                                            </button>
+                                        @endif
                                     </div>
                                 @endif
                             @endif
 
-                            <div x-show="errorMessage" x-transition class="mt-4 p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 text-xs font-bold uppercase tracking-wider text-center"
-                                x-text="errorMessage"></div>
+                            <div x-show="errorMessage" x-transition
+                                class="mt-6 p-4 bg-[#ef4565]/10 border border-[#ef4565]/20 rounded-2xl text-[#ef4565] text-[10px] font-black uppercase tracking-widest text-center" x-text="errorMessage">
+                            </div>
+
+                            @if ($transaksiPending)
+                                @if (\Carbon\Carbon::parse($transaksiPending->midtrans_response['expired_at'])->isPast())
+                                    <div class="mt-6 p-4 bg-[#ef4565]/10 border border-[#ef4565]/20 rounded-2xl text-[#ef4565] text-[10px] font-black uppercase tracking-widest text-center">
+                                        <p>Token pembayaran sudah kadaluarsa. Silahkan klik "Buat Ulang Token" untuk transaksi ulang.</p>
+                                    </div>
+                                @endif
+                            @endif
+
                             @if (session('success'))
-                                <div class="mt-4 p-4 bg-emerald-50 border border-emerald-100 rounded-xl text-emerald-600 text-xs font-bold uppercase tracking-wider text-center">
+                                <div class="mt-6 p-4 bg-emerald-50 border border-emerald-100 rounded-2xl text-emerald-600 text-[10px] font-black uppercase tracking-widest text-center">
                                     {{ session('success') }}
                                 </div>
                             @endif
                         </div>
 
-                        <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 text-center">
-                            <p class="text-[10px] text-slate-400 font-medium italic">
-                                Aman & Terenkripsi oleh Midtrans Payment Gateway
-                            </p>
+                        <div class="px-8 py-5 bg-[#f8fafc] border-t border-[#90b4ce]/10 flex flex-col md:flex-row justify-between items-center gap-4">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-lock text-[#90b4ce] text-[10px]"></i>
+                                <p class="text-[10px] text-[#90b4ce] font-bold uppercase tracking-tighter">Pembayaran Terenkripsi</p>
+                            </div>
+                            <div class="flex gap-4 opacity-50 grayscale hover:grayscale-0 transition-all">
+                                <i class="fa-brands fa-cc-visa text-xl"></i>
+                                <i class="fa-brands fa-cc-mastercard text-xl"></i>
+                                <span class="text-[10px] font-black text-[#094067] border border-[#094067] px-1 rounded">MIDTRANS</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="lg:col-span-5 space-y-6">
-
-                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                            <h3 class="font-bold text-slate-800 italic uppercase tracking-wider text-sm">Informasi Kamar</h3>
-                            <i class="fa-solid fa-door-open text-slate-400"></i>
+                <div class="lg:col-span-5 space-y-8">
+                    <div class="bg-white rounded-[2.5rem] border border-[#90b4ce]/20 shadow-sm overflow-hidden group">
+                        <div class="px-8 py-6 border-b border-[#90b4ce]/10 flex justify-between items-center bg-[#fffffe]">
+                            <h3 class="font-bold text-[#094067] uppercase tracking-wider text-sm">Informasi Kamar</h3>
+                            <i class="fa-solid fa-door-closed text-[#90b4ce] group-hover:text-[#3da9fc] transition-colors"></i>
                         </div>
 
                         @if (auth()->user()->kamar)
-                            <div class="relative h-48">
-                                <img src="{{ Storage::url(auth()->user()->kamar->gambar) }}" class="w-full h-full object-cover">
-                                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
-                                <div class="absolute bottom-4 left-6">
-                                    <span class="bg-indigo-600 text-white text-[10px] font-bold px-2 py-1 rounded uppercase">{{ auth()->user()->kamar->tipe }}</span>
-                                    <h4 class="text-white font-bold text-lg leading-tight">{{ auth()->user()->kamar->kode_kamar }}</h4>
+                            <div class="relative h-56 m-4 overflow-hidden rounded-[2rem]">
+                                <img src="{{ Storage::url(auth()->user()->kamar->gambar) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                                <div class="absolute inset-0 bg-gradient-to-t from-[#094067]/80 via-transparent to-transparent"></div>
+                                <div class="absolute bottom-6 left-6">
+                                    <span class="bg-[#3da9fc] text-[#fffffe] text-[9px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest mb-2 inline-block">
+                                        {{ auth()->user()->kamar->tipe }}
+                                    </span>
+                                    <h4 class="text-[#fffffe] font-black text-2xl tracking-tight">{{ auth()->user()->kamar->kode_kamar }}</h4>
                                 </div>
                             </div>
-                            <div class="p-6 space-y-4">
-                                <div class="flex justify-between items-center text-sm">
-                                    <span class="text-slate-500 font-medium">Harga Sewa</span>
-                                    <span class="font-bold text-indigo-600">Rp {{ number_format(auth()->user()->kamar->harga, 0, ',', '.') }} / bln</span>
+                            <div class="px-8 pb-8 space-y-6">
+                                <div class="flex justify-between items-end">
+                                    <div>
+                                        <p class="text-[#5f6c7b] text-[10px] font-bold uppercase tracking-widest mb-1">Harga Sewa</p>
+                                        <span class="text-2xl font-black text-[#094067]">Rp {{ number_format(auth()->user()->kamar->harga, 0, ',', '.') }}</span>
+                                        <span class="text-[#5f6c7b] text-xs">/ bln</span>
+                                    </div>
                                 </div>
 
                                 @if (auth()->user()->kamar->detailKamar)
-                                    <div class="pt-4 border-t border-slate-50">
-                                        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2">Fasilitas Utama</label>
-                                        <div class="flex flex-wrap gap-2">
+                                    <div class="pt-6 border-t border-slate-100">
+                                        <label class="text-[10px] font-black text-[#90b4ce] uppercase tracking-[0.2em] block mb-4">Fasilitas Utama</label>
+                                        <div class="grid grid-cols-2 gap-3">
                                             @foreach (auth()->user()->kamar->detailKamar->take(4) as $detail)
-                                                <span class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2.5 py-1 rounded-lg">
-                                                    {{ $detail->fasilitas }}
-                                                </span>
+                                                <div class="flex items-center gap-2 bg-[#f8fafc] p-3 rounded-xl border border-slate-100">
+                                                    <i class="fa-solid fa-circle-check text-[#3da9fc] text-[10px]"></i>
+                                                    <span class="text-[#5f6c7b] text-[10px] font-bold uppercase truncate">
+                                                        {{ $detail->fasilitas }}
+                                                    </span>
+                                                </div>
                                             @endforeach
                                         </div>
                                     </div>
                                 @endif
                             </div>
                         @else
-                            <div class="p-12 text-center">
-                                <p class="text-sm text-slate-400 italic font-medium">Data kamar tidak ditemukan.</p>
+                            <div class="p-16 text-center">
+                                <p class="text-sm text-[#90b4ce] italic font-medium">Data kamar tidak ditemukan.</p>
                             </div>
                         @endif
                     </div>
 
-                    <div class="bg-indigo-900 rounded-2xl p-6 text-white shadow-lg shadow-indigo-100">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="w-10 h-10 bg-indigo-800 rounded-xl flex items-center justify-center">
-                                <i class="fa-solid fa-shield-halved text-indigo-300"></i>
-                            </div>
-                            <h4 class="font-bold text-sm uppercase tracking-wider text-indigo-100">Jaminan Keamanan</h4>
+                    <div class="bg-[#094067] rounded-[2.5rem] p-8 text-[#fffffe] shadow-2xl shadow-blue-900/20 relative overflow-hidden group">
+                        <div class="absolute -right-10 -bottom-10 opacity-10 group-hover:rotate-12 transition-transform duration-500">
+                            <i class="fa-solid fa-shield-halved text-[150px]"></i>
                         </div>
-                        <ul class="space-y-3 text-xs text-indigo-200/80 font-medium">
-                            <li class="flex items-center gap-2">
-                                <i class="fa-solid fa-circle-check text-emerald-400"></i>
-                                Enkripsi SSL 256-bit
+
+                        <div class="flex items-center gap-4 mb-8">
+                            <div class="w-12 h-12 bg-[#3da9fc]/20 rounded-2xl flex items-center justify-center border border-[#3da9fc]/30">
+                                <i class="fa-solid fa-shield-heart text-[#3da9fc] text-xl"></i>
+                            </div>
+                            <h4 class="font-black text-sm uppercase tracking-[0.2em]">Sistem Aman</h4>
+                        </div>
+
+                        <ul class="space-y-4 relative z-10">
+                            <li class="flex items-start gap-4">
+                                <div class="mt-1 w-5 h-5 bg-emerald-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fa-solid fa-check text-emerald-400 text-[10px]"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold">Verifikasi Otomatis</p>
+                                    <p class="text-[#90b4ce] text-[10px] mt-0.5">Sistem akan memverifikasi pembayaran Anda secara real-time.</p>
+                                </div>
                             </li>
-                            <li class="flex items-center gap-2">
-                                <i class="fa-solid fa-circle-check text-emerald-400"></i>
-                                Verifikasi Otomatis 24/7
-                            </li>
-                            <li class="flex items-center gap-2">
-                                <i class="fa-solid fa-circle-check text-emerald-400"></i>
-                                Tanpa Biaya Admin Tersembunyi
+                            <li class="flex items-start gap-4">
+                                <div class="mt-1 w-5 h-5 bg-emerald-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fa-solid fa-check text-emerald-400 text-[10px]"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold">Bebas Biaya Tersembunyi</p>
+                                    <p class="text-[#90b4ce] text-[10px] mt-0.5">Total yang tertera adalah jumlah bersih yang Anda bayarkan.</p>
+                                </div>
                             </li>
                         </ul>
                     </div>

@@ -30,25 +30,21 @@ class PembayaranPenghuniController extends Controller
     {
         $user = Auth::user();
 
-        // Pastikan penghuni punya kamar
         if (!$user->kamar) {
             return redirect()->route('dashboard-penghuni')->with('error', 'Anda belum memiliki kamar.');
         }
 
-        // Cari transaksi TERAKHIR (berdasarkan tanggal_jatuhtempo terbaru) milik user
         $transaksi = Transaksi::where('id_user', $user->id)
-            ->orderBy('tanggal_jatuhtempo', 'desc') // Urutkan dari yang paling baru
-            ->first(); // Ambil satu saja (yang terakhir)
+            ->orderBy('tanggal_jatuhtempo', 'desc')
+            ->first();
 
         $dataTransaksi = null;
         $isOverdue = false;
 
         if ($transaksi) {
-            // Cek apakah tanggal_jatuhtempo transaksi terakhir sudah lewat (kemarin atau sebelumnya)
             $isOverdue = $transaksi->tanggal_jatuhtempo < now()->toDateString();
 
             if ($isOverdue) {
-                // Format data untuk ditampilkan di blade
                 $dataTransaksi = [
                     'id' => $transaksi->id,
                     'kode' => $transaksi->kode,
@@ -56,40 +52,32 @@ class PembayaranPenghuniController extends Controller
                     'tanggal_jatuhtempo' => $transaksi->tanggal_jatuhtempo->toDateString(),
                     'periode_mulai' => Carbon::parse($transaksi->masuk_kamar)->format('M Y'),
                     'periode_akhir' => Carbon::parse($transaksi->masuk_kamar)->addMonths($transaksi->durasi - 1)->format('M Y'),
-                    'kamar_kode' => $transaksi->kamar->kode_kamar ?? '–',
+                    'kamar_kode' => $transaksi->kamar->kode_kamar ?? '-',
                 ];
             }
         }
 
-        // Cari transaksi 'pending' yang sudah dibuat sebelumnya untuk user ini (jika ada)
         $transaksiPending = Transaksi::where('id_user', $user->id)
             ->where('status_pembayaran', 'pending')
-            ->latest() // Ambil yang terbaru
+            ->latest()
             ->first();
 
-        // --- LOGIKA ---
-        // Jika ada transaksi pending, kita anggap user sudah dalam proses pembayaran,
-        // jadi kita abaikan pengecekan overdue dan tampilkan tombol lanjutkan pembayaran.
-        // Jika tidak ada transaksi pending, baru gunakan logika isOverdue.
         if ($transaksiPending) {
-            // Set message menjadi null karena kita tidak ingin menampilkan pesan "Belum ada tagihan..."
             $message = null;
         } else {
-            // Gunakan message default dari logika isOverdue
             $message = !$transaksi ? 'Tidak ada transaksi ditemukan.' : (!$isOverdue ? 'Belum ada tagihan yang jatuh tempo.' : null);
         }
 
         if ($request->has('verify_payment')) {
             $this->verifyMidtransPayment($user);
-            // Setelah verifikasi, redirect ulang tanpa query agar tidak loop
             return redirect()->route('dashboard-penghuni');
         }
 
         return view('frontend.user.pembayaran-penghuni', [
-            'user' => $user,
-            'dataTransaksi' => $dataTransaksi,
-            'isOverdue' => $isOverdue,
-            'message' => $message,
+            'user'             => $user,
+            'dataTransaksi'    => $dataTransaksi,
+            'isOverdue'        => $isOverdue,
+            'message'          => $message,
             'transaksiPending' => $transaksiPending,
         ]);
     }
@@ -107,39 +95,26 @@ class PembayaranPenghuniController extends Controller
 
         $durasi = (int) $request->durasi;
 
-        // Ambil data kamar user untuk harga
         $kamar = $user->kamar;
         if (!$kamar) {
             return back()->withErrors(['durasi' => 'Data kamar tidak ditemukan.']);
         }
 
-        // Cek apakah sudah ada transaksi 'pending' yang belum dibayar
         $transaksiPending = Transaksi::where('id_user', $user->id)
             ->where('status_pembayaran', 'pending')
-            ->latest() // Ambil yang terbaru
+            ->latest()
             ->first();
 
         if ($transaksiPending) {
-            // Jika sudah ada transaksi pending, kembalikan ke halaman dengan error
             return back()->withErrors(['durasi' => 'Anda sudah memiliki transaksi yang menunggu pembayaran. Silakan selesaikan terlebih dahulu.']);
         }
 
-        // Hitung total bayar
         $totalBayar = $kamar->harga * $durasi;
-
-        // Hitung tanggal masuk (misalnya, dari hari ini)
         $tanggalMasuk = now()->toDateString();
-
-        // Hitung tanggal jatuh tempo (tanggal masuk + durasi bulan - 1 hari)
         $tanggalJatuhTempo = Carbon::parse($tanggalMasuk)->addMonths($durasi)->subDays(1)->toDateString();
-
-        // Generate kode unik
         $kode = 'INV-' . strtoupper(Str::random(8)) . '-' . date('Ymd');
-
-        // Generate order ID Midtrans
         $midtransOrderId = $this->midtransService->generateOrderId($kode);
 
-        // Buat transaksi baru
         $transaksi = Transaksi::create([
             'id_user' => $user->id,
             'id_kamar' => $kamar->id,
@@ -154,7 +129,7 @@ class PembayaranPenghuniController extends Controller
             'midtrans_order_id' => $midtransOrderId,
             'midtrans_transaction_id' => null,
             'midtrans_payment_type' => null,
-            'midtrans_response' => null, // <-- Tetap null dulu
+            'midtrans_response' => null,
         ]);
 
         // --- Bagian Pembuatan Token Midtrans ---
@@ -178,34 +153,28 @@ class PembayaranPenghuniController extends Controller
                 ]
             ],
             'expiry' => [
-                'start_time' => now()->format('Y-m-d H:i:s O'), // Gunakan Carbon untuk konsistensi
+                'start_time' => now()->format('Y-m-d H:i:s O'),
                 'unit' => 'hour',
                 'duration' => 24
             ]
         ];
 
-        // Panggil service untuk membuat token
         $midtransResponse = $this->midtransService->createTransaction($transactionDetails);
 
         if (!$midtransResponse['success']) {
-            // Jika pembuatan token gagal, hapus transaksi yang baru dibuat
             $transaksi->delete();
             return back()->withErrors(['durasi' => 'Gagal membuat token pembayaran. Silakan coba lagi.']);
         }
 
-        // Simpan response ke database
         $transaksi->midtrans_response = json_encode([
             'snap_token' => $midtransResponse['snap_token'],
-            'redirect_url' => $midtransResponse['redirect_url'] ?? null,
-            'expired_at' => $midtransResponse['expired_at'] ?? null,
+            'expired_at' => now()->addDay()->toDateTimeString(),
             'created_at' => now()->toDateTimeString()
         ]);
 
-        // Simpan perubahan ke database
-        $transaksi->save(); // <-- Kita gunakan save() untuk memperbarui record yang sudah ada
+        $transaksi->save();
 
-        // Kembali ke halaman utama dengan pesan sukses
-        return back()->with('success', 'Transaksi baru berhasil dibuat. Silakan klik tombol "Lanjutkan Pembayaran" untuk menyelesaikan pembayaran.');
+        return back()->with('success', 'Transaksi baru berhasil dibuat. Silakan klik tombol "Bayar Sekarang" untuk menyelesaikan pembayaran.');
     }
 
     /**
@@ -234,7 +203,6 @@ class PembayaranPenghuniController extends Controller
             ], 400);
         }
 
-        // Jika belum paid, cek apakah perlu generate token baru
         $midtransData = $transaksi->midtrans_response;
         $tokenExistsAndIsValid = false;
 
@@ -243,63 +211,15 @@ class PembayaranPenghuniController extends Controller
             $tokenExistsAndIsValid = now()->lt($tokenExpiredAt);
         }
 
-        // Jika token tidak valid/expired → buat baru
+        // Jika token tidak valid/expired
         if (!$tokenExistsAndIsValid) {
-            try {
-                $transactionDetails = [
-                    'transaction_details' => [
-                        'order_id' => $transaksi->midtrans_order_id,
-                        'gross_amount' => (int) $transaksi->total_bayar,
-                    ],
-                    'customer_details' => [
-                        'first_name' => $user->name,
-                        'email' => $user->email,
-                        'phone' => $user->phone ?? '081234567890',
-                    ],
-                    'item_details' => [
-                        [
-                            'id' => $transaksi->id,
-                            'price' => (int) $transaksi->total_bayar,
-                            'quantity' => 1,
-                            'name' => "Pembayaran Sewa Kamar {$transaksi->kamar->kode_kamar} ({$transaksi->durasi} Bulan)",
-                            'category' => 'Sewa Kost'
-                        ]
-                    ],
-                    'expiry' => [
-                        'start_time' => now()->format('Y-m-d H:i:s O'),
-                        'unit' => 'day',
-                        'duration' => 1
-                    ]
-                ];
-
-                $midtransResponse = $this->midtransService->createTransaction($transactionDetails);
-
-                if (!$midtransResponse['success']) {
-                    throw new \Exception($midtransResponse['message'] ?? 'Gagal membuat token Midtrans');
-                }
-
-                $transaksi->midtrans_response = [
-                    'snap_token' => $midtransResponse['snap_token'],
-                    'expired_at' => now()->addDay()->toDateTimeString(),
-                    'created_at' => now()->toDateTimeString(),
-                ];
-                $transaksi->save();
-
-                return response()->json([
-                    'success' => true,
-                    'snap_token' => $midtransResponse['snap_token'],
-                    'transaksi_id' => $transaksi->id
-                ]);
-
-            } catch (\Exception $e) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Gagal menyiapkan pembayaran: ' . $e->getMessage()
-                ], 500);
-            }
+            return response()->json([
+                'success' => false,
+                'message' => 'Token pembayaran sudah kadaluarsa. Silahkan klik "Buat Ulang" untuk transaksi ulang.'
+            ], 400);
         }
 
-        // Token valid dan transaksi belum paid → kembalikan token lama
+        // Token valid dan transaksi belum paid
         return response()->json([
             'success' => true,
             'snap_token' => $midtransData['snap_token'],
@@ -329,14 +249,12 @@ class PembayaranPenghuniController extends Controller
                 if ($response->successful()) {
                     $model = $response->json();
                     if (in_array($model['transaction_status'] ?? null, ['settlement', 'capture'])) {
-                        // Update transaksi
                         $transaksi->update([
                             'status_pembayaran' => 'paid',
                             'midtrans_transaction_id' => $model['transaction_id'] ?? null,
                             'midtrans_payment_type' => $model['payment_type'] ?? null,
                         ]);
 
-                        // Jika user belum jadi penghuni → upgrade role
                         if (!$user->kamar) {
                             $user->update([
                                 'id_kamar' => $transaksi->id_kamar,
@@ -350,13 +268,11 @@ class PembayaranPenghuniController extends Controller
                     }
                 }
 
-                // Jika belum settlement, tunggu sebentar lalu coba lagi
                 if ($i < $maxRetries - 1) {
-                    sleep(2); // tunggu 2 detik sebelum retry
+                    sleep(2);
                 }
 
             } catch (\Exception $e) {
-                // Log error di development
                 // Log::warning("Midtrans verify attempt {$i} failed: " . $e->getMessage());
                 if ($i < $maxRetries - 1) {
                     sleep(2);
@@ -365,5 +281,121 @@ class PembayaranPenghuniController extends Controller
         }
 
         return false;
+    }
+
+    public function buatUlangTransaksi(Request $request, $idKamar)
+    {
+        $user = Auth::user();
+        $kamar = Kamar::findOrFail($idKamar);
+
+        if ($kamar->status !== 'Terisi') {
+            return redirect()->route('penghuni.pembayaran')->with('error', 'Ini bukan kamar nda.');
+        }
+
+        $transaksiLama = Transaksi::where('id_user', $user->id)
+            ->where('id_kamar', $kamar->id)
+            ->where('status_pembayaran', 'pending')
+            ->latest()
+            ->first();
+        $transaksiLama->update([
+            'status_pembayaran' => 'expired',
+        ]);
+
+        if (!$transaksiLama) {
+            return redirect()->route('penghuni.pembayaran')->with('error', 'Tidak ada transaksi yang bisa diulang.');
+        }
+
+        // Validasi expired
+        $midtransData = $transaksiLama->midtrans_response;
+        if (is_string($midtransData)) {
+            $midtransData = json_decode($midtransData, true);
+        }
+
+        $isExpired = false;
+        if (isset($midtransData['expired_at'])) {
+            $expiredAt = Carbon::parse($midtransData['expired_at']);
+            $isExpired = now()->gt($expiredAt);
+        }
+
+        if (!$isExpired) {
+            return redirect()->route('penghuni.pembayaran')->with('error', 'Transaksi masih berlaku. Tidak perlu dibuat ulang.');
+        }
+
+        $durasi = (int) $transaksiLama->durasi;
+        $totalBayar = $kamar->harga * $durasi;
+        $tanggalMasuk = $transaksiLama->masuk_kamar;
+
+        try {
+            $tanggalMasukCarbon = Carbon::parse($tanggalMasuk);
+        } catch (\Exception $e) {
+            $tanggalMasukCarbon = now();
+        }
+
+        $tanggalJatuhTempo = $tanggalMasukCarbon->copy()
+            ->addMonths($durasi)
+            ->subDays(1)
+            ->toDateString();
+
+        $kode = 'INV-' . strtoupper(Str::random(8)) . '-' . date('Ymd');
+        $midtransOrderId = $this->midtransService->generateOrderId($kode);
+
+        $transaksiBaru = Transaksi::create([
+            'id_user' => $user->id,
+            'id_kamar' => $kamar->id,
+            'kode' => $kode,
+            'tanggal_pembayaran' => now(),
+            'tanggal_jatuhtempo' => $tanggalJatuhTempo,
+            'masuk_kamar' => $tanggalMasuk,
+            'durasi' => $durasi,
+            'total_bayar' => $totalBayar,
+            'metode_pembayaran' => 'midtrans',
+            'status_pembayaran' => 'pending',
+            'midtrans_order_id' => $midtransOrderId,
+            'midtrans_transaction_id' => null,
+            'midtrans_payment_type' => null,
+            'midtrans_response' => null,
+        ]);
+
+        $transactionDetails = [
+            'transaction_details' => [
+                'order_id' => $midtransOrderId,
+                'gross_amount' => $totalBayar,
+            ],
+            'customer_details' => [
+                'first_name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone ?? '081234567890',
+            ],
+            'item_details' => [
+                [
+                    'id' => $kamar->id,
+                    'price' => $totalBayar,
+                    'quantity' => 1,
+                    'name' => "Pembayaran Kos {$kamar->kode_kamar} - {$durasi} Bulan",
+                    'category' => 'Kost'
+                ]
+            ],
+            'expiry' => [
+                'start_time' => now()->format('Y-m-d H:i:s O'),
+                'unit' => 'hour',
+                'duration' => 24
+            ]
+        ];
+
+        $midtransResponse = $this->midtransService->createTransaction($transactionDetails);
+
+        if (!$midtransResponse['success']) {
+            $transaksiBaru->delete();
+            return back()->withErrors(['system' => 'Gagal membuat token pembayaran. Silakan coba lagi.']);
+        }
+
+        $transaksiBaru->midtrans_response = json_encode([
+            'snap_token' => $midtransResponse['snap_token'],
+            'created_at' => now()->toDateTimeString(),
+            'expired_at' => now()->addDay()->toDateTimeString(),
+        ]);
+        $transaksiBaru->save();
+
+        return redirect()->route('penghuni.pembayaran', $kamar)->with('success', 'Transaksi baru berhasil dibuat. Silakan lanjutkan pembayaran.');
     }
 }

@@ -97,7 +97,7 @@ Route::middleware('auth')->group(function () {
         Route::post('buat', [PembayaranPageController::class, 'buatTransaksiBaru'])->name('buat-transaksi');
         Route::post('siapkan', [PembayaranPageController::class, 'PembayaranMidtrans'])->name('siapkan-pembayaran');
         Route::get('tunggu-verifikasi', [PembayaranPageController::class, 'tungguVerifikasi'])->name('verifikasi-data');
-        Route::post('buat-ulang/{kamar}', [PembayaranPageController::class, 'buatUlangTransaksi'])->name('buat-ulang');
+        Route::post('buat-ulang/{id}', [PembayaranPageController::class, 'buatUlangTransaksi'])->name('buat-ulang');
         //invoice
         Route::get('invoice/{id}', [InvoiceController::class, 'invoicePembayaran'])->name('invoice');
         Route::get('invoice/pdf/{id}', [InvoiceController::class, 'exportInvoicePdf'])->name('invoice.pdf');
@@ -121,6 +121,7 @@ Route::middleware([PenghuniMiddleware::class])->group(function () {
         Route::get('/pembayaran', [PembayaranPenghuniController::class, 'index'])->name('pembayaran');
         Route::post('/pembayaran/buat-transaksi', [PembayaranPenghuniController::class, 'buatTransaksiBaru'])->name('pembayaran.buat-transaksi');
         Route::post('/pembayaran/siapkan-pembayaran', [PembayaranPenghuniController::class, 'PembayaranMidtrans'])->name('pembayaran.siapkan-pembayaran');
+        Route::post('/pembayaran/buat-ulang/{id}', [PembayaranPenghuniController::class, 'buatUlangTransaksi'])->name('pembayaran.buat-ulang');
     });
 });
 

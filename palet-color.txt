@@ -1,4 +1,3 @@
-Ubah Warnanya Menjadi:
 Elements {
     Background: #fffffe
     Headline: #094067
