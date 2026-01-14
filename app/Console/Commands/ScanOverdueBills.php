@@ -77,9 +77,10 @@ class ScanOverdueBills extends Command
             $this->info("📅 Notif 7 hari sebelum jatuh tempo: {$t->kode}");
         }
 
-        // 5. Expire transaksi midtrans yang sudah expired
+        // 5. Expire transaksi Midtrans yang sudah expired
         $midtransExpired = Transaksi::where('status_pembayaran', 'pending')
             ->whereNotNull('midtrans_response')
+            ->where('created_by_admin', true)
             ->get()
             ->filter(function ($transaksi) {
                 $midtransData = $transaksi->midtrans_response;
@@ -98,7 +99,7 @@ class ScanOverdueBills extends Command
 
         foreach ($midtransExpired as $t) {
             ExpireMidtransTransaction::dispatch($t);
-            $this->info("⏳ Expire Midtrans: {$t->kode}");
+            $this->info("⏳ Expire Midtrans (admin): {$t->kode}");
         }
     }
 }

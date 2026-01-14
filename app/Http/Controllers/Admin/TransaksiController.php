@@ -65,7 +65,8 @@ class TransaksiController extends Controller
             'durasi' => $request->durasi,
             'total_bayar' => $total_bayar,
             'metode_pembayaran' => $request->metode_pembayaran,
-            'status_pembayaran' => 'pending'
+            'status_pembayaran' => 'pending',
+            'created_by_admin' => true,
         ];
 
         if ($request->metode_pembayaran === 'cash') {
@@ -186,7 +187,6 @@ class TransaksiController extends Controller
                     ->with('error', 'Transaksi tidak ditemukan di sistem.');
             }
 
-            // Mapping status
             $status = $model['transaction_status'] ?? 'unknown';
             $fraudStatus = $model['fraud_status'] ?? 'accept';
             $newStatus = match ($status) {
@@ -200,12 +200,10 @@ class TransaksiController extends Controller
                 default => $trx->status_pembayaran,
             };
 
-            // Simpan field tambahan dari Midtrans
             $updateData = [
                 'status_pembayaran' => $newStatus,
             ];
 
-            // Simpan hanya jika tersedia
             if (isset($model['transaction_id'])) {
                 $updateData['midtrans_transaction_id'] = $model['transaction_id'];
             }
@@ -214,10 +212,8 @@ class TransaksiController extends Controller
                 $updateData['midtrans_payment_type'] = $model['payment_type'];
             }
 
-            // Simpan juga response lengkap (opsional, untuk debugging)
             $updateData['midtrans_response'] = json_encode($model);
 
-            // Update hanya jika ada perubahan status atau data penting
             $trx->update($updateData);
 
             if ($newStatus === 'paid') {

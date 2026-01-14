@@ -10,6 +10,7 @@ class Transaksi extends Model
         'id_user',
         'id_kamar',
         'kode',
+        'created_by_admin',
         'tanggal_pembayaran',
         'tanggal_jatuhtempo',
         'notifikasi_hampir_jatuh_tempo_terkirim_pada',

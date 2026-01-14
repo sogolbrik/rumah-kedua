@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->date('tanggal_jatuhtempo');
             $table->date('masuk_kamar')->nullable();
             $table->string('durasi', 20); // contoh: 1,3,6 "bulan"
+            $table->boolean('created_by_admin')->default(false);
 
             //Notifikasi WhatsApp
             $table->timestamp('notifikasi_hampir_jatuh_tempo_terkirim_pada')->nullable();
