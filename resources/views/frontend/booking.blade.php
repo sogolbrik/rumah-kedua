@@ -78,6 +78,55 @@
     </style>
 
     <div class="min-h-screen pt-28 pb-12">
+
+        @if ($showPendingAlert && $pendingTransaksi && $pendingTransaksi->kamar)
+            <div class="w-full top-16 z-50">
+                <div class="max-w-7xl mx-auto px-4 py-3">
+                    <div class="flex items-start gap-4 bg-[#fffdf5] border border-[#fde68a] rounded-2xl px-5 py-4 shadow-sm">
+
+                        <div class="flex-shrink-0 mt-1">
+                            <div class="w-9 h-9 rounded-full bg-[#fde68a] flex items-center justify-center">
+                                <i class="fas fa-clock text-[#b45309] text-sm"></i>
+                            </div>
+                        </div>
+
+                        <div class="flex-1">
+                            <p class="text-sm font-bold text-[#92400e]">
+                                <i class="fas fa-exclamation-triangle mr-1"></i> Transaksi Belum Selesai
+                            </p>
+                            <p class="text-xs text-[#a16207] mt-1 leading-relaxed">
+                                Anda memiliki transaksi pembayaran kos
+                                <span class="font-bold">{{ $pendingTransaksi->kamar->kode_kamar }}</span>
+                                yang belum diselesaikan.
+                                <span class="font-medium">Segera selesaikan pembayaran</span>
+                                sebelum masa berlaku habis untuk mengamankan kamar Anda.
+                            </p>
+                            <p class="text-[10px] text-[#92400e] mt-1 flex items-center">
+                                <i class="far fa-clock mr-1"></i>
+                                <span>Berlaku hingga:
+                                    @php
+                                        $expiredAt = isset($pendingTransaksi->midtrans_response['expired_at'])
+                                            ? \Carbon\Carbon::parse($pendingTransaksi->midtrans_response['expired_at'])
+                                            : now()->addDay();
+                                    @endphp
+                                    {{ $expiredAt->format('d M Y H:i') }} WIB
+                                </span>
+                            </p>
+                        </div>
+
+                        <div class="flex flex-col items-end mt-4">
+                            <a href="{{ route('user.pembayaran.booking', $pendingTransaksi->kamar->id) }}"
+                                class="inline-flex items-center gap-2 px-4 py-2 bg-[#f59e0b] text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-[#d97706] transition transform hover:scale-[1.02] active:scale-[0.98] shadow-md">
+                                <span>Lanjutkan Pembayaran</span>
+                                <i class="fas fa-arrow-right text-xs"></i>
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <div class="max-w-7xl mx-auto px-4 mb-12 text-center">
             <span class="inline-block px-4 py-1.5 mb-4 text-[10px] font-black tracking-[0.2em] text-[#3da9fc] uppercase bg-[#3da9fc15] rounded-full">
                 Available Rooms
@@ -187,7 +236,8 @@
                                             Booking Sekarang
                                         </a>
                                     @else
-                                        <button class="block w-full py-4 bg-[#ef4565] text-[#fffffe] text-center font-black uppercase tracking-widest text-[11px] rounded-2xl opacity-80 cursor-not-allowed"
+                                        <button
+                                            class="block w-full py-4 bg-[#ef4565] text-[#fffffe] text-center font-black uppercase tracking-widest text-[11px] rounded-2xl opacity-80 cursor-not-allowed"
                                             disabled>
                                             Sudah Terisi
                                         </button>

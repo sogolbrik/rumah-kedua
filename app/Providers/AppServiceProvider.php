@@ -3,11 +3,13 @@
 namespace App\Providers;
 
 use App\Models\PengaturanSistem;
+use App\Models\Transaksi;
 use App\Models\User;
 use App\Observers\UserObserver;
 use Illuminate\Support\Facades\View;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -56,6 +58,30 @@ class AppServiceProvider extends ServiceProvider
         View::composer(['layouts.frontend-main', 'layouts.admin-main'], function ($view) {
             $pengaturan = PengaturanSistem::first();
             $view->with('pengaturan', $pengaturan);
+        });
+
+        // View Composer untuk alert transaksi pending
+        View::composer('frontend.booking', function ($view) {
+            $user = Auth::user();
+            $showPendingAlert = false;
+            $pendingTransaksi = null;
+
+            // Hanya untuk user yang login dan belum punya kamar
+            if ($user && !$user->id_kamar) {
+                // Cari transaksi pending terbaru
+                $pendingTransaksi = Transaksi::with('kamar')
+                    ->where('id_user', $user->id)
+                    ->where('status_pembayaran', 'pending')
+                    ->latest()
+                    ->first();
+
+                $showPendingAlert = $pendingTransaksi !== null;
+            }
+
+            $view->with([
+                'showPendingAlert' => $showPendingAlert,
+                'pendingTransaksi' => $pendingTransaksi
+            ]);
         });
     }
 }
