@@ -300,4 +300,128 @@ class PembayaranPageController extends Controller
             'orderId' => $transaksi->midtrans_order_id
         ]);
     }
+
+    public function buatUlangTransaksi(Request $request, $idKamar)
+    {
+        $user = Auth::user();
+        $kamar = Kamar::findOrFail($idKamar);
+
+        // Pastikan kamar masih tersedia
+        if ($kamar->status !== 'Tersedia') {
+            return redirect()->route('booking')
+                ->with('error', 'Kamar tidak tersedia untuk dipesan.');
+        }
+
+        // Cari transaksi pending yang expired untuk user dan kamar ini
+        $transaksiLama = Transaksi::where('id_user', $user->id)
+            ->where('id_kamar', $kamar->id)
+            ->where('status_pembayaran', 'pending')
+            ->latest()
+            ->first();
+
+        if (!$transaksiLama) {
+            return redirect()->route('user.pembayaran.booking', $kamar)
+                ->with('error', 'Tidak ada transaksi yang bisa diulang.');
+        }
+
+        // Validasi expired
+        $midtransData = $transaksiLama->midtrans_response;
+        if (is_string($midtransData)) {
+            $midtransData = json_decode($midtransData, true);
+        }
+
+        $isExpired = false;
+        if (isset($midtransData['expired_at'])) {
+            $expiredAt = Carbon::parse($midtransData['expired_at']);
+            $isExpired = now()->gt($expiredAt);
+        }
+
+        if (!$isExpired) {
+            return redirect()->route('user.pembayaran.booking', $kamar)
+                ->with('error', 'Transaksi masih berlaku. Tidak perlu dibuat ulang.');
+        }
+
+        // CAST DURASI KE INTEGER DI SINI
+        $durasi = (int) $transaksiLama->durasi; // <-- PERBAIKAN UTAMA
+        $totalBayar = $kamar->harga * $durasi;
+        $tanggalMasuk = $transaksiLama->masuk_kamar;
+
+        // PERBAIKAN TAMBAHAN: Pastikan tanggal masuk valid
+        try {
+            $tanggalMasukCarbon = Carbon::parse($tanggalMasuk);
+        } catch (\Exception $e) {
+            $tanggalMasukCarbon = now();
+        }
+
+        $tanggalJatuhTempo = $tanggalMasukCarbon->copy()
+            ->addMonths($durasi)
+            ->subDays(1)
+            ->toDateString();
+
+        $kode = 'INV-' . strtoupper(Str::random(8)) . '-' . date('Ymd');
+        $midtransOrderId = $this->midtransService->generateOrderId($kode);
+
+        // Buat transaksi baru
+        $transaksiBaru = Transaksi::create([
+            'id_user' => $user->id,
+            'id_kamar' => $kamar->id,
+            'kode' => $kode,
+            'tanggal_pembayaran' => now(),
+            'tanggal_jatuhtempo' => $tanggalJatuhTempo,
+            'masuk_kamar' => $tanggalMasuk,
+            'durasi' => $durasi, // Sudah di-cast ke integer
+            'total_bayar' => $totalBayar,
+            'metode_pembayaran' => 'midtrans',
+            'status_pembayaran' => 'pending',
+            'midtrans_order_id' => $midtransOrderId,
+            'midtrans_transaction_id' => null,
+            'midtrans_payment_type' => null,
+            'midtrans_response' => null,
+        ]);
+
+        // Buat token Midtrans baru
+        $transactionDetails = [
+            'transaction_details' => [
+                'order_id' => $midtransOrderId,
+                'gross_amount' => $totalBayar,
+            ],
+            'customer_details' => [
+                'first_name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone ?? '081234567890',
+            ],
+            'item_details' => [
+                [
+                    'id' => $kamar->id,
+                    'price' => $totalBayar,
+                    'quantity' => 1,
+                    'name' => "Pembayaran Kos {$kamar->kode_kamar} - {$durasi} Bulan",
+                    'category' => 'Kost'
+                ]
+            ],
+            'expiry' => [
+                'start_time' => now()->format('Y-m-d H:i:s O'),
+                'unit' => 'hour',
+                'duration' => 24
+            ]
+        ];
+
+        $midtransResponse = $this->midtransService->createTransaction($transactionDetails);
+
+        if (!$midtransResponse['success']) {
+            $transaksiBaru->delete();
+            return back()->withErrors(['system' => 'Gagal membuat token pembayaran. Silakan coba lagi.']);
+        }
+
+        // Update transaksi baru dengan response Midtrans
+        $transaksiBaru->midtrans_response = json_encode([
+            'snap_token' => $midtransResponse['snap_token'],
+            'created_at' => now()->toDateTimeString(),
+            'expired_at' => now()->addDay()->toDateTimeString(),
+        ]);
+        $transaksiBaru->save();
+
+        return redirect()->route('user.pembayaran.booking', $kamar)
+            ->with('success', 'Transaksi baru berhasil dibuat. Silakan lanjutkan pembayaran.');
+    }
 }

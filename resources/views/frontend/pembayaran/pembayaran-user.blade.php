@@ -112,11 +112,13 @@
                             </div>
 
                             @if (\Carbon\Carbon::parse($transaksiPending->midtrans_response['expired_at'])->isPast())
-                                <button
-                                    class="w-full text-white font-black uppercase tracking-widest py-4 px-6 rounded-2xl transition-all shadow-xl"
-                                    style="background-color: #9ca3af; border-bottom: 4px solid #6b7280; cursor: not-allowed;" disabled >
-                                    <span>Bayar Sekarang</span>
-                                </button>
+                                <form method="POST" action="{{ route('user.pembayaran.buat-ulang', $kamar->id) }}">
+                                    @csrf
+                                    <button type="submit"
+                                        class="w-full text-white font-black uppercase tracking-widest py-4 px-6 rounded-2xl transition-all shadow-xl active:translate-y-1 bg-gradient-to-b from-orange-500 to-orange-600 hover:bg-orange-700 hover:border-b-4 hover:border-orange-800">
+                                        <span>Buat Ulang Transaksi</span>
+                                    </button>
+                                </form>
                             @else
                                 <button @click="lanjutkanPembayaran()" :disabled="isProcessing"
                                     class="w-full text-white font-black uppercase tracking-widest py-4 px-6 rounded-2xl transition-all shadow-xl active:translate-y-1"
@@ -263,16 +265,20 @@
                         </div>
 
                         @php
-                            $data = $transaksiPending->midtrans_response;
+                            $data = $transaksiPending->midtrans_response ?? '';
+
+                            if (is_string($data)) {
+                                $data = json_decode($data, true);
+                            }
                         @endphp
 
-                        @if (\Carbon\Carbon::parse($data['expired_at'])->isPast())
+                        @if ($data && isset($data['expired_at']) && \Carbon\Carbon::parse($data['expired_at'])->isPast())
                             <div class="border-l-4 p-4 rounded-2xl text-sm flex gap-3"
                                 style="background-color: rgba(239, 69, 101, 0.1); border-color: var(--tertiary-color); color: var(--tertiary-color)">
                                 <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
                                 </svg>
-                                <span class="font-bold">Token pembayaran sudah kadaluarsa. Silakan pilih kamar dan transaksi ulang</span>
+                                <span class="font-bold">Token pembayaran sudah kadaluarsa. Silakan klik Buat Ulang atau pilih kamar yang lain</span>
                             </div>
                         @endif
 
