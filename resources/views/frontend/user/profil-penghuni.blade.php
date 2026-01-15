@@ -3,8 +3,13 @@
 @section('title', 'Pengaturan Profil')
 
 @section('frontend-main')
-    <div class="min-h-screen bg-[#fffffe] pb-12">
-        <div class="bg-[#fffffe] border-b border-[#90b4ce]/30 mt-25 mb-8">
+    <div class="min-h-screen pt-28 pb-20 relative bg-[#fffffe]">
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-[#3da9fc]/10 rounded-full blur-[120px] -mr-48 -mt-48"></div>
+            <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#90b4ce]/10 rounded-full blur-[100px] -ml-24 -mb-24"></div>
+        </div>
+
+        <div class="bg-[#fffffe] border-b border-[#90b4ce]/30 mt-0 mb-8">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                 <div class="flex items-center gap-4">
                     <a href="{{ route('dashboard-penghuni') }}" class="p-2 hover:bg-[#90b4ce]/10 rounded-full transition-colors text-[#094067]">

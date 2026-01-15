@@ -3,27 +3,27 @@
 @section('title', 'Invoice Pembayaran - RumahKedua')
 
 @section('frontend-main')
-    {{-- Background: #fffffe --}}
-    <div class="min-h-screen bg-[#fffffe] pb-12">
-        <div class="bg-white border-b border-[#90b4ce]/30 mt-25 mb-8">
+    <div class="min-h-screen pt-28 pb-20 relative bg-[#fffffe]">
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-[#3da9fc]/10 rounded-full blur-[120px] -mr-48 -mt-48"></div>
+            <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#90b4ce]/10 rounded-full blur-[100px] -ml-24 -mb-24"></div>
+        </div>
+
+        <div class="bg-white border-b border-[#90b4ce]/30 mt-0 mb-8">
             <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div class="flex items-center gap-4">
                         <a href="{{ route('dashboard-penghuni') }}" class="p-2 hover:bg-[#90b4ce]/10 rounded-full transition-colors">
-                            {{-- Stroke: #094067 --}}
                             <i class="fa-solid fa-arrow-left text-[#094067]"></i>
                         </a>
                         <div>
-                            {{-- Headline: #094067 --}}
                             <h1 class="text-2xl font-bold text-[#094067]">Detail Invoice</h1>
-                            {{-- Paragraph: #5f6c7b --}}
                             <p class="text-sm text-[#5f6c7b] font-mono">{{ $transaksi->kode }}</p>
                         </div>
                     </div>
 
                     <div>
                         @php
-                            // Menggunakan Tertiary (#ef4565) untuk pending/attention dan Highlight (#3da9fc) untuk success
                             $statusConfig = match ($transaksi->status_pembayaran) {
                                 'paid' => ['bg-[#3da9fc]/10 text-[#3da9fc] border-[#3da9fc]/20', 'LUNAS', 'fa-check-circle'],
                                 'pending' => ['bg-[#ef4565]/10 text-[#ef4565] border-[#ef4565]/20', 'PENDING', 'fa-clock'],
@@ -44,7 +44,6 @@
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
                 <div class="lg:col-span-8 space-y-6">
-                    {{-- Card Background --}}
                     <div class="bg-white rounded-2xl border border-[#90b4ce]/20 shadow-sm overflow-hidden">
                         <div class="px-6 py-4 border-b border-[#90b4ce]/10 flex justify-between items-center bg-[#90b4ce]/5">
                             <h3 class="font-bold text-[#094067] italic uppercase tracking-wider text-sm">Informasi Hunian</h3>
@@ -97,7 +96,6 @@
                                 <tfoot>
                                     <tr class="border-t-2 border-[#90b4ce]/10">
                                         <td class="pt-4 font-bold text-[#094067]">TOTAL BAYAR</td>
-                                        {{-- Highlight: #3da9fc --}}
                                         <td class="pt-4 text-right font-extrabold text-[#3da9fc] text-lg">Rp{{ number_format($transaksi->total_bayar, 0, ',', '.') }}</td>
                                     </tr>
                                 </tfoot>
@@ -122,7 +120,6 @@
                     <div class="bg-white rounded-2xl border border-[#90b4ce]/20 shadow-sm p-4 space-y-3">
                         <h3 class="px-2 text-[10px] font-bold text-[#90b4ce] uppercase tracking-widest mb-4">Opsi Invoice</h3>
 
-                        {{-- Button Background: #3da9fc, Text: #fffffe --}}
                         <a href="{{ route('user.pembayaran.invoice.preview', $transaksi->id) }}" target="_blank"
                             class="flex items-center justify-between w-full px-4 py-3 bg-[#094067] hover:opacity-90 text-[#fffffe] rounded-xl transition-all group">
                             <span class="text-sm font-bold">Preview PDF</span>
@@ -145,7 +142,6 @@
                     <div class="bg-white rounded-2xl border border-[#90b4ce]/20 shadow-sm overflow-hidden">
                         <div class="p-4 space-y-4">
                             <div class="flex items-start gap-3">
-                                {{-- Highlight: #3da9fc --}}
                                 <div class="mt-1 w-2 h-2 rounded-full bg-[#3da9fc] shadow-[0_0_8px_rgba(61,169,252,0.5)]"></div>
                                 <div>
                                     <p class="text-[10px] font-bold text-[#90b4ce] uppercase tracking-widest">Tanggal Bayar</p>
@@ -154,7 +150,6 @@
                                 </div>
                             </div>
                             <div class="flex items-start gap-3">
-                                {{-- Tertiary: #ef4565 --}}
                                 <div class="mt-1 w-2 h-2 rounded-full bg-[#ef4565] shadow-[0_0_8px_rgba(239,69,101,0.5)]"></div>
                                 <div>
                                     <p class="text-[10px] font-bold text-[#90b4ce] uppercase tracking-widest">Jatuh Tempo</p>

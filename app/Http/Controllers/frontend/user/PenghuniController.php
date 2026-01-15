@@ -90,6 +90,7 @@ class PenghuniController extends Controller
         if ($request->filled('kategori') && $request->kategori !== 'semua') {
             $query->where('kategori', $request->kategori);
         }
+        $query->where('highlight', false);
 
         // Pencarian berdasarkan judul atau isi
         if ($request->filled('search')) {
@@ -114,7 +115,18 @@ class PenghuniController extends Controller
 
         $pengumuman = $query->paginate(6)->appends($request->only(['search', 'kategori', 'sort']));
 
-        return view('frontend.user.pengumuman-penghuni', compact('pengumuman'));
+        $is_highlight = Pengumuman::where('highlight', true)
+            ->when(
+                $request->filled('kategori') && $request->kategori !== 'semua',
+                fn($q) => $q->where('kategori', $request->kategori)
+            )
+            ->first();
+
+
+        return view('frontend.user.pengumuman-penghuni', [
+            'pengumuman' => $pengumuman,
+            'is_highlight' => $is_highlight
+        ]);
     }
 
     public function update(Request $request)
