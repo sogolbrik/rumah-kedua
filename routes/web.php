@@ -123,6 +123,8 @@ Route::middleware([PenghuniMiddleware::class])->group(function () {
         Route::post('/pembayaran/siapkan-pembayaran', [PembayaranPenghuniController::class, 'PembayaranMidtrans'])->name('pembayaran.siapkan-pembayaran');
         Route::post('/pembayaran/buat-ulang/{id}', [PembayaranPenghuniController::class, 'buatUlangTransaksi'])->name('pembayaran.buat-ulang');
     });
+    //Pengumuman
+    Route::get('pengumuman-penghuni', [PenghuniController::class, 'pengumuman'])->name('pengumuman-penghuni');
 });
 
 /* OutMiddleware */

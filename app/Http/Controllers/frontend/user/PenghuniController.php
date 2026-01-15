@@ -4,6 +4,7 @@ namespace App\Http\Controllers\frontend\user;
 
 use App\Http\Controllers\Controller;
 use App\Models\Kamar;
+use App\Models\Pengumuman;
 use App\Models\Transaksi;
 use App\Models\User;
 use Carbon\Carbon;
@@ -33,47 +34,34 @@ class PenghuniController extends Controller
         $terakhirBayar = Transaksi::where('id_user', $user->id)
             ->where('status_pembayaran', 'paid')
             ->orderBy('tanggal_pembayaran', 'desc')
-            ->value('tanggal_pembayaran'); // Carbon instance atau null
+            ->value('tanggal_pembayaran');
 
-        // Ambil transaksi terakhir (tanggal_jatuhtempo terbesar) milik user
         $transaksiTerakhir = Transaksi::where('id_user', $user->id)
-            ->orderBy('tanggal_jatuhtempo', 'desc') // Urutkan dari terbaru
-            ->where('status_pembayaran', 'paid') // Hanya transaksi yang sudah dibayar
-            ->first(); // Ambil satu record pertama (yg terakhir)
+            ->orderBy('tanggal_jatuhtempo', 'desc')
+            ->where('status_pembayaran', 'paid')
+            ->first();
 
-        // Cek apakah transaksi terakhir ada dan tanggal_jatuhtempo-nya kurang dari hari ini
-        $menunggak = false; // Default ke false
+        $menunggak = false;
         if ($transaksiTerakhir) {
-            // Hitung selisih hari antara hari ini dan tanggal jatuh tempo
             $hariSampaiJatuhTempo = now()->diffInDays(Carbon::parse($transaksiTerakhir->tanggal_jatuhtempo), false);
 
-            // Jika tanggal jatuh tempo sudah lewat → $hariSampaiJatuhTempo negatif
-            // Jika masih di masa depan → positif
-
-            // Kita ingin tampilkan alert jika:
-            // - Jatuh tempo sudah lewat (hariSampaiJatuhTempo < 0), ATAU
-            // - Jatuh tempo dalam 7 hari ke depan (0 ≤ hariSampaiJatuhTempo < 7)
             if ($hariSampaiJatuhTempo < 7) {
                 $menunggak = true;
             }
         }
 
-        // Jika role = penghuni tapi belum punya kamar → coba verifikasi
         if ($user->role === 'penghuni' && !$user->kamar) {
-            // Cek apakah ada transaksi paid yang belum di-update
             $transaksiPaid = Transaksi::where('id_user', $user->id)
                 ->where('status_pembayaran', 'paid')
                 ->first();
 
             if ($transaksiPaid) {
-                // Update manual (fallback)
                 $user->update([
                     'id_kamar' => $transaksiPaid->id_kamar,
                     'tanggal_masuk' => $transaksiPaid->masuk_kamar,
                 ]);
                 Kamar::where('id', $transaksiPaid->id_kamar)->update(['status' => 'Terisi']);
             } else {
-                // Belum benar-benar jadi penghuni
                 return redirect()->route('landing-page')
                     ->with('error', 'Akun Anda belum aktif. Silakan selesaikan pembayaran.');
             }
@@ -92,6 +80,41 @@ class PenghuniController extends Controller
     public function profil()
     {
         return view('frontend.user.profil-penghuni');
+    }
+
+    public function pengumuman(Request $request)
+    {
+        $query = Pengumuman::query();
+
+        // Filter berdasarkan kategori
+        if ($request->filled('kategori') && $request->kategori !== 'semua') {
+            $query->where('kategori', $request->kategori);
+        }
+
+        // Pencarian berdasarkan judul atau isi
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('judul', 'like', "%{$searchTerm}%")
+                    ->orWhere('isi', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        // Sortir
+        $sortBy = $request->get('sort', 'terbaru');
+        switch ($sortBy) {
+            case 'terlama':
+                $query->oldest();
+                break;
+            case 'populer':
+            default:
+                $query->latest();
+                break;
+        }
+
+        $pengumuman = $query->paginate(6)->appends($request->only(['search', 'kategori', 'sort']));
+
+        return view('frontend.user.pengumuman-penghuni', compact('pengumuman'));
     }
 
     public function update(Request $request)

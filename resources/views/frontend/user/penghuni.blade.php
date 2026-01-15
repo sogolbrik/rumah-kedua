@@ -48,6 +48,15 @@
                 </div>
 
                 <div class="flex flex-wrap gap-3">
+                    <a href="{{ route('pengumuman-penghuni') }}"
+                        class="flex items-center gap-3 px-6 py-3 bg-[#fffffe] border border-[#90b4ce]/50 text-[#094067] rounded-2xl hover:border-[#3da9fc] hover:bg-[#3da9fc]/5 hover:shadow-md transition-all duration-300 font-bold text-sm group">
+                        <div class="relative">
+                            <i class="fa-solid fa-bullhorn text-[#3da9fc] group-hover:scale-110 transition-transform"></i>
+                            <span class="absolute -top-1 -right-1 w-2 h-2 bg-[#ef4565] rounded-full border-2 border-[#fffffe]"></span>
+                        </div>
+                        Pengumuman
+                    </a>
+
                     <div class="relative">
                         <button @click="openProfile = !openProfile"
                             class="flex items-center gap-3 px-6 py-3 bg-[#fffffe] border border-[#90b4ce] text-[#094067] rounded-2xl hover:border-[#3da9fc] hover:shadow-lg transition-all duration-300 font-bold text-sm">
@@ -225,7 +234,16 @@
                                     <td class="px-8 py-6">
                                         <div class="flex items-center gap-2">
                                             <div class="w-2 h-2 bg-[#90b4ce] rounded-full"></div>
-                                            <span class="capitalize text-[#094067] font-bold tracking-tight text-xs">{{ $trx->midtrans_payment_type ?? 'Cash' }}</span>
+                                            @php
+                                                if ($trx->metode_pembayaran == 'cash') {
+                                                    $metode = 'Cash';
+                                                } elseif ($trx->metode_pembayaran == 'midtrans') {
+                                                    $metode = $trx->midtrans_payment_type ?? 'Online';
+                                                } else {
+                                                    $metode = '-';
+                                                }
+                                            @endphp
+                                            <span class="capitalize text-[#094067] font-bold tracking-tight text-xs">{{ $metode }}</span>
                                         </div>
                                     </td>
                                     <td class="px-8 py-6">

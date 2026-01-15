@@ -60,15 +60,13 @@ class AppServiceProvider extends ServiceProvider
             $view->with('pengaturan', $pengaturan);
         });
 
-        // View Composer untuk alert transaksi pending
+        // Alert transaksi pending
         View::composer('frontend.booking', function ($view) {
             $user = Auth::user();
             $showPendingAlert = false;
             $pendingTransaksi = null;
 
-            // Hanya untuk user yang login dan belum punya kamar
             if ($user && !$user->id_kamar) {
-                // Cari transaksi pending terbaru
                 $pendingTransaksi = Transaksi::with('kamar')
                     ->where('id_user', $user->id)
                     ->where('status_pembayaran', 'pending')

@@ -83,7 +83,7 @@
                 <li>
                     <a href="{{ route('transaksi.index') }}"
                         class="flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all duration-300 group
-                        {{ request()->routeIs('transaksi.index') ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-100' : 'text-slate-600 hover:bg-slate-50 hover:text-emerald-500' }}">
+                        {{ request()->routeIs('transaksi.*') ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-100' : 'text-slate-600 hover:bg-slate-50 hover:text-emerald-500' }}">
                         <i class="fa-solid fa-wallet text-sm group-hover:-translate-y-0.5 transition-transform"></i>
                         <span class="font-bold text-[14px]">Transaksi</span>
                     </a>
