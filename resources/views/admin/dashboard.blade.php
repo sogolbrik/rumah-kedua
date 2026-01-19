@@ -3,16 +3,53 @@
 @section('title', 'Dashboard')
 
 @section('admin-main')
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
-        <div>
-            <h1 class="text-2xl font-bold text-[#094067]">Dashboard</h1>
-            <p class="mt-0.5 text-sm text-[#5f6c7b]">Kelola kos RumahKedua lebih mudah dari dashboard ini.</p>
-        </div>
+    <div class="relative overflow-hidden rounded-3xl bg-[#fffffe] p-8 md:p-12 border border-[#90b4ce]/20 shadow-sm mb-7" x-data="dashboardHeader()">
+        <div class="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-[#3da9fc]/5 blur-3xl"></div>
+        <div class="absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-[#ef4565]/5 blur-3xl"></div>
 
-        <div class="inline-flex items-center gap-2 rounded-full bg-[#90b4ce]/10 px-3.5 py-2 text-xs font-medium text-[#5f6c7b] backdrop-blur-sm border border-[#90b4ce]/20">
-            <i class="fa-regular fa-clock text-[#90b4ce]"></i>
-            <span id="realtime-clock" x-data="realtimeClock()" x-init="init()" x-text="time"></span>
-            <span class="text-[#90b4ce]">WIB</span>
+        <div class="relative flex flex-col items-center text-center">
+            <div class="mb-4 inline-flex items-center gap-2 rounded-full bg-[#ef4565]/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#ef4565] border border-[#ef4565]/20">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ef4565] opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-[#ef4565]"></span>
+                </span>
+                Sistem Terpantau
+            </div>
+
+            <h1 class="text-3xl md:text-4xl font-extrabold text-[#094067] tracking-tight">
+                <span x-text="greeting" class="block text-[#3da9fc] text-lg md:text-xl font-medium mb-1"></span>
+                Dashboard Utama <span class="text-[#3da9fc]">RumahKedua</span>
+            </h1>
+
+            <p class="mt-4 max-w-lg text-sm md:text-base leading-relaxed text-[#5f6c7b]">
+                Pantau aktivitas operasional, kelola penghuni, dan atur keuangan kos Anda dalam satu panel kendali yang terintegrasi.
+            </p>
+
+            <div class="mt-8 flex flex-wrap justify-center gap-4">
+                <div class="flex items-center gap-4 rounded-2xl bg-[#90b4ce]/10 p-4 border border-[#90b4ce]/20 backdrop-blur-md">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-[#3da9fc] text-[#fffffe] shadow-lg shadow-[#3da9fc]/30">
+                        <i class="fa-solid fa-calendar-day text-xl"></i>
+                    </div>
+                    <div class="text-left">
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-[#90b4ce]">Tanggal Hari Ini</p>
+                        <p class="font-semibold text-[#094067]" x-text="dateOnly"></p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 rounded-2xl bg-[#094067] p-4 border border-[#094067] shadow-xl">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-[#fffffe]/10 text-[#fffffe]">
+                        <i class="fa-regular fa-clock text-xl text-[#3da9fc]"></i>
+                    </div>
+                    <div class="text-left">
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-[#90b4ce]">Waktu Digital</p>
+                        <div class="flex items-baseline gap-1">
+                            <p class="text-xl font-black text-[#fffffe] tabular-nums" x-text="timeOnly"></p>
+                            <span class="text-[10px] font-bold text-[#3da9fc]">WIB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -348,22 +385,41 @@
                 }
             }));
 
-            Alpine.data('realtimeClock', () => ({
-                time: '',
+            Alpine.data('dashboardHeader', () => ({
+                timeOnly: '',
+                dateOnly: '',
+                greeting: '',
+
                 init() {
                     this.updateTime();
                     setInterval(() => this.updateTime(), 1000);
                 },
+
                 updateTime() {
-                    this.time = new Date().toLocaleString('id-ID', {
+                    const now = new Date();
+
+                    // Format Waktu: 14:05:01
+                    this.timeOnly = now.toLocaleTimeString('id-ID', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false
+                    });
+
+                    // Format Tanggal: Senin, 20 Mei 2024
+                    this.dateOnly = now.toLocaleDateString('id-ID', {
                         weekday: 'long',
                         day: 'numeric',
                         month: 'long',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit'
+                        year: 'numeric'
                     });
+
+                    // Logika Greeting
+                    const hour = now.getHours();
+                    if (hour < 11) this.greeting = 'Selamat Pagi, Admin! 👋';
+                    else if (hour < 15) this.greeting = 'Selamat Siang, Admin! ☀️';
+                    else if (hour < 18) this.greeting = 'Selamat Sore, Admin! 🌆';
+                    else this.greeting = 'Selamat Malam, Admin! 🌙';
                 }
             }));
         });

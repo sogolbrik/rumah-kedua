@@ -1,27 +1,70 @@
 <!-- Spinner -->
-<div id="initial-loader" class="fixed inset-0 z-[9999] flex items-center justify-center bg-white">
+<div id="initial-loader" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#fffffe] transition-opacity duration-500">
     <style>
-        @keyframes loading-wave-animation {
-
-            0%,
-            100% {
-                height: 10px;
+        @keyframes spin-slow {
+            from {
+                transform: rotate(0deg);
             }
 
-            50% {
-                height: 50px;
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spin-reverse-fast {
+            from {
+                transform: rotate(360deg);
+            }
+
+            to {
+                transform: rotate(0deg);
+            }
+        }
+
+        @keyframes pulse-core {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(103, 232, 249, 0.7);
+            }
+
+            70% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 15px rgba(103, 232, 249, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(103, 232, 249, 0);
             }
         }
     </style>
-    <div class="flex justify-center items-end w-[120px] h-[60px] gap-[6px]">
-        <div class="w-5 h-2.5 bg-blue-500 rounded-[5px]" style="animation: loading-wave-animation 1s ease-in-out 0s infinite;"></div>
-        <div class="w-5 h-2.5 bg-blue-500 rounded-[5px]" style="animation: loading-wave-animation 1s ease-in-out 0.1s infinite;"></div>
-        <div class="w-5 h-2.5 bg-blue-500 rounded-[5px]" style="animation: loading-wave-animation 1s ease-in-out 0.2s infinite;"></div>
-        <div class="w-5 h-2.5 bg-blue-500 rounded-[5px]" style="animation: loading-wave-animation 1s ease-in-out 0.3s infinite;"></div>
+
+    <div class="relative flex items-center justify-center w-36 h-36">
+        <div class="absolute w-full h-full rounded-full border-[3px] border-transparent border-t-[#90b4ce]/80 border-r-[#90b4ce]/40" style="animation: spin-slow 4s linear infinite;">
+        </div>
+
+        <div class="absolute w-28 h-28 rounded-full border-[4px] border-transparent border-l-[#3da9fc] border-b-[#3da9fc]"
+            style="animation: spin-reverse-fast 1.5s cubic-bezier(0.55, 0.055, 0.675, 0.19) infinite;">
+        </div>
+
+        <div class="absolute w-10 h-10 bg-[#67e8f9] rounded-full flex items-center justify-center shadow-lg shadow-[#67e8f9]/50" style="animation: pulse-core 2s infinite ease-in-out;">
+            <svg class="w-6 h-6 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8v4a4 4 0 0 0-4 4H4z" />
+            </svg>
+        </div>
+    </div>
+
+    <div class="mt-8 flex flex-col items-center">
+        <h2 class="text-lg font-extrabold tracking-[0.2em] uppercase text-[#094067]">Memuat</h2>
+        <p class="text-xs font-medium text-[#90b4ce] mt-1">Menyiapkan Halaman...</p>
     </div>
 </div>
 
-{{-- Alert --}}
+
+<!-- Alert -->
+<div id="toast-container" class="fixed top-4 right-4 z-[9999] space-y-3 pointer-events-none"></div>
+
 <style>
     @keyframes slideInRight {
         from {
@@ -51,10 +94,7 @@
     }
 </style>
 
-<div id="toast-container" class="fixed top-4 right-4 z-[9999] space-y-3 pointer-events-none"></div>
-
 <script>
-    // Fungsi reusable untuk menampilkan toast
     window.showToast = function(type, message) {
         const container = document.getElementById('toast-container');
         if (!container) return;
@@ -88,7 +128,6 @@
 
         const config = types[type] || types.info;
 
-        // Buat elemen toast
         const toastEl = document.createElement('div');
         toastEl.className =
             `${config.bgColor} rounded-xl shadow-[0_8px_24px_rgba(149,157,165,0.2)] w-[330px] h-[80px] p-2.5 flex items-center justify-between gap-3 overflow-hidden pointer-events-auto relative`;
@@ -111,13 +150,10 @@
                 </button>
                 `;
 
-        // Tambahkan animasi masuk
         toastEl.classList.add('toast-slide-in');
 
-        // Tambahkan ke container
         container.appendChild(toastEl);
 
-        // Ambil tombol tutup
         const closeBtn = toastEl.querySelector('button');
         let timeout = setTimeout(() => {
             toastEl.classList.replace('toast-slide-in', 'toast-fade-out');
@@ -143,7 +179,6 @@
             setTimeout(() => {
                 loader.remove();
 
-                // Ambil alert dari data yang dikirim via component
                 const alerts = {{ Js::from($alerts) }};
                 if (alerts.success) showToast('success', alerts.success);
                 if (alerts.error) showToast('error', alerts.error);
