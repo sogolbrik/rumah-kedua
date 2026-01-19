@@ -84,18 +84,25 @@ class PenghuniController extends Controller
 
     public function pengumuman(Request $request)
     {
-        $query = Pengumuman::query();
+        // Query pengumuman biasa
+        $pengumumanQuery = Pengumuman::query();
 
-        // Filter berdasarkan kategori
+        // Query highlight
+        $highlightQuery = Pengumuman::where('highlight', true);
+
+        // Filter kategori
         if ($request->filled('kategori') && $request->kategori !== 'semua') {
-            $query->where('kategori', $request->kategori);
+            $kategori = $request->kategori;
+            $pengumumanQuery->where('kategori', $kategori);
+            $highlightQuery->where('kategori', $kategori);
         }
-        $query->where('highlight', false);
 
-        // Pencarian berdasarkan judul atau isi
+        $pengumumanQuery->where('highlight', false);
+
+        // Searching
         if ($request->filled('search')) {
             $searchTerm = $request->search;
-            $query->where(function ($q) use ($searchTerm) {
+            $pengumumanQuery->where(function ($q) use ($searchTerm) {
                 $q->where('judul', 'like', "%{$searchTerm}%")
                     ->orWhere('isi', 'like', "%{$searchTerm}%");
             });
@@ -105,23 +112,15 @@ class PenghuniController extends Controller
         $sortBy = $request->get('sort', 'terbaru');
         switch ($sortBy) {
             case 'terlama':
-                $query->oldest();
+                $pengumumanQuery->oldest();
                 break;
-            case 'populer':
             default:
-                $query->latest();
+                $pengumumanQuery->latest();
                 break;
         }
 
-        $pengumuman = $query->paginate(6)->appends($request->only(['search', 'kategori', 'sort']));
-
-        $is_highlight = Pengumuman::where('highlight', true)
-            ->when(
-                $request->filled('kategori') && $request->kategori !== 'semua',
-                fn($q) => $q->where('kategori', $request->kategori)
-            )
-            ->first();
-
+        $pengumuman = $pengumumanQuery->paginate(6)->appends($request->only(['search', 'kategori', 'sort']));
+        $is_highlight = $highlightQuery->first();
 
         return view('frontend.user.pengumuman-penghuni', [
             'pengumuman' => $pengumuman,
