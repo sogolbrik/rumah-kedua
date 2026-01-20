@@ -48,10 +48,10 @@
         </div>
 
         <div class="absolute w-10 h-10 bg-[#67e8f9] rounded-full flex items-center justify-center shadow-lg shadow-[#67e8f9]/50" style="animation: pulse-core 2s infinite ease-in-out;">
-            <svg class="w-6 h-6 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            {{-- <svg class="w-6 h-6 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8v4a4 4 0 0 0-4 4H4z" />
-            </svg>
+            </svg> --}}
         </div>
     </div>
 

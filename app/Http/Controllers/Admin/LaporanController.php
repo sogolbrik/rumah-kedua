@@ -131,6 +131,25 @@ class LaporanController extends Controller
         return $pdf->download("laporan-transaksi-{$tanggalMulai}-{$tanggalSelesai}.pdf");
     }
 
+    public function previewTransaksiPdf(Request $request)
+    {
+        $tanggalMulai = $request->get('tanggal_mulai', now()->subMonth()->startOfMonth()->format('Y-m-d'));
+        $tanggalSelesai = $request->get('tanggal_selesai', now()->format('Y-m-d'));
+
+        $transaksi = Transaksi::whereBetween('created_at', [
+            Carbon::parse($tanggalMulai)->startOfDay(),
+            Carbon::parse($tanggalSelesai)->endOfDay(),
+        ])->latest()->get();
+
+        $pdf = Pdf::loadView('admin.laporan.export.transaksi-pdf', [
+            'transaksi' => $transaksi,
+            'tanggalMulai' => Carbon::parse($tanggalMulai)->translatedFormat('d F Y'),
+            'tanggalSelesai' => Carbon::parse($tanggalSelesai)->translatedFormat('d F Y'),
+        ]);
+
+        return $pdf->stream("laporafilename: n-transaksi-{$tanggalMulai}-{$tanggalSelesai}.pdf");
+    }
+
     public function exportTransaksiExcel(Request $request)
     {
         $tanggalMulai = $request->get('tanggal_mulai', now()->subMonth()->startOfMonth()->format('Y-m-d'));
@@ -174,6 +193,32 @@ class LaporanController extends Controller
         ]);
 
         return $pdf->download("laporan-kamar" . ($tipe ? "-{$tipe}" : '') . ($status ? "-{$status}" : '') . ".pdf");
+    }
+
+    public function previewKamarPdf(Request $request)
+    {
+        $tipe = $request->get('tipe');
+        $status = $request->get('status');
+
+        $query = Kamar::query();
+
+        if ($tipe) {
+            $query->where('tipe', $tipe);
+        }
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        $kamar = $query->latest()->get();
+
+        $pdf = Pdf::loadView('admin.laporan.export.kamar-pdf', [
+            'kamar' => $kamar,
+            'tipe' => $tipe,
+            'status' => $status,
+        ]);
+
+        return $pdf->stream("laporafilename: n-kamar" . ($tipe ? "-{$tipe}" : '') . ($status ? "-{$status}" : '') . ".pdf");
     }
 
     public function exportKamarExcel(Request $request)
@@ -225,6 +270,26 @@ class LaporanController extends Controller
         ]);
 
         return $pdf->download('laporan-penghuni.pdf');
+    }
+
+    public function previewPenghuniPdf(Request $request)
+    {
+        // Ambil semua penghuni, beserta kamar dan transaksi terakhir
+        $penghuni = User::where('role', 'penghuni')
+            ->with([
+                'kamar',
+                'transaksi' => function ($q) {
+                    $q->orderByDesc('id')->limit(1); // transaksi terakhir
+                }
+            ])
+            ->latest()
+            ->get();
+
+        $pdf = Pdf::loadView('admin.laporan.export.penghuni-pdf', [
+            'penghuni' => $penghuni,
+        ]);
+
+        return $pdf->stream('laporan-penghuni.pdf');
     }
 
     public function exportPenghuniExcel(Request $request)

@@ -44,14 +44,17 @@ Route::middleware([AdminMiddleware::class])->group(function () {
         //Export Laporan
         Route::prefix('transaksi/export')->name('transaksi.export.')->group(function () {
             Route::get('pdf', [LaporanController::class, 'exportTransaksiPdf'])->name('pdf');
+            Route::get('preview-pdf', [LaporanController::class, 'previewTransaksiPdf'])->name('preview-pdf');
             Route::get('excel', [LaporanController::class, 'exportTransaksiExcel'])->name('excel');
         });
         Route::prefix('kamar/export')->name('kamar.export.')->group(function () {
             Route::get('pdf', [LaporanController::class, 'exportKamarPdf'])->name('pdf');
+            Route::get('preview-pdf', [LaporanController::class, 'previewKamarPdf'])->name('preview-pdf');
             Route::get('excel', [LaporanController::class, 'exportKamarExcel'])->name('excel');
         });
         Route::prefix('penghuni/export')->name('penghuni.export.')->group(function () {
             Route::get('pdf', [LaporanController::class, 'exportPenghuniPdf'])->name('pdf');
+            Route::get('preview-pdf', [LaporanController::class, 'previewPenghuniPdf'])->name('preview-pdf');
             Route::get('excel', [LaporanController::class, 'exportPenghuniExcel'])->name('excel');
         });
     });

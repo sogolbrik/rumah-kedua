@@ -11,10 +11,10 @@
         </div>
         <div>
             <a href="{{ route('laporan.index') }}"
-                    class="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-slate-200 transition-all hover:bg-slate-50 hover:shadow">
-                    <i class="fa-solid fa-arrow-left"></i>
-                    Kembali
-                </a>
+                class="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-slate-200 transition-all hover:bg-slate-50 hover:shadow">
+                <i class="fa-solid fa-arrow-left"></i>
+                Kembali
+            </a>
         </div>
     </div>
 
@@ -32,6 +32,13 @@
     
         exportPdf() {
             const url = new URL('{{ route('laporan.transaksi.export.pdf') }}', window.location.origin);
+            url.searchParams.set('tanggal_mulai', this.tanggalMulai);
+            url.searchParams.set('tanggal_selesai', this.tanggalSelesai);
+            window.open(url.toString(), '_blank');
+        },
+    
+        previewPdf() {
+            const url = new URL('{{ route('laporan.transaksi.export.preview-pdf') }}', window.location.origin);
             url.searchParams.set('tanggal_mulai', this.tanggalMulai);
             url.searchParams.set('tanggal_selesai', this.tanggalSelesai);
             window.open(url.toString(), '_blank');
@@ -86,6 +93,13 @@
 
                 <!-- Kanan: Tombol Export -->
                 <div class="flex flex-wrap gap-3">
+                    <!-- Tombol Preview PDF -->
+                    <button type="button" x-on:click="previewPdf()"
+                        class="inline-flex items-center gap-2 px-4 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition">
+                        <i class="fas fa-file-pdf"></i>
+                        Preview PDF
+                    </button>
+
                     <!-- Tombol Download PDF -->
                     <button type="button" x-on:click="exportPdf()"
                         class="inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition">
