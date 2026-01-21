@@ -1,158 +1,189 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 
 <head>
     <meta charset="utf-8">
-    <title>Laporan Kamar</title>
+    <title>Laporan Kamar - RumahKedua</title>
     <style>
-        /* Font dasar - DOMPDF mendukung font sans-serif umum */
         body {
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 12px;
-            color: #333;
-            line-height: 1.5;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-size: 13px;
+            color: #5f6c7b;
+            background-color: #fffffe;
+            line-height: 1.6;
             margin: 0;
-            padding: 20px;
+            padding: 40px;
         }
 
-        /* Header laporan */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
         .header {
-            text-align: center;
-            margin-bottom: 24px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid #2c3e50;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #3da9fc;
+            padding-bottom: 20px;
         }
 
-        .header h1 {
-            font-size: 20px;
-            font-weight: 700;
-            color: #2c3e50;
+        .header-title h1 {
+            font-size: 28px;
+            font-weight: 800;
+            color: #094067;
             margin: 0;
-            letter-spacing: -0.5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .period {
-            font-size: 12px;
-            color: #555;
-            margin-top: 6px;
-            font-weight: 500;
+            font-size: 13px;
+            color: #5f6c7b;
+            margin-top: 5px;
         }
 
-        /* Tabel modern */
+        .period b {
+            color: #3da9fc;
+        }
+
+        .report-info {
+            text-align: right;
+            font-size: 12px;
+            color: #90b4ce;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 12px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-top: 20px;
         }
 
-        th {
-            background-color: #3498db;
-            color: white;
+        thead th {
+            background-color: #094067;
+            color: #fffffe;
             font-weight: 600;
             text-align: left;
-            padding: 10px 12px;
-            font-size: 12px;
-        }
-
-        td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #e0e0e0;
-            vertical-align: top;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        /* Status badge */
-        .status-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
+            padding: 15px 12px;
             text-transform: uppercase;
+            font-size: 11px;
             letter-spacing: 0.5px;
         }
 
-        .status-terisi {
-            background-color: #e74c3c;
-            color: white;
+        tbody tr:nth-child(even) {
+            background-color: #f8fbfd;
+        }
+
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #d8eefe;
+            vertical-align: middle;
+        }
+
+        .kode-kamar {
+            font-weight: 700;
+            color: #3da9fc;
+        }
+
+        .harga {
+            font-weight: 700;
+            color: #094067;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            text-align: center;
+            min-width: 90px;
         }
 
         .status-tersedia {
-            background-color: #2ecc71;
-            color: white;
+            background-color: #3da9fc;
+            color: #fffffe;
+        }
+
+        .status-terisi {
+            background-color: #ef4565;
+            color: #fffffe;
         }
 
         .status-default {
-            background-color: #95a5a6;
-            color: white;
+            background-color: #5f6c7b;
+            color: #fffffe;
         }
 
-        /* Harga — lebih menonjol */
-        .harga {
-            font-weight: 700;
-            color: #2c3e50;
-        }
-
-        /* Footer halaman (opsional) */
         .footer {
-            margin-top: 30px;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #90b4ce;
             text-align: center;
-            font-size: 10px;
-            color: #7f8c8d;
+            font-size: 11px;
+            color: #90b4ce;
         }
 
-        /* Garis pemisah */
-        hr {
-            border: 0;
-            border-top: 1px solid #ecf0f1;
-            margin: 20px 0;
+        .footer b {
+            color: #094067;
         }
     </style>
 </head>
 
 <body>
-    <div class="header">
-        <h1>Laporan Kamar</h1>
-        <div class="period">Tipe: {{ $tipe ?? 'Semua' }} | Status: {{ $status ?? 'Semua' }}</div>
-    </div>
+    <div class="container">
+        <div class="header">
+            <div class="header-title">
+                <h1>Laporan Kamar</h1>
+                <div class="period">
+                    Tipe: <b>{{ $tipe ?? 'Semua' }}</b> | Status: <b>{{ $status ?? 'Semua' }}</b>
+                </div>
+            </div>
+            <div class="report-info">
+                RumahKedua Asset Management<br>
+                Generated: {{ now()->translatedFormat('d M Y') }}
+            </div>
+        </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Kode Kamar</th>
-                <th>Tipe</th>
-                <th>Lebar</th>
-                <th>Harga</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($kamar as $item)
+        <table>
+            <thead>
                 <tr>
-                    <td>{{ $item->kode_kamar ?? '—' }}</td>
-                    <td>{{ $item->tipe ?? '—' }}</td>
-                    <td>{{ $item->lebar ? $item->lebar . ' m' : '—' }}</td>
-                    <td class="harga">Rp {{ number_format($item->harga, 0, ',', '.') }}</td>
-                    <td>
-                        @if ($item->status == 'Tersedia')
-                            <span class="status-badge status-tersedia">Tersedia</span>
-                        @elseif($item->status == 'Terisi')
-                            <span class="status-badge status-terisi">Terisi</span>
-                        @else
-                            <span class="status-badge status-default">Tidak Diketahui</span>
-                        @endif
-                    </td>
+                    <th>Kode Kamar</th>
+                    <th>Tipe Kamar</th>
+                    <th>Lebar</th>
+                    <th>Harga Sewa</th>
+                    <th style="text-align: center;">Status</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach ($kamar as $item)
+                    <tr>
+                        <td class="kode-kamar">{{ $item->kode_kamar ?? '—' }}</td>
+                        <td style="font-weight: 500;">{{ $item->tipe ?? '—' }}</td>
+                        <td>{{ $item->lebar ? $item->lebar . ' m' : '—' }}</td>
+                        <td class="harga">Rp {{ number_format($item->harga, 0, ',', '.') }}</td>
+                        <td style="text-align: center;">
+                            @if ($item->status == 'Tersedia')
+                                <span class="status-badge status-tersedia">Tersedia</span>
+                            @elseif($item->status == 'Terisi')
+                                <span class="status-badge status-terisi">Terisi</span>
+                            @else
+                                <span class="status-badge status-default">Unknown</span>
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
 
-    <div class="footer">
-        Dicetak pada: {{ now()->translatedFormat('d F Y, H:i') }} | RumahKedua Admin Panel
+        <div class="footer">
+            Dokumen ini dihasilkan secara otomatis oleh <b>RumahKedua Admin Panel</b> pada {{ now()->translatedFormat('d F Y, H:i') }}
+        </div>
     </div>
 </body>
 
