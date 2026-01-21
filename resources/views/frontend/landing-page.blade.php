@@ -4,18 +4,18 @@
 @section('frontend-main')
 
     {{-- 1. HERO SECTION: Premium Mesh Gradient & Noise --}}
-    <header class="relative min-h-[90vh] flex items-center pt-25 overflow-hidden bg-[#fffffe]">
+    <header class="relative min-h-screen flex items-center py-16 md:py-20 lg:pt-32 overflow-hidden bg-[#fffffe]">
         <div class="absolute inset-0 z-0">
-            <div class="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#90b4ce]/20 rounded-full blur-[120px] animate-pulse"></div>
-            <div class="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-[#3da9fc]/10 rounded-full blur-[120px]"></div>
+            <div class="absolute top-[-5%] right-[-10%] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-[#90b4ce]/20 rounded-full blur-[80px] md:blur-[120px] animate-pulse"></div>
+            <div class="absolute bottom-[-5%] left-[-10%] w-[350px] md:w-[600px] h-[350px] md:h-[600px] bg-[#3da9fc]/10 rounded-full blur-[80px] md:blur-[120px]"></div>
             <div class="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
         </div>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
 
-                <div class="lg:col-span-7 space-y-8 animate-fade-in-up">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#90b4ce]/20 border border-[#90b4ce]/30 text-[#094067] text-sm font-medium">
+                <div class="lg:col-span-7 space-y-6 md:space-y-8 animate-fade-in-up text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#90b4ce]/20 border border-[#90b4ce]/30 text-[#094067] text-xs md:text-sm font-medium">
                         <span class="relative flex h-2 w-2">
                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#3da9fc] opacity-75"></span>
                             <span class="relative inline-flex rounded-full h-2 w-2 bg-[#3da9fc]"></span>
@@ -23,42 +23,45 @@
                         Hunian Modern Generasi Baru
                     </div>
 
-                    <h1 class="text-5xl md:text-7xl font-extrabold text-[#094067] leading-[1.1] tracking-tight">
+                    <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-[#094067] leading-[1.1] tracking-tight">
                         Definisi Baru <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#3da9fc] to-[#90b4ce]">Kenyamanan</span> Menginap.
                     </h1>
 
-                    <p class="text-xl text-[#5f6c7b] leading-relaxed max-w-2xl">
+                    <p class="text-lg md:text-xl text-[#5f6c7b] leading-relaxed max-w-2xl mx-auto lg:mx-0">
                         Lebih dari sekadar tempat tinggal. RumahKedua menggabungkan estetika modern, teknologi pintar, dan komunitas yang hangat dalam satu ekosistem hunian.
                     </p>
 
-                    <div class="flex flex-wrap gap-5">
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 md:gap-5">
                         <a href="{{ route('booking') }}"
-                            class="group relative px-8 py-4 bg-[#094067] text-[#fffffe] rounded-2xl font-bold transition-all hover:shadow-[0_20px_50px_rgba(61,169,252,0.3)] hover:-translate-y-1 overflow-hidden">
+                            class="w-full sm:w-auto group relative px-8 py-4 bg-[#094067] text-[#fffffe] rounded-2xl font-bold transition-all hover:shadow-[0_20px_50px_rgba(61,169,252,0.3)] hover:-translate-y-1 overflow-hidden text-center">
                             <div class="absolute inset-0 w-full h-full bg-[#3da9fc] opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                            <span class="relative z-10 flex items-center gap-2">
+                            <span class="relative z-10 flex items-center justify-center gap-2">
                                 Pesan Kamar Sekarang <i class="fas fa-arrow-right text-sm"></i>
                             </span>
                         </a>
 
-                        <a href="{{ route('galeri-kamar') }}" class="px-8 py-4 bg-[#fffffe] text-[#094067] border border-[#90b4ce]/50 rounded-2xl font-bold hover:bg-[#90b4ce]/10 transition-all">
+                        <a href="{{ route('galeri-kamar') }}"
+                            class="w-full sm:w-auto px-8 py-4 bg-[#fffffe] text-[#094067] border border-[#90b4ce]/50 rounded-2xl font-bold hover:bg-[#90b4ce]/10 transition-all text-center">
                             Eksplor Galeri
                         </a>
                     </div>
                 </div>
 
-                <div class="lg:col-span-5 relative">
-                    <div class="relative z-10 rounded-[2.5rem] overflow-hidden shadow-2xl transform lg:rotate-3 hover:rotate-0 transition-transform duration-700 border-8 border-[#fffffe]">
+                <div class="lg:col-span-5 relative mt-10 lg:mt-0">
+                    <div
+                        class="relative z-10 rounded-[2rem] md:rounded-[2.5rem] overflow-hidden shadow-2xl transform rotate-0 lg:rotate-3 hover:rotate-0 transition-transform duration-700 border-4 md:border-8 border-[#fffffe] max-w-[500px] mx-auto lg:max-w-none">
                         <img src="{{ asset('assets/image/landing-page/hero.svg') }}" alt="Premium Interior" class="w-full h-full object-cover">
                     </div>
 
-                    <div class="absolute -bottom-10 -left-10 z-20 bg-[#fffffe]/90 backdrop-blur-xl p-6 rounded-3xl shadow-xl border border-[#90b4ce]/20 animate-bounce-slow">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-[#ef4565] rounded-2xl flex items-center justify-center text-[#fffffe] shadow-lg shadow-[#ef4565]/20">
-                                <i class="fas fa-check-double text-xl"></i>
+                    <div
+                        class="absolute -bottom-6 -left-4 md:-bottom-10 md:-left-10 z-20 bg-[#fffffe]/90 backdrop-blur-xl p-4 md:p-6 rounded-2xl md:rounded-3xl shadow-xl border border-[#90b4ce]/20 animate-bounce-slow">
+                        <div class="flex items-center gap-3 md:gap-4">
+                            <div class="w-10 h-10 md:w-12 md:h-12 bg-[#ef4565] rounded-xl md:rounded-2xl flex items-center justify-center text-[#fffffe] shadow-lg shadow-[#ef4565]/20">
+                                <i class="fas fa-check-double text-lg md:text-xl"></i>
                             </div>
                             <div>
-                                <p class="text-sm text-[#5f6c7b] font-medium">Konsep Hunian</p>
-                                <p class="text-lg font-bold text-[#094067]">Privasi & Kenyamanan</p>
+                                <p class="text-[10px] md:text-sm text-[#5f6c7b] font-medium uppercase tracking-wider">Konsep Hunian</p>
+                                <p class="text-sm md:text-lg font-bold text-[#094067]">Privasi & Kenyamanan</p>
                             </div>
                         </div>
                     </div>
@@ -338,7 +341,7 @@
                         </div>
                     </div>
 
-                    <a href="http://maps.google.com" target="_blank"
+                    <a href="https://maps.app.goo.gl/eiYrueVEhWNgF62Y6" target="_blank"
                         class="inline-flex items-center gap-3 px-8 py-4 bg-[#3da9fc] text-[#fffffe] rounded-2xl font-bold hover:shadow-[0_15px_30px_rgba(61,169,252,0.3)] hover:-translate-y-1 transition-all">
                         Petunjuk Arah <i class="fas fa-map-marked-alt text-sm"></i>
                     </a>

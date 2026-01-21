@@ -30,19 +30,19 @@ class UserSeeder extends Seeder
 
         User::create([
             'id_kamar' => 2,
-            'name' => 'Penghuni-2',
-            'email' => 'penghuni2@kos.com',
-            'password' => bcrypt('penghuni2123'),
+            'name' => 'John Doe',
+            'email' => 'john@kos.com',
+            'password' => bcrypt('john123'),
             'role' => 'penghuni',
-            'telepon' => null,
+            'telepon' => 6287870327957,
             'tanggal_masuk' => date('Y-m-d'),
         ]);
 
         User::create([
             'id_kamar' => 1,
-            'name' => 'Penghuni',
-            'email' => 'penghuni@kos.com',
-            'password' => bcrypt('penghuni123'),
+            'name' => 'Jane Doe',
+            'email' => 'jane@kos.com',
+            'password' => bcrypt('jane123'),
             'role' => 'penghuni',
             'telepon' => null,
             'tanggal_masuk' => date('Y-m-d'),

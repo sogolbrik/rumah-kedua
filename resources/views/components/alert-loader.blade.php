@@ -43,21 +43,8 @@
         <div class="absolute w-full h-full rounded-full border-[3px] border-transparent border-t-[#90b4ce]/80 border-r-[#90b4ce]/40" style="animation: spin-slow 4s linear infinite;">
         </div>
 
-        <div class="absolute w-28 h-28 rounded-full border-[4px] border-transparent border-l-[#3da9fc] border-b-[#3da9fc]"
-            style="animation: spin-reverse-fast 1.5s cubic-bezier(0.55, 0.055, 0.675, 0.19) infinite;">
-        </div>
-
         <div class="absolute w-10 h-10 bg-[#67e8f9] rounded-full flex items-center justify-center shadow-lg shadow-[#67e8f9]/50" style="animation: pulse-core 2s infinite ease-in-out;">
-            {{-- <svg class="w-6 h-6 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8v4a4 4 0 0 0-4 4H4z" />
-            </svg> --}}
         </div>
-    </div>
-
-    <div class="mt-8 flex flex-col items-center">
-        <h2 class="text-lg font-extrabold tracking-[0.2em] uppercase text-[#094067]">Memuat</h2>
-        <p class="text-xs font-medium text-[#90b4ce] mt-1">Menyiapkan Halaman...</p>
     </div>
 </div>
 

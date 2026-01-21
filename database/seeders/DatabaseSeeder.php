@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
 
         $this->command->info('Database seeded successfully!');
         $this->command->info('Admin credentials: admin@kos.com / admin123');
-        $this->command->info('Penghuni credentials: penghuni@kos.com / penghuni123');
+        $this->command->info('Penghuni credentials: john@kos.com / john123');
         $this->command->info('User credentials: sogol@kos.com / sogol123');
     }
 }

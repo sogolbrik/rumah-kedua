@@ -58,7 +58,7 @@
                                         </span>
                                         <span class="text-[10px] text-[#5f6c7b] italic">{{ $item->created_at->diffForHumans() }}</span>
                                     </div>
-                                    <h3 class="font-bold text-[#094067] group-hover:text-[#f59f00] text-sm transition-colors line-clamp-1">
+                                    <h3 class="font-bold text-[#094067] text-sm transition-colors line-clamp-1">
                                         {{ $item->judul }}
                                     </h3>
                                     <p class="mt-1 text-xs text-[#5f6c7b] leading-relaxed line-clamp-2 pr-4">
