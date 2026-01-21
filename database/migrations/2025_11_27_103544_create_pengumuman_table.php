@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('pengumumen', function (Blueprint $table) {
             $table->id();
             $table->string('judul');
-            $table->string('kategori');
+            $table->enum('kategori', ['Umum', 'Penting', 'Perbaikan', 'Kegiatan']);
             $table->text('isi');
             $table->boolean('highlight')->default(false);
             $table->timestamps();

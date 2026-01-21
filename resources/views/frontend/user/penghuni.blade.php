@@ -300,7 +300,7 @@
                     <p class="text-[#90b4ce] text-sm">Tim kami siap membantu kendala teknis maupun administratif Anda.</p>
                 </div>
                 <div class="p-10 space-y-4">
-                    @foreach ([['icon' => 'fa-brands fa-whatsapp', 'color' => 'text-[#3da9fc]', 'bg' => 'bg-[#3da9fc]/10', 'label' => 'WhatsApp Support', 'value' => '+62 858-7032-7957', 'link' => 'https://wa.me/6285870327957'], ['icon' => 'fa-envelope', 'color' => 'text-[#3da9fc]', 'bg' => 'bg-[#3da9fc]/10', 'label' => 'Official Email', 'value' => 'care@rumahkedua.id', 'link' => 'mailto:rumahkedua@gmail.com']] as $item)
+                    @foreach ([['icon' => 'fa-brands fa-whatsapp', 'color' => 'text-[#3da9fc]', 'bg' => 'bg-[#3da9fc]/10', 'label' => 'WhatsApp Support', 'value' => '+' . $pengaturan->no_telepon ?? '6285870327957', 'link' => 'https://wa.me/' . $pengaturan->no_telepon ?? '6285870327957'], ['icon' => 'fa-envelope', 'color' => 'text-[#3da9fc]', 'bg' => 'bg-[#3da9fc]/10', 'label' => 'Official Email', 'value' => $pengaturan->email ?? 'official@rumahkedua.id', 'link' => 'mailto:' . ($pengaturan->email ?? 'official@rumahkedua.id')]] as $item)
                         <a href="{{ $item['link'] }}" class="flex items-center gap-5 p-4 rounded-2xl border border-[#90b4ce]/20 hover:border-[#3da9fc] hover:bg-[#3da9fc]/5 transition-all group">
                             <div class="w-12 h-12 {{ $item['bg'] }} {{ $item['color'] }} rounded-xl flex items-center justify-center text-xl shadow-sm">
                                 <i class="fa {{ $item['icon'] }}"></i>

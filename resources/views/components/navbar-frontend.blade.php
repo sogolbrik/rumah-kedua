@@ -16,12 +16,24 @@
         <div class="relative flex justify-between items-center h-12">
             <a href="{{ route('landing-page') }}" class="flex items-center gap-3 group">
                 <div class="relative w-10 h-10 flex items-center justify-center">
-                    <div class="absolute inset-0 bg-[#094067] rounded-2xl rotate-6 group-hover:rotate-0 group-hover:bg-[#3da9fc] transition-all duration-500"></div>
-                    <i class="fas fa-home text-[#fffffe] text-sm relative z-10"></i>
+                    @if ($pengaturan->logo)
+                        <img src="{{ Storage::url($pengaturan->logo) }}" alt="{{ $pengaturan->nama_kos }}-logo" class="w-[120%] h-[120%] object-contain rounded-lg">
+                    @else
+                        <div class="absolute inset-0 bg-[#094067] rounded-2xl rotate-6 group-hover:rotate-0 group-hover:bg-[#3da9fc] transition-all duration-500"></div>
+                        <i class="fas fa-home text-[#fffffe] text-sm relative z-10"></i>
+                    @endif
                 </div>
                 <div class="flex flex-col">
                     <span class="text-lg font-black tracking-tight text-[#094067] leading-none">
-                        RUMAH<span class="text-[#3da9fc]">KEDUA</span>
+                        @php
+                            $raw = $pengaturan->nama_kos ?? 'RumahKedua';
+                            $nama = strtoupper(trim($raw));
+                            // Ambil 5 huruf pertama dan 5 huruf kedua
+                            $kata1 = substr($nama, 0, 5);
+                            $kata2 = substr($nama, 5, 5);
+                        @endphp
+
+                        {!! $kata1 !!}<span class="text-[#3da9fc]">{!! $kata2 !!}</span>
                     </span>
                     <span class="text-[9px] font-bold uppercase tracking-[0.2em] text-[#5f6c7b]">Premium Living</span>
                 </div>

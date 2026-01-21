@@ -137,6 +137,7 @@
                                     class="w-full rounded-xl border border-slate-200 py-3 pl-10 pr-4 text-sm font-medium text-slate-700 outline-none transition-all focus:border-slate-500 focus:ring-4 focus:ring-slate-500/10 placeholder:text-slate-300"
                                     placeholder="Contoh: Kos Amanah">
                             </div>
+                            <small class="text-slate-400 mx-2 font-medium">wajib 2 kata, per kata 5 huruf, jangan ada spasi</small>
                         </div>
 
                         <div class="space-y-2">

@@ -36,7 +36,6 @@ class MidtransService
                 'redirect_url' => null
             ];
         } catch (Exception $e) {
-            // Kembalikan pesan yang bisa ditampilkan ke user
             return [
                 'success' => false,
                 'message' => 'Gagal terhubung ke Midtrans. Coba lagi nanti'
@@ -50,15 +49,15 @@ class MidtransService
             !isset($transactionData['transaction_details']['gross_amount']) ||
             $transactionData['transaction_details']['gross_amount'] <= 0
         ) {
-            throw new \Exception('Gross amount harus lebih dari 0');
+            throw new Exception('Gross amount harus lebih dari 0');
         }
 
         if (empty($transactionData['transaction_details']['order_id'])) {
-            throw new \Exception('Order ID tidak boleh kosong');
+            throw new Exception('Order ID tidak boleh kosong');
         }
 
         if (empty($transactionData['customer_details']['first_name'])) {
-            throw new \Exception('Customer name is required');
+            throw new Exception('Customer name is required');
         }
     }
 

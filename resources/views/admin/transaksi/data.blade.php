@@ -189,130 +189,111 @@
     <!-- Modal Detail Transaksi -->
     <div id="detailModal" class="fixed inset-0 z-50 overflow-y-auto transition-all duration-300 ease-out opacity-0 pointer-events-none">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <!-- Backdrop dengan blur -->
-            <div id="modalBackdrop" class="fixed inset-0 transition-all duration-300 ease-out bg-gray-900/60 backdrop-blur-sm" onclick="hideDetailModal()"></div>
+            <div id="modalBackdrop" class="fixed inset-0 transition-all duration-300 ease-out bg-[#094067]/60 backdrop-blur-sm" onclick="hideDetailModal()"></div>
 
-            <!-- Modal Content -->
             <div id="modalContent"
-                class="relative inline-block w-full max-w-4xl px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all duration-300 ease-out transform scale-95 translate-y-4 bg-white rounded-2xl shadow-2xl sm:my-8 sm:align-middle sm:p-6">
-                <!-- Header Modal -->
-                <div class="flex items-center justify-between mb-6">
-                    <div class="flex items-center gap-3">
-                        <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-100 text-blue-600">
-                            <i class="fa-solid fa-receipt text-lg"></i>
+                class="relative inline-block w-full max-w-4xl overflow-hidden text-left align-bottom transition-all duration-300 ease-out transform scale-95 translate-y-4 bg-[#fffffe] rounded-3xl shadow-2xl sm:my-8 sm:align-middle">
+
+                <div class="px-8 py-7 border-b border-[#90b4ce]/20 flex items-center justify-between bg-[#fffffe]">
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center justify-center w-12 h-12 rounded-2xl bg-[#3da9fc] text-[#fffffe] shadow-lg shadow-[#3da9fc]/20">
+                            <i class="fa-solid fa-receipt text-xl"></i>
                         </div>
                         <div>
-                            <h3 class="text-xl font-bold text-slate-900" id="modalKodeTransaksi">Detail Transaksi</h3>
-                            <p class="text-sm text-slate-600">Informasi lengkap transaksi</p>
+                            <h3 class="text-2xl font-bold text-[#094067]" id="modalKodeTransaksi">Detail Transaksi</h3>
+                            <p class="text-sm font-medium text-[#5f6c7b] tracking-wide" id="modalKode">TRX-ID-XXXX</p>
                         </div>
                     </div>
-                    <button type="button" onclick="hideDetailModal()" class="p-2 text-slate-400 hover:text-slate-600 transition-colors rounded-lg hover:bg-slate-100">
+                    <button type="button" onclick="hideDetailModal()" class="p-2 text-[#5f6c7b] hover:text-[#094067] transition-all rounded-xl hover:bg-[#90b4ce]/10">
                         <i class="fa-solid fa-times text-xl"></i>
                     </button>
                 </div>
 
-                <!-- Content Modal -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Informasi Utama -->
-                    <div class="space-y-4">
-                        <!-- Informasi Transaksi -->
-                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 shadow-sm">
-                            <h4 class="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                                <i class="fa-solid fa-info-circle text-blue-600"></i>
-                                Informasi Transaksi
-                            </h4>
-                            <div class="space-y-3">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-slate-600">Kode Transaksi:</span>
-                                    <span id="modalKode" class="font-medium text-slate-900"></span>
+                <div class="grid grid-cols-1 lg:grid-cols-12">
+
+                    <div class="lg:col-span-5 p-8 bg-[#90b4ce]/5 border-r border-[#90b4ce]/10 space-y-8">
+
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-2 text-[#094067]">
+                                <i class="fa-solid fa-user-circle text-xs"></i>
+                                <span class="text-[11px] font-bold uppercase tracking-widest">Informasi Pelanggan</span>
+                            </div>
+                            <div class="bg-[#fffffe] p-5 rounded-2xl border border-[#90b4ce]/30 shadow-sm flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-full bg-[#3da9fc]/10 text-[#3da9fc] flex items-center justify-center font-bold text-lg border border-[#3da9fc]/20">
+                                    <i class="fa-solid fa-user"></i>
                                 </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-slate-600">Tanggal Pembayaran:</span>
-                                    <span id="modalTanggal" class="font-medium text-slate-900"></span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-slate-600">Metode Pembayaran:</span>
-                                    <span id="modalMetode" class="font-medium text-slate-900"></span>
+                                <div>
+                                    <p class="text-[11px] text-[#5f6c7b] uppercase font-bold tracking-tighter">Nama Pelanggan</p>
+                                    <p id="modalPelanggan" class="font-bold text-[#094067] text-lg leading-tight"></p>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Informasi Pelanggan -->
-                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 shadow-sm">
-                            <h4 class="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                                <i class="fa-solid fa-user text-cyan-600"></i>
-                                Informasi Pelanggan
-                            </h4>
-                            <div class="space-y-3">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-slate-600">Nama:</span>
-                                    <span id="modalPelanggan" class="font-medium text-slate-900"></span>
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-2 text-[#094067]">
+                                <i class="fa-solid fa-door-open text-xs"></i>
+                                <span class="text-[11px] font-bold uppercase tracking-widest">Detail Hunian</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-[#fffffe] p-4 rounded-2xl border border-[#90b4ce]/30 shadow-sm">
+                                    <p class="text-[10px] text-[#5f6c7b] uppercase font-bold mb-1">Kamar</p>
+                                    <p id="modalKamar" class="text-lg font-bold text-[#094067]"></p>
                                 </div>
+                                <div class="bg-[#fffffe] p-4 rounded-2xl border border-[#90b4ce]/30 shadow-sm">
+                                    <p class="text-[10px] text-[#5f6c7b] uppercase font-bold mb-1">Durasi</p>
+                                    <p id="modalDurasi" class="text-lg font-bold text-[#094067]"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-[#fffffe] rounded-2xl p-5 border border-[#90b4ce]/30 space-y-4 shadow-sm">
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-[#5f6c7b]">Tgl Pembayaran</span>
+                                <span id="modalTanggal" class="font-bold text-[#094067]"></span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-[#5f6c7b]">Metode</span>
+                                <span id="modalMetode" class="px-3 py-1 rounded-lg bg-[#3da9fc] text-[#fffffe] font-bold text-[10px] uppercase"></span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Detail Informasi -->
-                    <div class="space-y-6">
-                        <!-- Total Bayar -->
-                        <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-4 border border-emerald-200 shadow-sm">
-                            <div class="flex items-center gap-3">
-                                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600">
-                                    <i class="fa-solid fa-money-bill-wave"></i>
+                    <div class="lg:col-span-7 p-8 bg-[#fffffe] space-y-8">
+
+                        <div class="relative overflow-hidden bg-[#094067] rounded-3xl p-8 shadow-xl shadow-[#094067]/20">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-[#3da9fc]/10 rounded-full -mr-16 -mt-16"></div>
+                            <div class="relative z-10">
+                                <p class="text-[#90b4ce] text-sm font-medium mb-1">Total yang dibayar</p>
+                                <h2 id="modalTotal" class="text-4xl lg:text-5xl font-black text-[#fffffe] tracking-tight"></h2>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center gap-2 text-[#094067]">
+                                    <i class="fa-solid fa-shield-halved text-xs"></i>
+                                    <span class="text-[11px] font-bold uppercase tracking-widest">Status Pembayaran</span>
                                 </div>
-                                <div>
-                                    <p class="text-sm text-emerald-700 font-medium">Total Bayar</p>
-                                    <p id="modalTotal" class="text-2xl font-bold text-emerald-900"></p>
+                                <div class="h-2 w-2 rounded-full bg-[#ef4565] animate-pulse"></div>
+                            </div>
+
+                            <div class="p-6 rounded-2xl bg-[#fffffe] border-2 border-dashed border-[#90b4ce]/40 flex items-center justify-center min-h-[80px]">
+                                <div id="modalStatus" class="w-full flex justify-center text-center font-bold uppercase tracking-widest text-[#094067]">
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Status Pembayaran -->
-                        <div>
-                            <h4 class="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                                <i class="fa-solid fa-circle-info text-amber-600"></i>
-                                Status Pembayaran
-                            </h4>
-                            <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 shadow-sm">
-                                <div id="modalStatus" class="flex items-center justify-between">
-                                    <!-- Status akan diisi oleh JavaScript -->
-                                </div>
-                            </div>
+                        <div id="modalAksi" class="pt-4">
                         </div>
 
-                        <!-- Informasi Kamar -->
-                        <div>
-                            <h4 class="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                                <i class="fa-solid fa-door-open text-purple-600"></i>
-                                Informasi Kamar
-                            </h4>
-                            <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 shadow-sm">
-                                <div class="space-y-3">
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-slate-600">Kamar:</span>
-                                        <span id="modalKamar" class="font-medium text-slate-900"></span>
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-slate-600">Durasi:</span>
-                                        <span id="modalDurasi" class="font-medium text-slate-900"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Aksi Tambahan -->
-                        <div id="modalAksi" class="bg-blue-50 rounded-xl p-4 border border-blue-200 shadow-sm">
-                            <!-- Aksi tambahan akan diisi oleh JavaScript -->
-                        </div>
                     </div>
                 </div>
 
-                <!-- Footer Modal -->
-                <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-slate-200">
+                <div class="px-8 py-6 bg-[#90b4ce]/5 border-t border-[#90b4ce]/10 flex justify-end">
                     <button type="button" onclick="hideDetailModal()"
-                        class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-all duration-200 hover:shadow-sm">
-                        <i class="fa-solid fa-times mr-2"></i>
-                        Tutup
+                        class="px-6 py-2.5 text-sm font-bold text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:text-slate-900 transition-all duration-200 shadow-sm flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left text-xs"></i>
+                        Kembali
                     </button>
                 </div>
             </div>

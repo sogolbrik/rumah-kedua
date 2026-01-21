@@ -201,163 +201,119 @@
     <!-- Modal Detail User -->
     <div id="detailModal" class="fixed inset-0 z-50 overflow-y-auto transition-all duration-300 ease-out opacity-0 pointer-events-none">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <!-- Backdrop dengan blur -->
-            <div id="modalBackdrop" class="fixed inset-0 transition-all duration-300 ease-out bg-gray-900/60 backdrop-blur-sm" onclick="hideDetailModal()"></div>
+            <div id="modalBackdrop" class="fixed inset-0 transition-all duration-300 ease-out bg-slate-900/70 backdrop-blur-md" onclick="hideDetailModal()"></div>
 
-            <!-- Modal Content -->
             <div id="modalContent"
-                class="relative inline-block w-full max-w-4xl px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all duration-300 ease-out transform scale-95 translate-y-4 bg-white rounded-2xl shadow-2xl sm:my-8 sm:align-middle sm:p-6">
-                <!-- Header Modal -->
-                <div class="flex items-center justify-between mb-6">
-                    <div class="flex items-center gap-3">
-                        <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-100 text-blue-600">
-                            <i class="fa-solid fa-user text-lg"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold text-slate-900" id="modalNamaUser">Detail User</h3>
-                            <p class="text-sm text-slate-600">Informasi lengkap user</p>
-                        </div>
-                    </div>
-                    <button type="button" onclick="hideDetailModal()" class="p-2 text-slate-400 hover:text-slate-600 transition-colors rounded-lg hover:bg-slate-100">
+                class="relative inline-block w-full max-w-5xl overflow-hidden text-left align-bottom transition-all duration-300 ease-out transform scale-95 translate-y-4 bg-slate-50 rounded-3xl shadow-2xl sm:my-8 sm:align-middle">
+
+                <div class="absolute right-4 top-4 z-10">
+                    <button type="button" onclick="hideDetailModal()" class="p-2 text-slate-400 hover:text-slate-600 transition-all rounded-full hover:bg-white shadow-sm">
                         <i class="fa-solid fa-times text-xl"></i>
                     </button>
                 </div>
 
-                <!-- Content Modal -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Kolom 1: Foto Profil & KTP -->
-                    <div class="space-y-4">
-                        <!-- Foto Profil -->
-                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 shadow-sm">
-                            <h4 class="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                                <i class="fa-solid fa-user text-blue-600"></i>
-                                Foto Profil
-                            </h4>
-                            <div class="aspect-w-1 aspect-h-1 bg-slate-100 rounded-xl overflow-hidden border border-slate-200 shadow-sm">
-                                <img id="modalAvatar" src="" alt="Foto Profil" class="w-full h-48 object-cover transition-transform duration-300 hover:scale-105">
-                            </div>
-                        </div>
-
-                        <!-- Foto KTP -->
-                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 shadow-sm">
-                            <h4 class="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                                <i class="fa-solid fa-id-card text-amber-600"></i>
-                                Foto KTP
-                            </h4>
-                            <div class="aspect-w-16 aspect-h-9 bg-slate-100 rounded-xl overflow-hidden border border-slate-200 shadow-sm">
-                                <img id="modalKtp" src="" alt="Foto KTP" class="w-full h-32 object-cover transition-transform duration-300 hover:scale-105">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Kolom 2: Informasi Utama -->
-                    <div class="space-y-4">
-                        <!-- Informasi Pribadi -->
-                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 shadow-sm">
-                            <h4 class="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                                <i class="fa-solid fa-info-circle text-blue-600"></i>
-                                Informasi Pribadi
-                            </h4>
-                            <div class="space-y-3">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-slate-600">Nama:</span>
-                                    <span id="modalName" class="font-medium text-slate-900"></span>
+                <div class="grid grid-cols-1 lg:grid-cols-12">
+                    <div class="lg:col-span-4 bg-white p-8 border-r border-slate-200">
+                        <div class="flex flex-col items-center text-center">
+                            <div class="relative mb-6">
+                                <div class="w-40 h-40 rounded-2xl overflow-hidden border-4 border-white shadow-xl ring-1 ring-slate-200">
+                                    <img id="modalAvatar" src="" alt="Foto Profil" class="w-full h-full object-cover">
                                 </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-slate-600">Email:</span>
-                                    <span id="modalEmail" class="font-medium text-slate-900"></span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-slate-600">Telepon:</span>
-                                    <span id="modalTelepon" class="font-medium text-slate-900"></span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-slate-600">Tanggal Masuk:</span>
-                                    <span id="modalTanggalMasuk" class="font-medium text-slate-900"></span>
+                                <div class="absolute -bottom-3 left-1/2 -translate-x-1/2">
+                                    <span id="modalStatus" class="px-4 py-1 rounded-full text-xs font-bold tracking-wider uppercase shadow-sm border border-white"></span>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Status & Role -->
-                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 shadow-sm">
-                            <h4 class="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                                <i class="fa-solid fa-user-tag text-purple-600"></i>
-                                Status & Role
-                            </h4>
-                            <div class="space-y-3">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-slate-600">Role:</span>
-                                    <span id="modalRole" class="px-3 py-1 rounded-full text-xs font-medium"></span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-slate-600">Status:</span>
-                                    <span id="modalStatus" class="px-3 py-1 rounded-full text-xs font-medium"></span>
-                                </div>
-                            </div>
-                        </div>
+                            <h3 class="text-2xl font-bold text-slate-900 mb-1" id="modalNamaUser">Nama User</h3>
+                            <p id="modalRole" class="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-lg inline-block mb-6"></p>
 
-                        <!-- Informasi Kamar (Hanya untuk Penghuni) -->
-                        <div id="modalKamarInfo" class="bg-slate-50 rounded-xl p-4 border border-slate-200 shadow-sm hidden">
-                            <h4 class="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                                <i class="fa-solid fa-door-open text-emerald-600"></i>
-                                Informasi Kamar
-                            </h4>
-                            <div class="space-y-3">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-slate-600">Kode Kamar:</span>
-                                    <span id="modalKodeKamar" class="font-medium text-slate-900"></span>
+                            <div class="w-full space-y-3 pt-6 border-t border-slate-100 text-left">
+                                <div class="flex items-center gap-3 text-slate-600">
+                                    <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500">
+                                        <i class="fa-solid fa-envelope text-sm"></i>
+                                    </div>
+                                    <span id="modalEmail" class="text-sm truncate"></span>
                                 </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-slate-600">Tanggal Masuk Kamar:</span>
-                                    <span id="modalTanggalMasukKamar" class="font-medium text-slate-900"></span>
+                                <div class="flex items-center gap-3 text-slate-600">
+                                    <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500">
+                                        <i class="fa-solid fa-phone text-sm"></i>
+                                    </div>
+                                    <span id="modalTelepon" class="text-sm font-medium"></span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Kolom 3: Alamat -->
-                    <div class="space-y-4">
-                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 shadow-sm h-full">
-                            <h4 class="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                                <i class="fa-solid fa-location-dot text-red-600"></i>
-                                Alamat
-                            </h4>
-                            <div class="space-y-3">
-                                <div>
-                                    <span class="text-slate-600">Alamat:</span>
-                                    <p id="modalAlamat" class="font-medium text-slate-900 mt-1"></p>
+                    <div class="lg:col-span-8 p-8 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 mb-8">
+                                <h4 class="text-lg font-bold text-slate-800 uppercase tracking-wider">Informasi Lengkap</h4>
+                                <div class="h-px flex-1 bg-slate-200"></div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-hover hover:shadow-md transition-all">
+                                    <div class="flex items-center gap-3 mb-4">
+                                        <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg">
+                                            <i class="fa-solid fa-id-card"></i>
+                                        </div>
+                                        <h5 class="font-bold text-slate-700">Data Diri</h5>
+                                    </div>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <p class="text-[10px] uppercase font-bold text-slate-400 mb-1">Nama Lengkap</p>
+                                            <p id="modalName" class="text-slate-900 font-medium"></p>
+                                        </div>
+                                        <div>
+                                            <p class="text-[10px] uppercase font-bold text-slate-400 mb-1">Tanggal Bergabung</p>
+                                            <div class="flex items-center gap-2 text-slate-900">
+                                                <i class="fa-solid fa-calendar-day text-slate-400"></i>
+                                                <span id="modalTanggalMasuk" class="font-medium"></span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-slate-600">Kota:</span>
-                                    <span id="modalKota" class="font-medium text-slate-900"></span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-slate-600">Provinsi:</span>
-                                    <span id="modalProvinsi" class="font-medium text-slate-900"></span>
+
+                                <div id="modalKamarInfo" class="bg-emerald-50 p-5 rounded-2xl border border-emerald-100 shadow-sm hidden">
+                                    <div class="flex items-center gap-3 mb-4">
+                                        <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg">
+                                            <i class="fa-solid fa-door-open"></i>
+                                        </div>
+                                        <h5 class="font-bold text-emerald-800">Detail Kamar</h5>
+                                    </div>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <p class="text-[10px] uppercase font-bold text-emerald-600/60 mb-1">Kode Kamar</p>
+                                            <p id="modalKodeKamar" class="text-emerald-900 font-bold text-lg"></p>
+                                        </div>
+                                        <div>
+                                            <p class="text-[10px] uppercase font-bold text-emerald-600/60 mb-1">Masuk Kamar Sejak</p>
+                                            <p id="modalTanggalMasukKamar" class="text-emerald-900 font-medium"></p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Footer Modal -->
-                <div class="flex justify-between items-center mt-8 pt-6 border-t border-slate-200">
-                    <button type="button" id="inactiveButton"
-                        class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-amber-700 bg-amber-100 border border-amber-200 rounded-lg hover:bg-amber-200 transition-all duration-200 hover:shadow-sm">
-                        <i class="fa-solid fa-user-slash"></i>
-                        Nonaktifkan User
-                    </button>
-                    <div class="flex gap-3 ml-auto">
-                        <button type="button" onclick="hideDetailModal()"
-                            class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-all duration-200 hover:shadow-sm">
-                            <i class="fa-solid fa-times mr-2"></i>
-                            Tutup
-                        </button>
-                        <a href="#" id="modalEditLink"
-                            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all duration-200 hover:shadow-sm inline-flex items-center">
-                            <i class="fa-solid fa-pen-to-square mr-2"></i>
-                            Edit User
-                        </a>
+                        <div class="flex flex-wrap items-center justify-between gap-4 mt-12 pt-6 border-t border-slate-200">
+                            <button type="button" id="inactiveButton"
+                                class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-xl hover:bg-amber-100 hover:text-amber-800 transition-all duration-200">
+                                <i class="fa-solid fa-user-slash"></i>
+                                Nonaktifkan User
+                            </button>
+
+                            <div class="flex items-center gap-3">
+                                <button type="button" onclick="hideDetailModal()"
+                                    class="px-5 py-2.5 text-sm font-semibold text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all duration-200">
+                                    Tutup
+                                </button>
+                                <a href="#" id="modalEditLink"
+                                    class="px-6 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-200 transition-all duration-200 inline-flex items-center gap-2">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                    Edit Profil
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -365,10 +321,8 @@
     </div>
 
     <script>
-        // Data user dari server (bisa juga di-fetch via AJAX)
         const userData = @json($users->keyBy('id')->toArray());
 
-        // Fungsi untuk menampilkan modal detail dengan animasi
         function showDetailModal(userId) {
             const user = userData[userId];
             if (!user) return;
@@ -378,9 +332,6 @@
             document.getElementById('modalName').textContent = user.name;
             document.getElementById('modalEmail').textContent = user.email;
             document.getElementById('modalTelepon').textContent = user.telepon || '-';
-            document.getElementById('modalAlamat').textContent = user.alamat || '-';
-            document.getElementById('modalKota').textContent = user.kota || '-';
-            document.getElementById('modalProvinsi').textContent = user.provinsi || '-';
             document.getElementById('modalTanggalMasuk').textContent = user.tanggal_masuk ? formatTanggal(user.tanggal_masuk) : '-';
             document.getElementById('modalEditLink').href = `/user/${user.id}/edit`;
 
@@ -392,15 +343,6 @@
                 avatarElement.src = '/assets/image/avatar/default-avatar.png';
             }
             avatarElement.alt = `Foto ${user.name}`;
-
-            // Set KTP
-            const ktpElement = document.getElementById('modalKtp');
-            if (user.ktp) {
-                ktpElement.src = `/storage/${user.ktp}`;
-            } else {
-                ktpElement.src = '/assets/image/avatar/default-ktp.jpg';
-            }
-            ktpElement.alt = `KTP ${user.name}`;
 
             // Set role
             const roleElement = document.getElementById('modalRole');
@@ -419,7 +361,6 @@
             const statusElement = document.getElementById('modalStatus');
             const inactiveButton = document.getElementById('inactiveButton');
 
-            // default hide dulu
             inactiveButton.style.display = 'none';
             inactiveButton.onclick = null;
 
@@ -427,14 +368,13 @@
                 statusElement.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Aktif';
                 statusElement.className = 'px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200';
 
-                // Set tombol nonaktifkan
                 inactiveButton.innerHTML = '<i class="fa-solid fa-user-slash mr-2"></i> Nonaktifkan User';
                 inactiveButton.className =
                     'inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-amber-700 bg-amber-100 border border-amber-200 rounded-lg hover:bg-amber-200 transition-all duration-200 hover:shadow-sm';
                 inactiveButton.onclick = function() {
                     nonaktifkanUser(user.id, user.name);
                 };
-                inactiveButton.style.display = 'inline-flex'; // Tampilkan tombol
+                inactiveButton.style.display = 'inline-flex';
             } else {
                 statusElement.innerHTML = '-';
             }
@@ -452,7 +392,6 @@
                 kamarInfoElement.classList.add('hidden');
             }
 
-            // Tampilkan modal dengan animasi
             const modal = document.getElementById('detailModal');
             const backdrop = document.getElementById('modalBackdrop');
             const content = document.getElementById('modalContent');
@@ -460,10 +399,8 @@
             modal.classList.remove('pointer-events-none');
             modal.classList.add('pointer-events-auto');
 
-            // Trigger reflow untuk memastikan animasi berjalan
             void modal.offsetWidth;
 
-            // Animasikan backdrop dan content
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
                 modal.classList.add('opacity-100');
@@ -476,13 +413,11 @@
             document.body.classList.add('overflow-hidden');
         }
 
-        // Fungsi untuk menyembunyikan modal dengan animasi
         function hideDetailModal() {
             const modal = document.getElementById('detailModal');
             const backdrop = document.getElementById('modalBackdrop');
             const content = document.getElementById('modalContent');
 
-            // Animasikan keluar
             modal.classList.remove('opacity-100');
             modal.classList.add('opacity-0');
             backdrop.classList.remove('bg-gray-900/70');
@@ -490,7 +425,6 @@
             content.classList.remove('scale-100', 'translate-y-0');
             content.classList.add('scale-95', 'translate-y-4');
 
-            // Tunggu animasi selesai sebelum menyembunyikan
             setTimeout(() => {
                 modal.classList.remove('pointer-events-auto');
                 modal.classList.add('pointer-events-none');
@@ -498,7 +432,6 @@
             }, 300);
         }
 
-        // Fungsi format tanggal
         function formatTanggal(tanggal) {
             const options = {
                 year: 'numeric',
@@ -508,7 +441,6 @@
             return new Date(tanggal).toLocaleDateString('id-ID', options);
         }
 
-        // Fungsi untuk nonaktifkan user
         function nonaktifkanUser(userId, namaUser) {
             const url = "{{ route('user.nonaktifkan', ':id') }}".replace(':id', userId);
             Swal.fire({
@@ -534,21 +466,18 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Buat form secara dinamis
                     const form = document.createElement('form');
                     form.id = 'nonaktifkan-user-' + userId;
                     form.method = 'POST';
                     form.action = url;
                     form.style.display = 'none';
 
-                    // Tambahkan CSRF token
                     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
                     const csrfInput = document.createElement('input');
                     csrfInput.type = 'hidden';
                     csrfInput.name = '_token';
                     csrfInput.value = csrfToken;
 
-                    // Tambahkan method spoofing untuk PUT
                     const methodInput = document.createElement('input');
                     methodInput.type = 'hidden';
                     methodInput.name = '_method';
@@ -558,13 +487,11 @@
                     form.appendChild(methodInput);
                     document.body.appendChild(form);
 
-                    // Submit form
                     form.submit();
                 }
             });
         }
 
-        // Tutup modal dengan ESC key
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 hideDetailModal();

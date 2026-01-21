@@ -139,7 +139,6 @@
                                                 'bg-[#fffffe] border-[#90b4ce]/20 text-[#5f6c7b] hover:border-[#3da9fc]'"
                                             class="flex items-center justify-between rounded-2xl border-2 px-5 py-4 transition-all">
                                             <span class="font-bold" x-text="opt + ' Bulan'"></span>
-                                            <i class="fa-solid fa-circle-check" :class="formState.durasi == opt ? 'opacity-100' : 'opacity-0'"></i>
                                         </button>
                                     </template>
                                     <select name="durasi" class="hidden" x-model="formState.durasi" x-on:change="updateTotalSeharusnya()">
@@ -206,7 +205,7 @@
                     <div class="sticky top-23 space-y-6">
                         <div class="overflow-hidden rounded-3xl border border-[#90b4ce]/20 bg-[#fffffe] shadow-xl shadow-[#90b4ce]/10 transition-all">
                             <div class="bg-[#094067] px-6 py-6 text-[#fffffe]">
-                                <h3 class="text-lg font-bold italic tracking-tighter">SUMMARY_RECEIPT</h3>
+                                <h3 class="text-lg font-bold italic tracking-tighter">SUMMARY RECEIPT</h3>
                                 <p class="text-[10px] font-medium text-[#90b4ce] uppercase tracking-widest">Transaction Preview</p>
                             </div>
 
@@ -258,7 +257,7 @@
                             </div>
                         </div>
 
-                        <div class="rounded-3xl bg-gradient-to-br from-[#094067] to-[#3da9fc] p-6 text-[#fffffe] shadow-lg shadow-[#094067]/20">
+                        <div class="rounded-3xl bg-[#094067] p-6 text-[#fffffe] shadow-lg shadow-[#094067]/20">
                             <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-[#fffffe]/20 backdrop-blur-md text-[#fffffe]">
                                 <i class="fa-solid fa-lightbulb"></i>
                             </div>

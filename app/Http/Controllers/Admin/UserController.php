@@ -18,7 +18,7 @@ class UserController extends Controller
     {
         $penghuni = User::with([
             'transaksi' => function ($q) {
-                $q->orderBy('id', 'desc')->limit(1); // transaksi terakhir
+                $q->orderBy('id', 'desc')->limit(1);
             },
             'kamar'
         ])
@@ -28,11 +28,10 @@ class UserController extends Controller
             $trx = $user->transaksi->first();
 
             if (!$trx)
-                return false; // tidak punya transaksi → bukan menunggak
+                return false;
             if (!$trx->tanggal_jatuhtempo)
                 return false;
 
-            // jatuh tempo < hari ini → menunggak
             return Carbon::parse($trx->tanggal_jatuhtempo)
                 ->lt(Carbon::today());
         });
@@ -62,13 +61,8 @@ class UserController extends Controller
             'email' => 'required|unique:users,email|max:255',
             'password' => 'nullable|string|min:8',
             'telepon' => 'nullable|string|max:20',
-            'alamat' => 'nullable|string|max:255',
-            'kota' => 'nullable|string|max:100',
-            'provinsi' => 'nullable|string|max:100',
             'role' => 'nullable|in:admin,penghuni,user',
-            'status_penghuni' => 'nullable|in:aktif,nonaktif,menunggak',
             'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'ktp' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         $validation['password'] = bcrypt($request->password);
@@ -77,9 +71,9 @@ class UserController extends Controller
         if ($request->telepon) {
             $telepon = preg_replace('/\s+/', '', $request->telepon); // hilangkan spasi
             if (str_starts_with($telepon, '+62')) {
-                $telepon = substr($telepon, 3); // hilangkan +62
+                $telepon = substr($telepon, 3);
             } elseif (str_starts_with($telepon, '0')) {
-                $telepon = substr($telepon, 1); // hilangkan 0 di depan
+                $telepon = substr($telepon, 1);
             }
             $validation['telepon'] = '62' . $telepon;
         }
@@ -90,14 +84,6 @@ class UserController extends Controller
             $gambarAvatar = 'avatar_' . time() . '_' . uniqid() . '.' . $extension;
             $avatarPath = $request->file('avatar')->storePubliclyAs('avatar', $gambarAvatar, 'public');
             $validation['avatar'] = $avatarPath;
-        }
-
-        // Handle upload KTP
-        if ($request->file('ktp')) {
-            $extension = $request->file('ktp')->getClientOriginalExtension();
-            $gambarKtp = 'ktp' . time() . '_' . uniqid() . '.' . $extension;
-            $ktpPath = $request->file('ktp')->storePubliclyAs('ktp', $gambarKtp, 'public');
-            $validation['ktp'] = $ktpPath;
         }
 
         $user = User::create($validation);
@@ -136,16 +122,10 @@ class UserController extends Controller
             'email' => 'sometimes|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8',
             'telepon' => 'nullable|string|max:20',
-            'alamat' => 'nullable|string|max:255',
-            'kota' => 'nullable|string|max:100',
-            'provinsi' => 'nullable|string|max:100',
             'role' => 'nullable|in:admin,user',
-            'status_penghuni' => 'nullable|in:aktif,nonaktif,menunggak',
             'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'ktp' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        // Jika password tidak diubah → tetap pakai yang lama
         if (!empty($request->password)) {
             $validation['password'] = bcrypt($request->password);
         } else {
@@ -156,16 +136,15 @@ class UserController extends Controller
         if ($request->telepon) {
             $telepon = preg_replace('/\s+/', '', $request->telepon); // hilangkan spasi
             if (str_starts_with($telepon, '+62')) {
-                $telepon = substr($telepon, 3); // hilangkan +62
+                $telepon = substr($telepon, 3);
             } elseif (str_starts_with($telepon, '0')) {
-                $telepon = substr($telepon, 1); // hilangkan 0 di depan
+                $telepon = substr($telepon, 1);
             }
             $validation['telepon'] = '62' . $telepon;
         }
 
         // Handle upload avatar
         if ($request->hasFile('avatar')) {
-            // Hapus avatar lama jika ada
             if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
                 Storage::disk('public')->delete($user->avatar);
             }
@@ -176,42 +155,13 @@ class UserController extends Controller
             $avatarPath = $request->file('avatar')->storePubliclyAs('avatar', $gambarAvatar, 'public');
             $validation['avatar'] = $avatarPath;
         } else {
-            // Jika tidak ada avatar baru, gunakan avatar lama atau hapus jika dihapus
             if ($request->has('existing_image') && empty($request->existing_image)) {
-                // Hapus avatar lama
                 if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
                     Storage::disk('public')->delete($user->avatar);
                 }
                 $validation['avatar'] = null;
             } else {
-                // Pertahankan avatar lama
                 $validation['avatar'] = $user->avatar;
-            }
-        }
-
-        // Handle upload KTP
-        if ($request->hasFile('ktp')) {
-            // Hapus ktp lama jika ada
-            if ($user->ktp && Storage::disk('public')->exists($user->ktp)) {
-                Storage::disk('public')->delete($user->ktp);
-            }
-
-            // Upload ktp baru
-            $extension = $request->file('ktp')->getClientOriginalExtension();
-            $gambarKtp = 'ktp' . time() . '_' . uniqid() . '.' . $extension;
-            $ktpPath = $request->file('ktp')->storePubliclyAs('ktp', $gambarKtp, 'public');
-            $validation['ktp'] = $ktpPath;
-        } else {
-            // Jika tidak ada ktp baru, gunakan ktp lama atau hapus jika dihapus
-            if ($request->has('existing_image') && empty($request->existing_image)) {
-                // Hapus ktp lama
-                if ($user->ktp && Storage::disk('public')->exists($user->ktp)) {
-                    Storage::disk('public')->delete($user->ktp);
-                }
-                $validation['ktp'] = null;
-            } else {
-                // Pertahankan ktp lama
-                $validation['ktp'] = $user->ktp;
             }
         }
 
@@ -225,18 +175,12 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        // Cari User berdasarkan ID
         $user = User::findOrFail($id);
 
-        // Hapus gambar dari storage jika ada
         if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
             Storage::disk('public')->delete($user->avatar);
         }
-        if ($user->ktp && Storage::disk('public')->exists($user->ktp)) {
-            Storage::disk('public')->delete($user->ktp);
-        }
 
-        // Hapus User
         $user->delete();
 
         $kamarIdLama = $user->id_kamar;
@@ -249,8 +193,7 @@ class UserController extends Controller
         return redirect()->route('user.index')->with('success', 'User berhasil dihapus');
     }
 
-    // Status Penghuni
-    //Nonaktifkan
+    // Nonaktifkan Penghuni
     public function nonaktifkan($id)
     {
         $user = User::findOrFail($id);

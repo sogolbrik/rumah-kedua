@@ -4,6 +4,7 @@ namespace App\Http\Controllers\frontend\user;
 
 use App\Http\Controllers\Controller;
 use App\Models\Kamar;
+use App\Models\PengaturanSistem;
 use App\Models\Pengumuman;
 use App\Models\Transaksi;
 use App\Models\User;
@@ -67,13 +68,16 @@ class PenghuniController extends Controller
             }
         }
 
+        $pengaturan = PengaturanSistem::first();
+
         return view('frontend.user.penghuni', compact(
             'user',
             'transaksis',
             'totalTransaksi',
             'totalBayar',
             'terakhirBayar',
-            'menunggak'
+            'menunggak',
+            'pengaturan'
         ));
     }
 

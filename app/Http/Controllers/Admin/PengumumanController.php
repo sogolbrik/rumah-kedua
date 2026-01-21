@@ -24,7 +24,7 @@ class PengumumanController extends Controller
     {
         $validation = $request->validate([
             'judul' => 'required',
-            'kategori' => 'required',
+            'kategori' => 'required|in:Umum,Penting,Perbaikan,Kegiatan',
             'highlight' => 'nullable|boolean',
             'isi' => 'required',
         ]);

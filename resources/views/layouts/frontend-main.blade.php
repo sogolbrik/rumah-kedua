@@ -62,7 +62,13 @@
                         <div class="w-10 h-10 bg-gradient-to-br from-[#3da9fc] to-[#90b4ce] rounded-xl flex items-center justify-center shadow-lg shadow-[#094067]/50">
                             <i class="fas fa-home text-[#fffffe] text-lg"></i>
                         </div>
-                        <span class="text-2xl font-black text-[#fffffe] tracking-tighter italic">Rumah<span class="text-[#3da9fc]">Kedua</span></span>
+                        @php
+                            $nama = $pengaturan->nama_kos ?? 'RumahKedua';
+                            // Ambil 5 huruf pertama dan 5 huruf kedua
+                            $kata1 = substr($nama, 0, 5);
+                            $kata2 = substr($nama, 5, 5);
+                        @endphp
+                        <span class="text-2xl font-black text-[#fffffe] tracking-tighter italic">{{ $kata1 }}<span class="text-[#3da9fc]">{{ $kata2 }}</span></span>
                     </div>
                     <p class="text-[#90b4ce] leading-relaxed text-lg max-w-sm">
                         {{ $pengaturan->deskripsi_kos ?? 'Merevolusi cara Anda tinggal dengan menggabungkan estetika modern dan kenyamanan total dalam satu hunian eksklusif.' }}
@@ -81,11 +87,11 @@
                     <h4 class="text-[#fffffe] font-bold mb-8 uppercase tracking-widest text-xs opacity-60">Eksplorasi</h4>
                     <ul class="space-y-4">
                         @foreach ([
-                            'Fasilitas' => '#fasilitas',
-                            'Pilihan Kamar' => '#kamar',
-                            'Lokasi' => '#lokasi',
-                            'FAQ' => '#faq',
-                        ] as $title => $url)
+        'Fasilitas' => '#fasilitas',
+        'Pilihan Kamar' => '#kamar',
+        'Lokasi' => '#lokasi',
+        'FAQ' => '#faq',
+    ] as $title => $url)
                             <li>
                                 <a href="{{ url($url) }}" class="group flex items-center text-[#90b4ce] hover:text-[#3da9fc] transition-colors">
                                     <span class="h-px w-0 bg-[#3da9fc] mr-0 group-hover:w-4 group-hover:mr-3 transition-all duration-300"></span>
@@ -135,7 +141,7 @@
 
             <div class="pt-12 border-t border-[#fffffe]/10 flex flex-col md:flex-row justify-between items-center gap-6">
                 <p class="text-[#90b4ce] text-sm">
-                    &copy; {{ date('Y') }} <span class="text-[#fffffe] font-bold tracking-tight">RumahKedua</span>. Built for Modern Living.
+                    &copy; {{ date('Y') }} <span class="text-[#fffffe] font-bold tracking-tight">{{ $pengaturan->nama_kos ?? 'RumahKedua' }}</span>. Built for Modern Living.
                 </p>
                 <div class="flex items-center gap-8">
                     <div class="flex items-center gap-2">

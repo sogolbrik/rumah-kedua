@@ -113,8 +113,8 @@
                             <i class="fa-solid fa-id-card"></i>
                         </div>
                         <div>
-                            <h2 class="text-lg font-semibold text-slate-900">Informasi Tambahan</h2>
-                            <p class="text-sm text-slate-600">Data tambahan untuk melengkapi profil user</p>
+                            <h2 class="text-lg font-semibold text-slate-900">Informasi Akun</h2>
+                            <p class="text-sm text-slate-600">Data yang berkaitan dengan identitas dan hak akses pengguna</p>
                         </div>
                     </div>
                 </div>
@@ -133,59 +133,7 @@
                                     class="w-full rounded-xl border-2 border-slate-200 bg-white py-3 pl-11 pr-4 text-sm font-medium text-slate-900 placeholder:text-slate-400 transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-500/10" />
                             </div>
                         </div>
-                    </div>
 
-                    <div>
-                        <label for="alamat" class="mb-2 block text-sm font-semibold text-slate-700">
-                            Alamat <span class="text-slate-400">(opsional)</span>
-                        </label>
-                        <textarea id="alamat" name="alamat" rows="3" placeholder="Masukkan alamat lengkap..." x-model="formState.alamat" @input="checkForChanges"
-                            class="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-500/10"></textarea>
-                    </div>
-
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                        <div>
-                            <label for="kota" class="mb-2 block text-sm font-semibold text-slate-700">
-                                Kota <span class="text-slate-400">(opsional)</span>
-                            </label>
-                            <div class="relative">
-                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
-                                    <i class="fa-solid fa-city text-sm"></i>
-                                </div>
-                                <input id="kota" name="kota" type="text" placeholder="Nama kota" x-model="formState.kota" @input="checkForChanges"
-                                    class="w-full rounded-xl border-2 border-slate-200 bg-white py-3 pl-11 pr-4 text-sm font-medium text-slate-900 placeholder:text-slate-400 transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-500/10" />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label for="provinsi" class="mb-2 block text-sm font-semibold text-slate-700">
-                                Provinsi <span class="text-slate-400">(opsional)</span>
-                            </label>
-                            <div class="relative">
-                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
-                                    <i class="fa-solid fa-map text-sm"></i>
-                                </div>
-                                <input id="provinsi" name="provinsi" type="text" placeholder="Nama provinsi" x-model="formState.provinsi" @input="checkForChanges"
-                                    class="w-full rounded-xl border-2 border-slate-200 bg-white py-3 pl-11 pr-4 text-sm font-medium text-slate-900 placeholder:text-slate-400 transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-500/10" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="border-y border-slate-200 bg-gradient-to-r from-violet-50 to-purple-50 px-8 py-6">
-                    <div class="flex items-center gap-3">
-                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-600 text-white shadow-lg">
-                            <i class="fa-solid fa-user-tag"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-lg font-semibold text-slate-900">Role User</h2>
-                            <p class="text-sm text-slate-600">Tentukan role user</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="space-y-6 px-8 py-8">
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <div>
                             <label for="role" class="mb-2 block text-sm font-semibold text-slate-700">
                                 Role User <span class="text-slate-400">(opsional)</span>
@@ -212,7 +160,7 @@
                         </div>
                         <div>
                             <h2 class="text-lg font-semibold text-slate-900">Upload Foto</h2>
-                            <p class="text-sm text-slate-600">Foto profil dan KTP user (opsional)</p>
+                            <p class="text-sm text-slate-600">Foto profil user (opsional)</p>
                         </div>
                     </div>
                 </div>
@@ -255,43 +203,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Upload KTP -->
-                        <div>
-                            <label class="mb-2 block text-sm font-semibold text-slate-700">
-                                Foto KTP <span class="text-slate-400">(opsional)</span>
-                            </label>
-                            <div id="ktp-drop-zone" @dragover.prevent="isKtpDragging = true" @dragleave.prevent="isKtpDragging = false" @drop.prevent="handleKtpDrop"
-                                :class="isKtpDragging ? 'border-cyan-500 bg-cyan-100/50' : ''"
-                                class="group relative overflow-hidden rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/50 transition-all hover:border-cyan-400 hover:bg-cyan-50/50">
-                                <input type="file" name="ktp" accept="image/*" id="ktp-input" class="hidden" @change="handleKtpSelect; checkForChanges()">
-
-                                <div x-show="!formState.ktp && !formState.ktpPreview" class="flex flex-col items-center justify-center px-6 py-8 text-center">
-                                    <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30">
-                                        <i class="fa-solid fa-id-card text-lg"></i>
-                                    </div>
-                                    <button type="button" @click="document.getElementById('ktp-input').click()"
-                                        class="mb-2 inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200 transition-all hover:bg-slate-50 hover:shadow">
-                                        <i class="fa-solid fa-image"></i>
-                                        Pilih KTP
-                                    </button>
-                                    <p class="text-xs text-slate-500">PNG, JPG, WEBP hingga 2MB</p>
-                                </div>
-
-                                <div x-cloak x-show="formState.ktp || formState.ktpPreview" class="relative">
-                                    <img :src="formState.ktpPreview || ktpPreviewUrl" alt="Preview KTP" class="h-48 w-full object-cover" />
-                                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
-                                    <button type="button" @click="removeKtp"
-                                        class="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-xl bg-white/90 text-slate-700 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:text-rose-600">
-                                        <i class="fa-solid fa-trash-can text-sm"></i>
-                                    </button>
-                                    <div class="absolute bottom-3 left-3 right-3">
-                                        <p x-text="ktpFileInfo.name || 'Foto KTP saat ini'" class="text-sm font-semibold text-white"></p>
-                                        <p x-text="ktpFileInfo.size" class="text-xs text-white/80"></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -326,42 +237,27 @@
                     password: '',
                     password_confirmation: '',
                     telepon: userData?.telepon || '',
-                    alamat: userData?.alamat || '',
-                    kota: userData?.kota || '',
-                    provinsi: userData?.provinsi || '',
                     role: userData?.role || '',
                     avatar: null,
-                    ktp: null,
                     avatarPreview: userData?.avatar ? `/storage/${userData.avatar}` : null,
-                    ktpPreview: userData?.ktp ? `/storage/${userData.ktp}` : null,
                 },
                 originalData: {
                     name: userData?.name || '',
                     email: userData?.email || '',
                     telepon: userData?.telepon || '',
-                    alamat: userData?.alamat || '',
-                    kota: userData?.kota || '',
-                    provinsi: userData?.provinsi || '',
                     role: userData?.role || '',
                 },
                 showPassword: false,
                 showConfirmPassword: false,
                 isAvatarDragging: false,
-                isKtpDragging: false,
                 avatarPreviewUrl: '',
-                ktpPreviewUrl: '',
                 avatarFileInfo: {
-                    name: '',
-                    size: ''
-                },
-                ktpFileInfo: {
                     name: '',
                     size: ''
                 },
                 hasChanges: false,
 
                 init() {
-                    // Initialize by checking for changes
                     this.checkForChanges();
                 },
 
@@ -371,16 +267,11 @@
                         this.formState.name !== this.originalData.name ||
                         this.formState.email !== this.originalData.email ||
                         this.formState.telepon !== this.originalData.telepon ||
-                        this.formState.alamat !== this.originalData.alamat ||
-                        this.formState.kota !== this.originalData.kota ||
-                        this.formState.provinsi !== this.originalData.provinsi ||
                         this.formState.role !== this.originalData.role;
 
-                    // Check password fields (only if filled)
                     const passwordChanged = this.formState.password !== '' || this.formState.password_confirmation !== '';
 
-                    // Check file changes
-                    const filesChanged = this.formState.avatar !== null || this.formState.ktp !== null;
+                    const filesChanged = this.formState.avatar !== null;
 
                     this.hasChanges = textFieldsChanged || passwordChanged || filesChanged;
                 },
@@ -431,52 +322,6 @@
                     this.checkForChanges();
                 },
 
-                handleKtpSelect(e) {
-                    const file = e.target.files[0];
-                    if (file) {
-                        this.processKtpFile(file);
-                    }
-                },
-
-                handleKtpDrop(e) {
-                    this.isKtpDragging = false;
-                    const file = e.dataTransfer.files[0];
-                    if (file && file.type.startsWith('image/')) {
-                        const input = document.getElementById('ktp-input');
-                        const dataTransfer = new DataTransfer();
-                        dataTransfer.items.add(file);
-                        input.files = dataTransfer.files;
-                        this.processKtpFile(file);
-                    }
-                },
-
-                processKtpFile(file) {
-                    this.formState.ktp = file;
-                    this.formState.ktpPreview = null; // Clear existing preview when new file is selected
-                    this.ktpFileInfo.name = file.name;
-                    this.ktpFileInfo.size = this.formatFileSize(file.size);
-
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        this.ktpPreviewUrl = e.target.result;
-                    };
-                    reader.readAsDataURL(file);
-
-                    this.checkForChanges();
-                },
-
-                removeKtp() {
-                    this.formState.ktp = null;
-                    this.formState.ktpPreview = null;
-                    this.ktpPreviewUrl = '';
-                    this.ktpFileInfo = {
-                        name: '',
-                        size: ''
-                    };
-                    document.getElementById('ktp-input').value = '';
-                    this.checkForChanges();
-                },
-
                 formatFileSize(bytes) {
                     if (bytes < 1024) return bytes + ' B';
                     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
@@ -484,25 +329,18 @@
                 },
 
                 resetForm() {
-                    // Reset to original user data but keep password fields empty
                     this.formState = {
                         name: this.originalData.name,
                         email: this.originalData.email,
                         password: '',
                         password_confirmation: '',
                         telepon: this.originalData.telepon,
-                        alamat: this.originalData.alamat,
-                        kota: this.originalData.kota,
-                        provinsi: this.originalData.provinsi,
                         role: this.originalData.role,
                         avatar: null,
-                        ktp: null,
                         avatarPreview: userData?.avatar ? `/storage/${userData.avatar}` : null,
-                        ktpPreview: userData?.ktp ? `/storage/${userData.ktp}` : null,
                     };
 
                     this.removeAvatar();
-                    this.removeKtp();
                     this.showPassword = false;
                     this.showConfirmPassword = false;
                     this.checkForChanges();
