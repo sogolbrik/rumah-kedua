@@ -72,7 +72,6 @@ class KamarController extends Controller
 
             DetailKamar::insert($fasilitasData);
 
-            // Simpan galeri
             if ($request->file('galeri')) {
                 foreach ($request->file('galeri') as $file) {
                     $extension = $file->getClientOriginalExtension();
@@ -131,50 +130,38 @@ class KamarController extends Controller
                 "fasilitas.*" => 'string',
             ]);
 
-            // Format harga
             $harga = str_replace('.', '', $validation['harga']);
             $validation['harga'] = (int) $harga;
 
-            // Handle gambar
             if ($request->hasFile('gambar')) {
-                // Hapus gambar lama jika ada
                 if ($kamar->gambar && Storage::disk('public')->exists($kamar->gambar)) {
                     Storage::disk('public')->delete($kamar->gambar);
                 }
 
-                // Upload gambar baru
                 $extension = $request->file('gambar')->getClientOriginalExtension();
                 $photoBed = 'kamar_' . time() . '_' . uniqid() . '.' . $extension;
                 $photoPath = $request->file('gambar')->storePubliclyAs('kamar', $photoBed, 'public');
                 $validation['gambar'] = $photoPath;
             } else {
-                // Jika tidak ada gambar baru, gunakan gambar lama atau hapus jika dihapus
                 if ($request->has('existing_image') && empty($request->existing_image)) {
-                    // Hapus gambar lama
                     if ($kamar->gambar && Storage::disk('public')->exists($kamar->gambar)) {
                         Storage::disk('public')->delete($kamar->gambar);
                     }
                     $validation['gambar'] = null;
                 } else {
-                    // Pertahankan gambar lama
                     $validation['gambar'] = $kamar->gambar;
                 }
             }
 
-            // Handle deskripsi
             $validation['deskripsi'] = $request->deskripsi;
             if (empty(trim($validation['deskripsi'] ?? ''))) {
                 $validation['deskripsi'] = $this->getDefaultDeskripsi($request->tipe, $request->lebar);
             }
 
-            // Update data kamar
             $kamar->update($validation);
 
-            // Handle fasilitas
-            // Hapus fasilitas lama
             DetailKamar::where('id_kamar', $kamar->id)->delete();
 
-            // Insert fasilitas baru
             $fasilitasData = collect($validation['fasilitas'])->map(fn($fasilitas) => [
                 'id_kamar' => $kamar->id,
                 'fasilitas' => $fasilitas,
@@ -182,8 +169,6 @@ class KamarController extends Controller
 
             DetailKamar::insert($fasilitasData);
 
-            // Handle galeri
-            // 1. Hapus foto yang ditandai untuk dihapus (dari markedForDeletion)
             if ($request->has('hapus_galeri')) {
                 foreach ($request->hapus_galeri as $fotoId) {
                     $foto = GaleriKamar::find($fotoId);
@@ -196,7 +181,6 @@ class KamarController extends Controller
                 }
             }
 
-            // 2. Tambah foto baru (jika ada)
             if ($request->hasFile('galeri')) {
                 foreach ($request->file('galeri') as $file) {
                     $extension = $file->getClientOriginalExtension();
@@ -222,15 +206,12 @@ class KamarController extends Controller
     public function destroy(string $id)
     {
         try {
-            // Cari kamar berdasarkan ID
             $kamar = Kamar::with('galeri')->findOrFail($id);
 
-            // Hapus gambar dari storage jika ada
             if ($kamar->gambar && Storage::disk('public')->exists($kamar->gambar)) {
                 Storage::disk('public')->delete($kamar->gambar);
             }
 
-            // Hapus semua foto galeri
             foreach ($kamar->galeri as $foto) {
                 if (Storage::disk('public')->exists($foto->foto)) {
                     Storage::disk('public')->delete($foto->foto);
@@ -240,7 +221,6 @@ class KamarController extends Controller
             GaleriKamar::where('id_kamar', $kamar->id)->delete();
             DetailKamar::where('id_kamar', $kamar->id)->delete();
 
-            // Hapus kamar
             $kamar->delete();
 
             return redirect()->route('kamar.index')->with('success', 'Kamar berhasil dihapus');
@@ -260,5 +240,28 @@ class KamarController extends Controller
         ];
 
         return $defaultDeskripsi[$tipe] ?? "Kamar {$tipe} dengan luas {$lebar} m² yang nyaman dan dilengkapi berbagai fasilitas penunjang.";
+    }
+
+    public function maintenance(Request $request, string $id)
+    {
+        $request->validate([
+            'is_maintenance' => 'required|boolean'
+        ]);
+
+        try {
+            $kamar = Kamar::findOrFail($id);
+            $kamar->update([
+                'is_maintenance' => $request->boolean('is_maintenance')
+            ]);
+
+            $message = $request->boolean('is_maintenance')
+                ? 'Kamar berhasil dimasukkan ke mode maintenance.'
+                : 'Kamar berhasil diaktifkan kembali.';
+
+            return redirect()->back()->with('success', $message);
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal memperbarui status: ' . $e->getMessage());
+        }
     }
 }

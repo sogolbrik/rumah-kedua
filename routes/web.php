@@ -35,6 +35,8 @@ Route::middleware([AdminMiddleware::class])->group(function () {
     Route::resource('kamar', KamarController::class);
     Route::resource('user', UserController::class);
     Route::resource('galeri', GaleriController::class);
+    //Feature
+    Route::put('kamar/maintenance/{id}', [KamarController::class, 'maintenance'])->name('kamar.maintenance');
     //Laporan
     Route::prefix('laporan')->name('laporan.')->group(function () {
         Route::get('/', [LaporanController::class, 'index'])->name('index');

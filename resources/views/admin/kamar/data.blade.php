@@ -51,7 +51,11 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 text-center">
-                                @if ($item->status == 'Tersedia')
+                                @if ($item->is_maintenance == true)
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
+                                        <i class="fa-solid fa-wrench text-xs"></i> Maintenance
+                                    </span>
+                                @elseif($item->status == 'Tersedia')
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
                                         <i class="fa-solid fa-circle-check text-xs"></i> Tersedia
                                     </span>
@@ -220,12 +224,41 @@
                     </div>
                 </div>
 
+                <!-- Di dalam modal, bagian aksi -->
                 <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-slate-100">
                     <button type="button" onclick="hideDetailModal()" class="px-5 py-2 text-sm font-bold text-slate-600 hover:text-slate-800 transition-colors">
                         Tutup
                     </button>
+
+                    <form id="formSetMaintenance" method="POST" style="display:none;">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="is_maintenance" value="1">
+                        <button type="submit"
+                            class="inline-flex items-center px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
+                            Set Maintenance
+                        </button>
+                    </form>
+
+                    <form id="formAktifkanKamar" method="POST" style="display:none;">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="is_maintenance" value="0">
+                        <button type="submit"
+                            class="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Aktifkan Kamar
+                        </button>
+                    </form>
+
                     <a href="#" id="modalEditLink" class="px-5 py-2 text-sm font-bold text-white bg-blue-600 rounded-xl hover:bg-blue-700 shadow-md transition-all">
-                        Edit Data Kamar
+                        <i class="fa-solid fa-pen-to-square"></i> Edit Data Kamar
                     </a>
                 </div>
             </div>
@@ -233,7 +266,6 @@
     </div>
 
     <script>
-        // Data kamar diparsing dari PHP ke JS Object
         const kamarData = @json($kamar->keyBy('id'));
         let currentSlide = 0;
         let galeriItems = [];
@@ -242,7 +274,6 @@
             const data = kamarData[id];
             if (!data) return;
 
-            // Mapping Data
             document.getElementById('modalKodeKamar').textContent = 'Unit ' + data.kode_kamar;
             document.getElementById('modalHarga').textContent = 'Rp' + new Intl.NumberFormat('id-ID').format(data.harga);
             document.getElementById('modalTipe').textContent = data.tipe;
@@ -250,7 +281,6 @@
             document.getElementById('modalDeskripsi').textContent = data.deskripsi || 'Tidak ada deskripsi untuk kamar ini.';
             document.getElementById('modalEditLink').href = `/admin/kamar/${data.id}/edit`;
 
-            // Status Badge
             const statusTarget = document.getElementById('modalStatus');
             if (data.status === 'Tersedia') {
                 statusTarget.className = "px-3 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 border border-emerald-200";
@@ -260,7 +290,6 @@
                 statusTarget.innerHTML = "TERISI";
             }
 
-            // Fasilitas
             const fasilContainer = document.getElementById('modalFasilitas');
             fasilContainer.innerHTML = '';
             if (data.detail_kamar && data.detail_kamar.length > 0) {
@@ -274,7 +303,6 @@
                 fasilContainer.innerHTML = '<p class="text-xs text-slate-400 italic col-span-2">Belum ada fasilitas terdaftar</p>';
             }
 
-            // Galeri Logic
             galeriItems = [];
             if (data.gambar) galeriItems.push(`/storage/${data.gambar}`);
             if (data.galeri) {
@@ -287,7 +315,6 @@
             currentSlide = 0;
             updateGalleryUI();
 
-            // Show Modal with Animation
             const modal = document.getElementById('detailModal');
             modal.classList.remove('hidden');
             setTimeout(() => {
@@ -296,6 +323,27 @@
                 document.getElementById('modalContent').classList.add('scale-100', 'translate-y-0');
             }, 10);
             document.body.style.overflow = 'hidden';
+
+            const formSet = document.getElementById('formSetMaintenance');
+            const formAktif = document.getElementById('formAktifkanKamar');
+
+            formSet.action = '';
+            formAktif.action = '';
+
+            if (data.is_maintenance) {
+                formAktif.action = `/kamar/maintenance/${data.id}`;
+                formAktif.style.display = 'inline-block';
+                formSet.style.display = 'none';
+            } else {
+                formSet.action = `/kamar/maintenance/${data.id}`;
+                formSet.style.display = 'inline-block';
+                formAktif.style.display = 'none';
+            }
+
+            setTimeout(() => {
+                attachMaintenanceConfirm();
+            }, 100);
+
         }
 
         function updateGalleryUI() {
@@ -368,6 +416,62 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     document.getElementById('hapus-data-' + id).submit();
+                }
+            });
+        }
+
+        function attachMaintenanceConfirm() {
+            const btnSet = document.querySelector('#formSetMaintenance button[type="submit"]');
+            if (btnSet) {
+                btnSet.onclick = function(e) {
+                    e.preventDefault();
+                    const kodeKamar = document.getElementById('modalKodeKamar').textContent.replace('Unit ', '');
+                    konfirmasiMaintenance(true, kodeKamar, () => {
+                        document.getElementById('formSetMaintenance').submit();
+                    });
+                }
+            }
+
+            const btnAktif = document.querySelector('#formAktifkanKamar button[type="submit"]');
+            if (btnAktif) {
+                btnAktif.onclick = function(e) {
+                    e.preventDefault();
+                    const kodeKamar = document.getElementById('modalKodeKamar').textContent.replace('Unit ', '');
+                    konfirmasiMaintenance(false, kodeKamar, () => {
+                        document.getElementById('formAktifkanKamar').submit();
+                    });
+                }
+            }
+        }
+
+        function konfirmasiMaintenance(isMaintenance, kodeKamar, onConfirm) {
+            const title = isMaintenance ? 'Set Maintenance?' : 'Aktifkan Kamar?';
+            const message = isMaintenance ?
+                `Kamar <strong>${kodeKamar}</strong> akan dimasukkan ke mode maintenance. Penghuni tidak bisa memilih kamar ini.` :
+                `Kamar <strong>${kodeKamar}</strong> akan diaktifkan kembali dan tersedia untuk disewa.`;
+            const confirmText = isMaintenance ?
+                '<i class="fa-solid fa-wrench mr-2"></i>Ya, Set Maintenance' :
+                '<i class="fa-solid fa-check-circle mr-2"></i>Ya, Aktifkan';
+            const confirmColor = isMaintenance ? '#d97706' : '#059669';
+
+            Swal.fire({
+                title: title,
+                html: `<div class="text-center"><p class="text-slate-700">${message}</p></div>`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: confirmColor,
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: confirmText,
+                cancelButtonText: '<i class="fa-solid fa-times mr-2"></i>Batal',
+                reverseButtons: true,
+                buttonsStyling: true,
+                customClass: {
+                    confirmButton: 'inline-flex items-center px-4 py-2 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 transition ease-in-out duration-150 ml-2',
+                    cancelButton: 'inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    onConfirm();
                 }
             });
         }

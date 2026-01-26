@@ -20,6 +20,7 @@ return new class extends Migration
             $table->text('deskripsi');
             $table->string('gambar');
             $table->enum('status', ['Tersedia', 'Terisi']);
+            $table->boolean('is_maintenance')->default(false);
             $table->timestamps();
         });
     }

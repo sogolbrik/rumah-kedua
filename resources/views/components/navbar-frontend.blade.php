@@ -1,4 +1,4 @@
-<nav x-data="{
+<nav x-cloak x-data="{
     mobileOpen: false,
     isScrolled: false,
     atTop: true

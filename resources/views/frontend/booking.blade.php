@@ -206,7 +206,7 @@
 
                             <div class="absolute top-6 left-6 right-6 flex justify-between items-start z-10">
                                 <span
-                                    class="px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-lg {{ $item->status == 'Tersedia' ? 'bg-[#3da9fc] text-[#fffffe]' : 'bg-[#ef4565] text-[#fffffe]' }}">
+                                    class="px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-lg {{ $item->is_maintenance ? 'bg-[#ff9f1c] text-[#fffffe]' : ($item->status == 'Tersedia' ? 'bg-[#3da9fc] text-[#fffffe]' : 'bg-[#ef4565] text-[#fffffe]') }}">
                                     {{ $item->status }}
                                 </span>
                                 <div class="bg-[#fffffe] shadow-lg px-3 py-1.5 rounded-xl text-[#094067] font-black text-sm">
@@ -230,7 +230,13 @@
                                         </div>
                                     </div>
 
-                                    @if ($item->status == 'Tersedia')
+                                    @if ($item->is_maintenance == true)
+                                        <button
+                                            class="block w-full py-4 bg-amber-500 text-[#fffffe] text-center font-black uppercase tracking-widest text-[11px] rounded-2xl opacity-80 cursor-not-allowed"
+                                            disabled>
+                                            Dalam Perbaikan
+                                        </button>
+                                    @elseif($item->status == 'Tersedia')
                                         <a href="{{ Route('booking-detail', $item->id) }}"
                                             class="block w-full py-4 bg-[#3da9fc] text-[#fffffe] text-center font-black uppercase tracking-widest text-[11px] rounded-2xl hover:bg-[#fffffe] hover:text-[#3da9fc] transition-all shadow-xl shadow-[#00000020]">
                                             Booking Sekarang

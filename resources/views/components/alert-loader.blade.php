@@ -1,4 +1,4 @@
-<!-- Spinner -->
+{{-- <!-- Spinner -->
 <div id="initial-loader" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#fffffe] transition-opacity duration-500">
     <style>
         @keyframes spin-slow {
@@ -46,7 +46,7 @@
         <div class="absolute w-10 h-10 bg-[#67e8f9] rounded-full flex items-center justify-center shadow-lg shadow-[#67e8f9]/50" style="animation: pulse-core 2s infinite ease-in-out;">
         </div>
     </div>
-</div>
+</div> --}}
 
 
 <!-- Alert -->

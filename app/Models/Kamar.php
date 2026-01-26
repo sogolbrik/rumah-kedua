@@ -13,7 +13,8 @@ class Kamar extends Model
         'lebar',
         'deskripsi',
         'gambar',
-        'status'
+        'status',
+        'is_maintenance'
     ];
 
     public function detailKamar()
