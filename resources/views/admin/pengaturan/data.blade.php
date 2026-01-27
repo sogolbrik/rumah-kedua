@@ -129,15 +129,31 @@
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                         <div class="space-y-2">
                             <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Nama Kos</label>
-                            <div class="relative group">
-                                <div class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400 group-focus-within:text-slate-500 transition-colors">
-                                    <i class="fa-solid fa-tag text-xs"></i>
+
+                            <div class="flex flex-col gap-1">
+                                <div class="relative group">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400 group-focus-within:text-slate-500 transition-colors">
+                                        <i class="fa-solid fa-tag text-xs"></i>
+                                    </div>
+                                    <input type="text" name="nama_kos" x-model="namaKosInput" @input="validateNamaKos" value="{{ old('nama_kos', $pengaturan->nama_kos) }}"
+                                        class="w-full rounded-xl border border-slate-200 py-3 pl-10 pr-4 text-sm font-medium text-slate-700 outline-none transition-all focus:border-slate-500 focus:ring-4 focus:ring-slate-500/10 placeholder:text-slate-300"
+                                        placeholder="Contoh: RumahKedua">
                                 </div>
-                                <input type="text" name="nama_kos" value="{{ old('nama_kos', $pengaturan->nama_kos) }}"
-                                    class="w-full rounded-xl border border-slate-200 py-3 pl-10 pr-4 text-sm font-medium text-slate-700 outline-none transition-all focus:border-slate-500 focus:ring-4 focus:ring-slate-500/10 placeholder:text-slate-300"
-                                    placeholder="Contoh: Kos Amanah">
+
+                                <div class="px-2">
+                                    <template x-if="namaKosInput.length > 0 && !isNamaKosValid">
+                                        <small class="text-xs text-red-500 font-medium block">
+                                            Format salah: harus 10 huruf tanpa spasi (contoh: RumahKedua)
+                                        </small>
+                                    </template>
+                                    <template x-if="isNamaKosValid">
+                                        <small class="text-xs text-green-600 font-medium block">
+                                            Format valid
+                                        </small>
+                                    </template>
+                                    <small class="text-slate-400 font-medium block">wajib 2 kata, per kata 5 huruf, jangan ada spasi</small>
+                                </div>
                             </div>
-                            <small class="text-slate-400 mx-2 font-medium">wajib 2 kata, per kata 5 huruf, jangan ada spasi</small>
                         </div>
 
                         <div class="space-y-2">
@@ -189,8 +205,12 @@
 
         <div class="border-t border-slate-100 bg-slate-50 px-8 py-5 flex items-center justify-between">
             <p class="hidden sm:block text-[11px] font-medium text-slate-400 uppercase tracking-widest">Terakhir diperbarui: {{ $pengaturan->updated_at->diffForHumans() }}</p>
-            <button onclick="document.getElementById('submit-btn').click()"
-                class="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-slate-600 px-8 py-3 font-bold text-white shadow-lg shadow-slate-200 transition-all hover:bg-slate-700 hover:shadow-xl active:scale-95">
+            <button x-bind:disabled="!isNamaKosValid" x-on:click="isNamaKosValid ? document.getElementById('submit-btn').click() : null"
+                :class="{
+                    'bg-slate-600 hover:bg-slate-700 cursor-pointer': isNamaKosValid,
+                    'bg-slate-400 cursor-not-allowed opacity-75': !isNamaKosValid
+                }"
+                class="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl px-8 py-3 font-bold text-white shadow-lg shadow-slate-200 transition-all hover:shadow-xl active:scale-95">
                 <i class="fa-solid fa-circle-check"></i>
                 <span>Simpan Konfigurasi</span>
             </button>
@@ -224,6 +244,19 @@
             Alpine.data('settingsForm', () => ({
                 logoPreviewUrl: null,
                 logoFile: null,
+                namaKosInput: '{{ old('nama_kos', $pengaturan->nama_kos ?? '') }}',
+                isNamaKosValid: false,
+
+                init() {
+                    this.validateNamaKos();
+                },
+
+                validateNamaKos() {
+                    const value = this.namaKosInput || '';
+                    const isValid = /^[A-Za-z]{10}$/.test(value);
+                    this.isNamaKosValid = isValid;
+                },
+
                 handleLogoChange(event) {
                     const file = event.target.files[0];
                     this.logoPreviewUrl = null;

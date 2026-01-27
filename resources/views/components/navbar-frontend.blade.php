@@ -40,7 +40,7 @@
             </a>
 
             <div class="hidden md:flex items-center gap-8">
-                @foreach ([['label' => 'Fasilitas', 'id' => 'fasilitas'], ['label' => 'Kamar', 'id' => 'kamar'], ['label' => 'Lokasi', 'id' => 'lokasi'], ['label' => 'Galeri', 'route' => 'galeri-kamar'], ['label' => 'FAQ', 'id' => 'faq']] as $item)
+                @foreach ([['label' => 'Fasilitas', 'id' => 'fasilitas'], ['label' => 'Kamar', 'id' => 'kamar'], ['label' => 'Galeri', 'route' => 'galeri-kamar'], ['label' => 'FAQ', 'id' => 'faq']] as $item)
                     <a href="{{ isset($item['route']) ? route($item['route']) : url('/#' . $item['id']) }}"
                         class="text-[13px] font-bold uppercase tracking-widest text-[#5f6c7b] hover:text-[#3da9fc] transition-colors duration-300 relative group">
                         {{ $item['label'] }}
@@ -74,7 +74,7 @@
         class="absolute top-full left-0 right-0 mt-4 bg-[#fffffe]/fb backdrop-blur-xl rounded-[2rem] border border-[#90b4ce]/30 shadow-2xl p-6 md:hidden">
 
         <div class="flex flex-col gap-1">
-            @foreach ([['label' => 'Fasilitas', 'id' => 'fasilitas'], ['label' => 'Kamar', 'id' => 'kamar'], ['label' => 'Lokasi', 'id' => 'lokasi'], ['label' => 'Galeri', 'route' => 'galeri-kamar'], ['label' => 'FAQ', 'id' => 'faq']] as $item)
+            @foreach ([['label' => 'Fasilitas', 'id' => 'fasilitas'], ['label' => 'Kamar', 'id' => 'kamar'], ['label' => 'Galeri', 'route' => 'galeri-kamar'], ['label' => 'FAQ', 'id' => 'faq']] as $item)
                 <a href="{{ isset($item['route']) ? route($item['route']) : url('/#' . $item['id']) }}" @click="mobileOpen = false"
                     class="flex items-center justify-between p-4 rounded-2xl hover:bg-[#90b4ce]/10 transition-colors group">
                     <span class="text-sm font-bold uppercase tracking-widest text-[#5f6c7b] group-hover:text-[#3da9fc]">{{ $item['label'] }}</span>
