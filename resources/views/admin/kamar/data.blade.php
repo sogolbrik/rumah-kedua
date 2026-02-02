@@ -358,13 +358,27 @@
             if (galeriItems.length > 1) {
                 pBtn.classList.remove('hidden');
                 nBtn.classList.remove('hidden');
+
                 galeriItems.forEach((src, idx) => {
+                    const isActive = currentSlide === idx;
                     mini.innerHTML += `
-                        <div onclick="currentSlide=${idx}; updateGalleryUI()" 
-                             class="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 cursor-pointer transition-all ${currentSlide === idx ? 'border-blue-500 ring-2 ring-blue-100' : 'border-slate-200 opacity-60 hover:opacity-100'}">
-                            <img src="${src}" class="w-full h-full object-cover">
-                        </div>`;
+                <div id="thumb-${idx}" onclick="currentSlide=${idx}; updateGalleryUI()" 
+                     class="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 cursor-pointer transition-all ${isActive ? 'border-blue-500 ring-2 ring-blue-100' : 'border-slate-200 opacity-60 hover:opacity-100'}">
+                    <img src="${src}" class="w-full h-full object-cover">
+                </div>`;
                 });
+
+                setTimeout(() => {
+                    const activeThumb = document.getElementById(`thumb-${currentSlide}`);
+                    if (activeThumb) {
+                        activeThumb.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'nearest',
+                            inline: 'center'
+                        });
+                    }
+                }, 50);
+
             } else {
                 pBtn.classList.add('hidden');
                 nBtn.classList.add('hidden');

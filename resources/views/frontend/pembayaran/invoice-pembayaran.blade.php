@@ -177,4 +177,20 @@
             }
         }
     </style>
+
+        <script>
+        // Cek status setiap 5 detik
+        setInterval(function() {
+            fetch('/auto-kick/check-role')
+                .then(response => response.json())
+                .then(data => {
+                    // Jika role bukan lagi 'penghuni', arahkan ke landing page
+                    if (data.role !== 'penghuni') {
+                        alert('Sesi Anda berakhir atau akun telah diblokir. Mengalihkan ke Beranda...');
+                        window.location.href = '/';
+                    }
+                })
+                .catch(error => console.error('Error checking status:', error));
+        }, 5000);
+    </script>
 @endsection
