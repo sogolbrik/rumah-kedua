@@ -48,7 +48,8 @@
 
         <section class="max-w-7xl mx-auto px-6 lg:px-8 pb-32">
             @if ($galeri->isNotEmpty())
-                <div class="columns-1 sm:columns-2 lg:columns-3 gap-8 space-y-8">
+                {{-- <div class="columns-1 sm:columns-2 lg:columns-3 gap-8 space-y-8"> --}}
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                     @foreach ($galeri as $index => $item)
                         <div @click="openLightbox({{ $index }})"
                             class="group relative break-inside-avoid rounded-[2.5rem] bg-[#fffffe] border border-[#90b4ce]/20 p-2.5 shadow-sm transition-all duration-500 hover:shadow-[0_32px_64px_-16px_rgba(9,64,103,0.15)] hover:-translate-y-2 cursor-pointer overflow-hidden">

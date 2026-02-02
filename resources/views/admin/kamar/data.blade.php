@@ -279,7 +279,7 @@
             document.getElementById('modalTipe').textContent = data.tipe;
             document.getElementById('modalLebar').textContent = data.lebar + ' m²';
             document.getElementById('modalDeskripsi').textContent = data.deskripsi || 'Tidak ada deskripsi untuk kamar ini.';
-            document.getElementById('modalEditLink').href = `/admin/kamar/${data.id}/edit`;
+            document.getElementById('modalEditLink').href = `kamar/${data.id}/edit`;
 
             const statusTarget = document.getElementById('modalStatus');
             if (data.status === 'Tersedia') {
